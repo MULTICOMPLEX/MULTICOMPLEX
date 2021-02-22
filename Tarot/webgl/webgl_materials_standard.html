@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>three.js webgl - materials - standard</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="main.css">
+</head>
+
+<body>
+    <div id="info">
+        <a href="http://filmicworlds.com/blog/filmic-tonemapping-with-piecewise-power-curves/"
+           target="_blank" rel="noopener">Filmic Tonemapping</a>
+    </div>
+
+    <script type="module">
+
+        import * as THREE from '../build/three.module.js';
+
+        import Stats from './jsm/libs/stats.module.js';
+
+        import { GUI } from './jsm/libs/dat.gui.module.js';
+        import { TrackballControls } from './jsm/controls/TrackballControls.js';
+        import { OrbitControls } from './jsm/controls/OrbitControls.js';
+        import { OBJLoader } from './jsm/loaders/OBJLoader.js';
+        import { RGBELoader } from './jsm/loaders/RGBELoader.js';
+
+        const statsEnabled = true;
+
+        let container, stats;
+
+        let camera, scene, renderer;
+
+        init();
+        animate();
+        render();
+
+        function init() {
+
+            container = document.createElement('div');
+            document.body.appendChild(container);
+
+            
+
+
+            //
+
+            scene = new THREE.Scene();
+
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.25, 20);
+            camera.position.set(- 1.8, 0.6, 2.7);
+
+            //
+
+            //scene.add( new THREE.HemisphereLight( 0x443333, 0x222233, 4 ) );
+
+            //
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            //renderer.toneMapping = THREE.ReinhardToneMapping;
+            //renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMapping = THREE.CineonToneMapping;
+
+            renderer.toneMappingExposure = 1;
+
+
+            const material = new THREE.MeshStandardMaterial();
+
+            const manager = new THREE.LoadingManager();
+
+            new OBJLoader( manager )
+                .setPath('models/wavefront/ObtuseGoldenRhombohedron/')
+                .load('ObtuseGoldenRhombohedron.Wavefront', function (group) {
+
+                    group.scale.multiplyScalar(1.5);
+
+                    const loader = new THREE.TextureLoader(manager)
+                        .setPath('models/Wavefront/textures/')
+
+                    const diffuseMap = loader.load('wood_Wood_006_Color.jpg');
+                    diffuseMap.encoding = THREE.sRGBEncoding;
+                    material.map = diffuseMap;
+
+                    // roughness is in G channel, metalness is in B channel
+                    material.metalnessMap = material.roughnessMap = loader.load('metallicTexture&wood_Wood_006_Roughness_3.jpg');
+                    material.normalMap = loader.load('wood_Wood_006_NormalMap.jpg');
+
+                    material.roughness = 1; // attenuates roughnessMap
+                    material.metalness = 1; // attenuates metalnessMap
+
+                    material.map.wrapS = THREE.RepeatWrapping;
+                    material.roughnessMap.wrapS = THREE.RepeatWrapping;
+                    material.metalnessMap.wrapS = THREE.RepeatWrapping;
+                    material.normalMap.wrapS = THREE.RepeatWrapping;
+
+                    group.traverse(function (child) {
+
+                        if (child.isMesh) {
+
+                            child.material = material;
+
+                        }
+
+                    });
+
+                    //oup.position.x = - 0.45;
+                    //oup.rotation.y = - Math.PI / 2;
+                    scene.add(group);
+
+                });
+
+            const environments = {
+
+                
+                'Overpass': { filename: 'pedestrian_overpass_1k.hdr' },
+                'Rooitou park': { filename: 'rooitou_park_4k.hdr' }
+
+            };
+
+            function loadEnvironment( name ) {
+
+                if (environments[name].texture !== undefined) {
+
+                    scene.background = environments[name].texture;
+                    scene.environment = environments[name].texture;
+                    return;
+
+                }
+
+
+                
+
+
+                const filename = environments[name].filename;
+                new RGBELoader()
+                    .setDataType(THREE.UnsignedByteType)
+                    .setPath('textures/equirectangular/')
+                    .load(filename, function ( hdrEquirect ) {
+
+                        const envMap1 = pmremGenerator.fromEquirectangular( hdrEquirect ).texture;
+                        const envMap2 = new THREE.WebGLCubeRenderTarget(4096).fromEquirectangularTexture(renderer, hdrEquirect);
+                        hdrEquirect.dispose();
+
+                        scene.background = envMap2;
+                        scene.environment = envMap1;
+
+                        pmremGenerator.dispose();
+
+                        environments[name].texture = envMap1.texture;
+
+                        render();
+
+                    });
+
+            }
+
+            const params = {
+
+                scene: Object.keys(environments)[0]
+
+            };
+
+            loadEnvironment(params.scene);
+
+            const gui = new GUI();
+            gui.add(params, 'scene', Object.keys(environments)).onChange(function (value) {
+
+                loadEnvironment(value);
+
+            });
+
+            gui.open();
+
+
+            
+
+
+
+            const pmremGenerator = new THREE.PMREMGenerator(renderer);
+            pmremGenerator.compileEquirectangularShader();
+
+            //
+
+            
+
+
+            if (statsEnabled) {
+
+                stats = new Stats();
+                container.appendChild(stats.dom);
+
+            }
+
+
+            //controls = new TrackballControls( camera, renderer.domElement );
+            const controls = new OrbitControls(camera, renderer.domElement);
+            controls.addEventListener('change', render); // use if there is no animation loop
+            controls.minDistance = 2;
+            controls.maxDistance = 10;
+            controls.target.set(0, 0, - 0.2);
+            controls.update();
+
+
+            window.addEventListener('resize', onWindowResize);
+
+        }
+
+        //
+
+        function onWindowResize() {
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            render();
+        }
+
+        //
+
+        function animate() {
+
+            requestAnimationFrame(animate);
+            if (statsEnabled) stats.update();
+
+             //controls.update(); //trackball
+            render();
+           
+        }
+
+        function render() {
+
+            renderer.render(scene, camera);
+        }
+
+    </script>
+
+</body>
+</html>

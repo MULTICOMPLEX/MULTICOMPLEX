@@ -1,0 +1,97 @@
+#include "fast_hadamard_transform.hpp"
+
+template <typename Func>
+void timer(std::string name, size_t n_iter, size_t n_burnin, Func&& func) {
+  for (size_t i = 0; i < n_burnin; ++i) func();
+  auto t = std::chrono::system_clock::now();
+  for (size_t i = 0; i < n_iter; ++i) {
+    func();
+  }
+  auto diff = std::chrono::system_clock::now() - t;
+  auto elapsed_us = std::chrono::duration_cast<std::chrono::microseconds>(diff).count();
+  std::cout << "[" << name << "] " << elapsed_us << " us. " << (elapsed_us / double(n_iter)) << " us/iter." << std::endl;
+}
+
+template<typename T>
+void fast_hadamard_transform_driver() {
+  const size_t N = 8;
+
+  auto print_buf = [N = N](std::string name, T* p) {
+    std::cout << name << ": ";
+    for (size_t i = 0; i < N; ++i) {
+      std::cout << std::dec << p[i] << " ";
+    }
+    std::cout << std::endl;
+  };
+  T buf[N] = { 1, 0, 1, 0, 0, 1, 1, 0 };
+
+  using namespace fast_hadamard_transform;
+
+  { // non-unitary
+    std::vector<T> buf_ht(N);
+    fht(buf_ht.data(), buf, N);
+
+    std::vector<T> buf_ht_ht(N);
+    fht(buf_ht_ht.data(), buf_ht.data(), N);
+
+    std::vector<T> buf_ht_iht(N);
+    ifht(buf_ht_iht.data(), buf_ht.data(), N);
+
+    std::cout << "Non-unitary.." << std::endl;
+    print_buf("buf", buf);
+    print_buf("HT(buf)", buf_ht.data());
+    print_buf("HT(HT(buf))", buf_ht_ht.data());
+    print_buf("IHT(HT(buf))", buf_ht_iht.data());
+  }
+
+  { // unitary
+    std::vector<T> bufu_ht(N);
+    fht(bufu_ht.data(), buf, N, true);
+
+    std::vector<T> bufu_ht_ht(N);
+    fht(bufu_ht_ht.data(), bufu_ht.data(), N, true);
+
+    std::vector<T> bufu_ht_iht(N);
+    ifht(bufu_ht_iht.data(), bufu_ht.data(), N, true);
+
+    std::cout << "Unitary.." << std::endl;
+    print_buf("buf", buf);
+    print_buf("HT(buf)", bufu_ht.data());
+    print_buf("HT(HT(buf))", bufu_ht_ht.data());
+    print_buf("IHT(HT(buf))", bufu_ht_iht.data());
+  }
+  /*
+  { // benchmark
+    const size_t N_max = 1024 * 1024 * 8;
+    const size_t N_benchmark = 1024;
+    const size_t n_iter = 10;
+    const size_t n_burnin = 2;
+
+    std::vector<float> buf_src(N_max);
+    std::vector<float> buf_dst(N_max);
+    for (size_t i = 0; i < N_max; ++i) buf_src[i] = i * 10.5f / (i + 100.0f);
+
+    timer("ad-hoc HT", n_iter, n_burnin, [&] {
+      fht(buf_dst.data(), buf_src.data(), N_benchmark);
+      ifht(buf_src.data(), buf_dst.data(), N_benchmark);
+      });
+
+    fht_plan<float> plan(N_benchmark);
+    timer("planned HT", n_iter, n_burnin, [&] {
+      plan.fht(buf_dst.data(), buf_src.data());
+      plan.ifht(buf_src.data(), buf_dst.data());
+      });
+
+    for (size_t sz = 128; sz <= N_max; sz *= 2) {
+      std::ostringstream oss;
+      oss << "planned HT (sz=" << sz << ")";
+      fht_plan<float> plan(sz);
+      timer(oss.str(), n_iter, n_burnin, [&] {
+        plan.fht(buf_dst.data(), buf_src.data());
+        plan.ifht(buf_src.data(), buf_dst.data());
+        });
+    }
+  }
+  */
+}
+
