@@ -93,10 +93,10 @@
                     material.roughness = 1; // attenuates roughnessMap
                     material.metalness = 1; // attenuates metalnessMap
 
-                    material.map.wrapS = THREE.RepeatWrapping;
-                    material.roughnessMap.wrapS = THREE.RepeatWrapping;
-                    material.metalnessMap.wrapS = THREE.RepeatWrapping;
-                    material.normalMap.wrapS = THREE.RepeatWrapping;
+                    //material.map.wrapS = THREE.RepeatWrapping;
+                    //material.roughnessMap.wrapS = THREE.RepeatWrapping;
+                    //material.metalnessMap.wrapS = THREE.RepeatWrapping;
+                    //material.normalMap.wrapS = THREE.RepeatWrapping;
 
                     group.traverse(function (child) {
 
@@ -116,10 +116,9 @@
 
             const environments = {
 
-                'Rooitou park': { filename: 'rooitou_park_4k.hdr' },
-                'Overpass': { filename: 'pedestrian_overpass_1k.hdr' }
-                
-                
+
+                'Overpass': { filename: 'pedestrian_overpass_1k.hdr' },
+                'Rooitou park': { filename: 'rooitou_park_4k.hdr' }
 
             };
 
