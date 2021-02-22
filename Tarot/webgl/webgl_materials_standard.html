@@ -80,7 +80,7 @@
                     group.scale.multiplyScalar(1.5);
 
                     const loader = new THREE.TextureLoader(manager)
-                        .setPath('models/Wavefront/textures/')
+                        .setPath('models/Wavefront/ObtuseGoldenRhombohedron/')
 
                     const diffuseMap = loader.load('wood_Wood_006_Color.jpg');
                     diffuseMap.encoding = THREE.sRGBEncoding;
@@ -116,10 +116,9 @@
 
             const environments = {
 
+                'Overpass': { filename: 'pedestrian_overpass_1k.hdr' },
+                'Rooitou park': { filename: 'rooitou_park_4k.hdr' }
                 
-                
-                'Rooitou park': { filename: 'rooitou_park_4k.hdr' },
-                'Overpass': { filename: 'pedestrian_overpass_1k.hdr' }
 
             };
 
@@ -132,10 +131,6 @@
                     return;
 
                 }
-
-
-                
-
 
                 const filename = environments[name].filename;
                 new RGBELoader()
@@ -177,18 +172,10 @@
 
             gui.open();
 
-
-            
-
-
-
             const pmremGenerator = new THREE.PMREMGenerator(renderer);
             pmremGenerator.compileEquirectangularShader();
 
             //
-
-            
-
 
             if (statsEnabled) {
 
