@@ -82,21 +82,21 @@
                     const loader = new THREE.TextureLoader(manager)
                         .setPath('models/Wavefront/ObtuseGoldenRhombohedron/')
 
-                    const diffuseMap = loader.load('wood_02.jpg');
+                    const diffuseMap = loader.load('wood_Wood_006_Color.jpg');
                     diffuseMap.encoding = THREE.sRGBEncoding;
                     material.map = diffuseMap;
 
                     // roughness is in G channel, metalness is in B channel
-                    material.metalnessMap = material.roughnessMap = loader.load('wood_04.jpg');
-                    //material.normalMap = loader.load('wood_03.jpg');
+                    material.metalnessMap = material.roughnessMap = loader.load('metallicTexture&wood_Wood_006_Roughness_3.jpg');
+                    material.normalMap = loader.load('wood_Wood_006_NormalMap.jpg');
 
-                    //material.roughness = 1; // attenuates roughnessMap
-                    //material.metalness = 1; // attenuates metalnessMap
+                    material.roughness = 1; // attenuates roughnessMap
+                    material.metalness = 1; // attenuates metalnessMap
 
-                    //material.map.wrapS = THREE.RepeatWrapping;
-                    //material.roughnessMap.wrapS = THREE.RepeatWrapping;
-                    //material.metalnessMap.wrapS = THREE.RepeatWrapping;
-                    //material.normalMap.wrapS = THREE.RepeatWrapping;
+                    material.map.wrapS = THREE.RepeatWrapping;
+                    material.roughnessMap.wrapS = THREE.RepeatWrapping;
+                    material.metalnessMap.wrapS = THREE.RepeatWrapping;
+                    material.normalMap.wrapS = THREE.RepeatWrapping;
 
                     group.traverse(function (child) {
 
@@ -116,8 +116,10 @@
 
             const environments = {
 
-                'Rooitou park': { filename: 'rooitou_park_4k.hdr' },
-                'Overpass': { filename: 'pedestrian_overpass_1k.hdr' }
+                'Overpass': { filename: 'pedestrian_overpass_1k.hdr' },
+                'Rooitou park': { filename: 'rooitou_park_4k.hdr' }
+                
+                
                 
 
             };
