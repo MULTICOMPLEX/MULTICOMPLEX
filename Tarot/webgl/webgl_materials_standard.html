@@ -74,24 +74,24 @@
             const manager = new THREE.LoadingManager();
 
             new OBJLoader( manager )
-                .setPath('models/wavefront/ObtuseGoldenRhombohedron/')
-                .load('ObtuseGoldenRhombohedron.Wavefront', function (group) {
+                .setPath('./models/wavefront/ObtuseGoldenRhombohedron/')
+                .load('./ObtuseGoldenRhombohedron.Wavefront', function (group) {
 
                     group.scale.multiplyScalar(1.5);
 
                     const loader = new THREE.TextureLoader(manager)
-                        .setPath('models/Wavefront/ObtuseGoldenRhombohedron/')
+                        .setPath('./models/Wavefront/ObtuseGoldenRhombohedron/')
 
-                    const diffuseMap = loader.load('wood_Wood_006_Color.jpg');
+                    const diffuseMap = loader.load('./wood_02.jpg');
                     diffuseMap.encoding = THREE.sRGBEncoding;
                     material.map = diffuseMap;
 
                     // roughness is in G channel, metalness is in B channel
-                    material.metalnessMap = material.roughnessMap = loader.load('metallicTexture&wood_Wood_006_Roughness_3.jpg');
-                    material.normalMap = loader.load('wood_Wood_006_NormalMap.jpg');
+                    material.metalnessMap = material.roughnessMap = loader.load('./wood_04.jpg');
+                    //material.normalMap = loader.load('wood_03.jpg');
 
-                    material.roughness = 1; // attenuates roughnessMap
-                    material.metalness = 1; // attenuates metalnessMap
+                    //material.roughness = 1; // attenuates roughnessMap
+                    //material.metalness = 1; // attenuates metalnessMap
 
                     //material.map.wrapS = THREE.RepeatWrapping;
                     //material.roughnessMap.wrapS = THREE.RepeatWrapping;
