@@ -24,6 +24,7 @@
         import { OrbitControls } from './jsm/controls/OrbitControls.js';
         import { OBJLoader } from './jsm/loaders/OBJLoader.js';
         import { RGBELoader } from './jsm/loaders/RGBELoader.js';
+        import { MTLLoader } from './jsm/loaders/MTLLoader.js';
 
 
         const statsEnabled = true;
@@ -70,57 +71,55 @@
             renderer.toneMappingExposure = 1;
 
 
+            const manager = new THREE.LoadingManager();
             const material = new THREE.MeshStandardMaterial();
 
-            new OBJLoader()
-                .setPath('models/wavefront/ObtuseGoldenRhombohedron/')
-                .load('ObtuseGoldenRhombohedron.Wavefront', function (group) {
-
-                    group.scale.multiplyScalar(1.5);
+            new MTLLoader(manager)
+                .setPath('models/Wavefront/ObtuseGoldenRhombohedron/')
+                .load('ObtuseGoldenRhombohedron.mtl', function (materials) {
 
                     const loader = new THREE.TextureLoader()
                         .setPath('models/Wavefront/ObtuseGoldenRhombohedron/')
+
+                    //roughness is in G channel, metalness is in B channel
+                    material.metalnessMap = material.roughnessMap = loader.load('metallicTexture&wood_Wood_006_Roughness_3.jpg');
+                    material.normalMap = loader.load('wood_Wood_006_NormalMap.jpg');
 
                     const diffuseMap = loader.load('wood_Wood_006_Color.jpg');
                     diffuseMap.encoding = THREE.sRGBEncoding;
                     material.map = diffuseMap;
 
-                    // roughness is in G channel, metalness is in B channel
-                    material.metalnessMap = material.roughnessMap = loader.load('metallicTexture&wood_Wood_006_Roughness_3.jpg');
-                    material.normalMap = loader.load('wood_Wood_006_NormalMap.jpg');
+                    new OBJLoader(manager)
+                        .setMaterials(materials)
+                        .setPath('models/Wavefront/ObtuseGoldenRhombohedron/')
+                        .load('ObtuseGoldenRhombohedron.Wavefront', function (object) {
 
-                    material.roughness = 1; // attenuates roughnessMap
-                    material.metalness = 1; // attenuates metalnessMap
+                            object.scale.multiplyScalar(1.5);
 
-                    material.map.wrapS = THREE.RepeatWrapping;
-                    material.roughnessMap.wrapS = THREE.RepeatWrapping;
-                    material.metalnessMap.wrapS = THREE.RepeatWrapping;
-                    material.normalMap.wrapS = THREE.RepeatWrapping;
+                            object.traverse(function (child) {
 
-                    group.traverse(function (child) {
+                                if (child.isMesh) {
 
-                        if (child.isMesh) {
+                                    // child.parent.remove(child);
+                                    child.material = material;
 
-                            child.material = material;
+                                }
 
-                        }
+                            });
 
-                    });
+                            scene.add(object);
 
-                    //oup.position.x = - 0.45;
-                    //oup.rotation.y = - Math.PI / 2;
-                    scene.add(group);
+                        });
 
-                });
+                });  
 
             const environments = {
 
+                'Overpass': { filename: 'pedestrian_overpass_1k.hdr' },
+
                 'Rooitou park': { filename: 'rooitou_park_4k.hdr' },
-                'Overpass': { filename: 'pedestrian_overpass_1k.hdr' }
-                
-                
-                
-                
+              
+  
 
             };
 

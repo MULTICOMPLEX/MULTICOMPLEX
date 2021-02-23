@@ -60,10 +60,22 @@
 				// model
 
 				const manager = new THREE.LoadingManager();
+                const material = new THREE.MeshStandardMaterial();
 
 				new MTLLoader( manager )
                     .setPath( 'models/Wavefront/textures/' )
                     .load( 'DisdyakisTriacontahedron.mtl', function ( materials ) {
+
+                        const loader = new THREE.TextureLoader()
+                            .setPath('models/Wavefront/ObtuseGoldenRhombohedron/')
+
+                            //roughness is in G channel, metalness is in B channel
+                        material.metalnessMap = material.roughnessMap = loader.load('metallicTexture&wood_Wood_006_Roughness_3.jpg');
+                        material.normalMap = loader.load('wood_Wood_006_NormalMap.jpg');
+
+                        const diffuseMap = loader.load('wood_Wood_006_Color.jpg');
+                        diffuseMap.encoding = THREE.sRGBEncoding;
+                        material.map = diffuseMap;
 
 						new OBJLoader( manager )
 							.setMaterials( materials )
@@ -87,6 +99,7 @@
                                         child.add(wireframe);
 
                                        // child.parent.remove(child);
+                                        child.material = material;
 
                                     }
 
