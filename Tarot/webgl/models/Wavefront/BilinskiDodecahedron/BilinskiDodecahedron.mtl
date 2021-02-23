@@ -1,11 +1,4 @@
-# Exported from Wings 3D 2.2.6.1
-newmtl Wood_c2270ca1-444c-4901-a00d-e003c78feb24
-Ns 19.999999999999996
-d 1.0
-illum 2
-Kd 1.0 1.0 1.0
-Ka 0.0 0.0 0.0
-Ks 0.19 0.19 0.19
-Ke 0.0 0.0 0.0
+newmtl Wood_1c9966d5-53d1-41f1-9300-4c9ea01376a0
+Kd 1.000 1.000 1.000
+d 1.000
 map_Kd wood_Wood_006_Color.jpg
-

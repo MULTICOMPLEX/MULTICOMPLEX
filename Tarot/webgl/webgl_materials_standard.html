@@ -36,18 +36,18 @@
         init();
         animate();
         render();
+        loadPolyhedron();
+        removeEntity;
 
         function init() {
 
             container = document.createElement('div');
             document.body.appendChild(container);
 
-            
-
-
             //
 
             scene = new THREE.Scene();
+          
 
             camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.25, 20);
             camera.position.set(- 1.8, 0.6, 2.7);
@@ -71,52 +71,79 @@
             renderer.toneMappingExposure = 1;
 
 
-            const manager = new THREE.LoadingManager();
-            const material = new THREE.MeshStandardMaterial();
-
-            new MTLLoader(manager)
-                .setPath('models/Wavefront/ObtuseGoldenRhombohedron/')
-                .load('ObtuseGoldenRhombohedron.mtl');
-
-                    const loader = new THREE.TextureLoader()
-                        .setPath('models/Wavefront/ObtuseGoldenRhombohedron/')
-
-                    //roughness is in G channel, metalness is in B channel
-                    material.metalnessMap = material.roughnessMap = loader.load('metallicTexture&wood_Wood_006_Roughness_3.jpg');
-                    material.normalMap = loader.load('wood_Wood_006_NormalMap.jpg');
-
-                    const diffuseMap = loader.load('wood_Wood_006_Color.jpg');
-                    diffuseMap.encoding = THREE.sRGBEncoding;
-                    material.map = diffuseMap;
-
-                    new OBJLoader(manager)
-                     
-                        .setPath('models/Wavefront/ObtuseGoldenRhombohedron/')
-                        .load('ObtuseGoldenRhombohedron.Wavefront', function (object) {
-
-                            object.scale.multiplyScalar(1.5);
-
-                            object.traverse(function (child) {
-
-                                if (child.isMesh) {
-
-                                   
-                                    child.material = material;
-
-                                }
-
-                            });
-
-                            scene.add(object);
-                            render();
-                        });
-
-             
+            //loadPolyhedron();
 
             const environments = {
 
-                'Rooitou park': { filename: 'rooitou_park_4k.hdr' },
-                'Overpass': { filename: 'pedestrian_overpass_1k.hdr' }
+                'quarry_01_1k': {
+                    filename: 'quarry_01_1k.hdr'
+                },
+                'royal_esplanade_1k': {
+                    filename: 'royal_esplanade_1k.hdr'
+                },
+                'the_lost_city_4k': {
+                    filename: 'the_lost_city_4k.hdr'
+                },
+                'Rooitou park_4k': {
+                    filename: 'rooitou_park_4k.hdr'
+                },
+                'Overpass_1k': {
+                    filename: 'pedestrian_overpass_1k.hdr'
+                },
+                'venice_sunset_1k': {
+                    filename: 'venice_sunset_1k.hdr'
+                }
+
+            };
+
+            const objects_3D = {
+
+                'ObtuseGoldenRhombohedron': {
+                    filename: 'ObtuseGoldenRhombohedron.mtl'
+                   
+                },
+                'AcuteGoldenRhombohedron': {
+                    filename: 'AcuteGoldenRhombohedron.mtl'
+                   
+                },
+                'BilinskiDodecahedron': {
+                    filename: 'BilinskiDodecahedron.mtl'
+                   
+                },
+                'RhombicIcosahedron': {
+                    filename: 'RhombicIcosahedron.mtl'
+                   
+                },
+                'RhombicTriacontahedron': {
+                    filename: 'RhombicTriacontahedron.mtl'
+                   
+                },
+                'DisdyakisTriacontahedron': {
+                    filename: 'DisdyakisTriacontahedron.mtl'
+                   
+                },
+
+                 //Platonics
+                'Tetrahedron': {
+                    filename: 'Tetrahedron.mtl'
+                    
+                },
+                'Cube': {
+                    filename: 'Cube.mtl'
+                    
+                },
+                'Octahedron': {
+                    filename: 'Octahedron.mtl'
+                    
+                },
+                'Dodecahedron': {
+                    filename: 'Dodecahedron.mtl'
+                    
+                },
+                'Icosahedron': {
+                    filename: 'Icosahedron.mtl'
+                   
+                }
 
             };
 
@@ -127,7 +154,6 @@
                     scene.background = environments[name].texture;
                     scene.environment = environments[name].texture;
                     return;
-
                 }
 
                 const filename = environments[name].filename;
@@ -153,22 +179,99 @@
 
             }
 
+
+            function loadPolyhedron( name ) {
+
+                //if (objects_3D[name].object !== undefined) {
+
+                    // scene.background = environments[name].texture;
+                    // scene.environment = environments[name].texture;
+                    //return;
+               // }
+
+                const manager = new THREE.LoadingManager();
+                const material = new THREE.MeshStandardMaterial();
+
+                new MTLLoader(manager)
+                    .setPath('models/Wavefront/'+ name +'/')
+                    .load( name );
+
+                const loader = new THREE.TextureLoader()
+                    .setPath('models/Wavefront/'+ name +'/')
+
+                //roughness is in G channel, metalness is in B channel
+                material.metalnessMap = material.roughnessMap = loader.load('metallicTexture&wood_Wood_006_Roughness_3.jpg');
+                material.normalMap = loader.load('wood_Wood_006_NormalMap.jpg');
+
+                const diffuseMap = loader.load('wood_Wood_006_Color.jpg');
+                diffuseMap.encoding = THREE.sRGBEncoding;
+                material.map = diffuseMap;
+
+                new OBJLoader(manager)
+
+                    .setPath('models/Wavefront/'+ name +'/')
+                    .load(''+ name +'.Wavefront', function (object) {
+
+                        object.scale.multiplyScalar(1.5);
+
+                        object.traverse(function (child) {
+
+                            if (child.isMesh) {
+
+                                
+                                child.material = material;
+
+                            }
+
+                        });
+
+                        
+                        scene.add(object);
+                        
+
+                        render();
+                    });
+            }
+
             const params = {
 
-                scene: Object.keys(environments)[0]
+                scene: Object.keys(environments)[0],
+                polyhedron: Object.keys(objects_3D)[0]
 
             };
 
             loadEnvironment(params.scene);
 
-            const gui = new GUI();
+            /////
+
+
+            loadPolyhedron(params.polyhedron);
+
+            ////
+            
+            
+
+            //const gui = new GUI();
+            const  gui = new GUI({ width: 330 });
+
             gui.add(params, 'scene', Object.keys(environments)).onChange(function (value) {
 
                 loadEnvironment(value);
 
             });
 
+
+            gui.add(params, 'polyhedron', Object.keys(objects_3D)).onChange(function (value) {
+               
+                loadPolyhedron(value);
+
+              
+ 
+            });
+
+
             gui.open();
+          
 
             const pmremGenerator = new THREE.PMREMGenerator(renderer);
             pmremGenerator.compileEquirectangularShader();
@@ -182,6 +285,8 @@
 
             }
 
+           // removeEntity(value);
+            
 
             //controls = new TrackballControls( camera, renderer.domElement );
             const controls = new OrbitControls(camera, renderer.domElement);
@@ -191,10 +296,37 @@
             controls.target.set(0, 0, - 0.2);
             controls.update();
 
+            //controls.detach();
 
             window.addEventListener('resize', onWindowResize);
 
         }
+
+        function removeEntity(name) {
+            obj = scene.getObjectByName(name);
+            // dispose geometries and materials in scene
+
+
+            if (obj.geometry) {
+                obj.geometry.dispose()
+                // console.log("dispose geometry ", o.geometry)
+            }
+
+            if (obj.material) {
+                if (obj.material.length) {
+                    for (let i = 0; i < obj.material.length; ++i) {
+                        obj.material[i].dispose()
+                        // console.log("dispose material ", o.material[i])
+                    }
+                }
+                else {
+                    obj.material.dispose()
+                    //console.log("dispose material ", o.material)
+                }
+
+            }
+
+        };			
 
         //
 
