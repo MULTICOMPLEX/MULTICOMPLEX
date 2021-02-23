@@ -76,7 +76,7 @@
 
             new MTLLoader(manager)
                 .setPath('models/Wavefront/ObtuseGoldenRhombohedron/')
-                .load('ObtuseGoldenRhombohedron.mtl', function (materials) {
+                .load('ObtuseGoldenRhombohedron.mtl');
 
                     const loader = new THREE.TextureLoader()
                         .setPath('models/Wavefront/ObtuseGoldenRhombohedron/')
@@ -90,7 +90,7 @@
                     material.map = diffuseMap;
 
                     new OBJLoader(manager)
-                        .setMaterials(materials)
+                     
                         .setPath('models/Wavefront/ObtuseGoldenRhombohedron/')
                         .load('ObtuseGoldenRhombohedron.Wavefront', function (object) {
 
@@ -100,7 +100,7 @@
 
                                 if (child.isMesh) {
 
-                                    // child.parent.remove(child);
+                                   
                                     child.material = material;
 
                                 }
@@ -111,15 +111,12 @@
 
                         });
 
-                });  
+             
 
             const environments = {
 
-                'Overpass': { filename: 'pedestrian_overpass_1k.hdr' },
-
                 'Rooitou park': { filename: 'rooitou_park_4k.hdr' },
-              
-  
+                'Overpass': { filename: 'pedestrian_overpass_1k.hdr' }
 
             };
 
