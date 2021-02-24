@@ -28,9 +28,9 @@
 
         const statsEnabled = true;
 
-        let container, stats;
+        let container, stats, selected_object;
 
-        let camera, renderer, scene;
+        let camera, renderer, scene, wood_base, wood_metal, wood_normals;
 
         init();
         animate();
@@ -95,54 +95,84 @@
             const objects_3D = {
 
                 'ObtuseGoldenRhombohedron': {
-                    filename: 'ObtuseGoldenRhombohedron.mtl'
+
 
                 },
                 'AcuteGoldenRhombohedron': {
-                    filename: 'AcuteGoldenRhombohedron.mtl'
+
 
                 },
                 'BilinskiDodecahedron': {
-                    filename: 'BilinskiDodecahedron.mtl'
+
 
                 },
                 'RhombicIcosahedron': {
-                    filename: 'RhombicIcosahedron.mtl'
+
 
                 },
                 'RhombicTriacontahedron': {
-                    filename: 'RhombicTriacontahedron.mtl'
+
 
                 },
                 'DisdyakisTriacontahedron': {
-                    filename: 'DisdyakisTriacontahedron.mtl'
+
 
                 },
 
                 //Platonics
                 'Tetrahedron': {
-                    filename: 'Tetrahedron.mtl'
+
 
                 },
                 'Cube': {
-                    filename: 'Cube.mtl'
+
 
                 },
                 'Octahedron': {
-                    filename: 'Octahedron.mtl'
+
 
                 },
                 'Dodecahedron': {
-                    filename: 'Dodecahedron.mtl'
+
 
                 },
                 'Icosahedron': {
-                    filename: 'Icosahedron.mtl'
+
 
                 }
 
             };
 
+
+            const wood_species = {
+
+                'a': {
+
+
+                },
+                'b': {
+
+
+                },
+                'c': {
+
+
+                },
+                'd': {
+
+
+                },
+                'e': {
+
+
+                },
+                'f': {
+
+
+                }
+
+
+            };
 
 
             function loadEnvironment(name) {
@@ -186,10 +216,10 @@
                     .setPath('models/Wavefront/textures/')
 
                 //roughness is in G channel, metalness is in B channel
-                material.metalnessMap = material.roughnessMap = material_loader.load('wood_027_Metalic_1&wood_027_Rough_1.jpg');
-                material.normalMap = material_loader.load('wood_027_Normal_1.jpg');
+                material.metalnessMap = material.roughnessMap = material_loader.load(wood_metal);
+                material.normalMap = material_loader.load(wood_normals);
 
-                const diffuseMap = material_loader.load('wood_027_base_1.jpg');
+                const diffuseMap = material_loader.load(wood_base);
                 diffuseMap.encoding = THREE.sRGBEncoding;
                 material.map = diffuseMap;
 
@@ -203,15 +233,15 @@
                         obj.scale.multiplyScalar(0.7);
                     }
                     else
-                    if (name == 'DisdyakisTriacontahedron') {
-                        obj.scale.multiplyScalar(0.35);
+                        if (name == 'DisdyakisTriacontahedron') {
+                            obj.scale.multiplyScalar(0.35);
                         }
-                    else
+                        else
 
-                    if (name == 'RhombicTriacontahedron') {
-                        obj.scale.multiplyScalar(0.7);
-                    }
-                    else { obj.scale.multiplyScalar(1.5); }
+                            if (name == 'RhombicTriacontahedron') {
+                                obj.scale.multiplyScalar(0.7);
+                            }
+                            else { obj.scale.multiplyScalar(1.5); }
 
                     obj.traverse(function (child) {
 
@@ -230,18 +260,36 @@
 
             }
 
+            function select_wood(name) {
+                if (name == 'a') {
+                    wood_base = 'wood_Wood_006_Color.jpg';
+                    wood_metal = 'metallicTexture&wood_Wood_006_Roughness_3.jpg';
+                    wood_normals = 'wood_Wood_006_NormalMap.jpg';
+                }
+
+                else
+
+                if (name == 'b') {
+                    wood_base = 'wood_027_base_1.jpg';
+                    wood_metal = 'wood_027_Metalic_1&wood_027_Rough_1.jpg';
+                    wood_normals = 'wood_027_Normal_1.jpg';
+                }
+            }
 
             const params = {
 
                 scene: Object.keys(environments)[0],
-                polyhedron: Object.keys(objects_3D)[0]
-
+                polyhedron: Object.keys(objects_3D)[0],
+                wood_species: Object.keys(wood_species)[0]
             };
 
+            selected_object = params.polyhedron;
             /////
 
             loadEnvironment(params.scene);
 
+            select_wood(params.wood_species);
+           
             loadPolyhedron(params.polyhedron);
 
 
@@ -266,6 +314,14 @@
 
                 removeEntity("test_name");
                 loadPolyhedron(value);
+                selected_object = value;
+            });
+
+            gui.add(params, 'wood_species', Object.keys(wood_species)).onChange(function (value) {
+
+                removeEntity("test_name");
+                select_wood(value);
+                loadPolyhedron(selected_object);
 
             });
 
