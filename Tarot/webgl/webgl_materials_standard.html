@@ -20,7 +20,7 @@
         import Stats from './jsm/libs/stats.module.js';
 
         import { GUI } from './jsm/libs/dat.gui.module.js';
-        import { TrackballControls } from './jsm/controls/TrackballControls.js';
+        //import { TrackballControls } from './jsm/controls/TrackballControls.js';
         import { OrbitControls } from './jsm/controls/OrbitControls.js';
         import { OBJLoader } from './jsm/loaders/OBJLoader.js';
         import { RGBELoader } from './jsm/loaders/RGBELoader.js';
@@ -31,20 +31,16 @@
         let container, stats;
 
         let camera, renderer, scene;
-        
 
         init();
         animate();
         render();
-        loadPolyhedron();
-        removeEntity();
-     
 
         function init() {
 
-          
+
             scene = new THREE.Scene();
-           
+
 
             container = document.createElement('div');
             document.body.appendChild(container);
@@ -100,56 +96,56 @@
 
                 'ObtuseGoldenRhombohedron': {
                     filename: 'ObtuseGoldenRhombohedron.mtl'
-                   
+
                 },
                 'AcuteGoldenRhombohedron': {
                     filename: 'AcuteGoldenRhombohedron.mtl'
-                   
+
                 },
                 'BilinskiDodecahedron': {
                     filename: 'BilinskiDodecahedron.mtl'
-                   
+
                 },
                 'RhombicIcosahedron': {
                     filename: 'RhombicIcosahedron.mtl'
-                   
+
                 },
                 'RhombicTriacontahedron': {
                     filename: 'RhombicTriacontahedron.mtl'
-                   
+
                 },
                 'DisdyakisTriacontahedron': {
                     filename: 'DisdyakisTriacontahedron.mtl'
-                   
+
                 },
 
-                 //Platonics
+                //Platonics
                 'Tetrahedron': {
                     filename: 'Tetrahedron.mtl'
-                    
+
                 },
                 'Cube': {
                     filename: 'Cube.mtl'
-                    
+
                 },
                 'Octahedron': {
                     filename: 'Octahedron.mtl'
-                    
+
                 },
                 'Dodecahedron': {
                     filename: 'Dodecahedron.mtl'
-                    
+
                 },
                 'Icosahedron': {
                     filename: 'Icosahedron.mtl'
-                   
+
                 }
 
             };
 
-            
 
-            function loadEnvironment( name ) {
+
+            function loadEnvironment(name) {
 
                 if (environments[name].texture !== undefined) {
 
@@ -162,9 +158,9 @@
                 new RGBELoader()
                     .setDataType(THREE.UnsignedByteType)
                     .setPath('textures/equirectangular/')
-                    .load(filename, function ( hdrEquirect ) {
+                    .load(filename, function (hdrEquirect) {
 
-                        const envMap1 = pmremGenerator.fromEquirectangular( hdrEquirect ).texture;
+                        const envMap1 = pmremGenerator.fromEquirectangular(hdrEquirect).texture;
                         const envMap2 = new THREE.WebGLCubeRenderTarget(4096).fromEquirectangularTexture(renderer, hdrEquirect);
                         hdrEquirect.dispose();
 
@@ -181,13 +177,13 @@
 
 
             const manager = new THREE.LoadingManager();
-          
+
             const material = new THREE.MeshStandardMaterial();
 
             function loadPolyhedron(name) {
 
                 const material_loader = new THREE.TextureLoader(manager)
-                    .setPath('models/Wavefront/'+ name +'/')
+                    .setPath('models/Wavefront/' + name + '/')
 
                 //roughness is in G channel, metalness is in B channel
                 material.metalnessMap = material.roughnessMap = material_loader.load('metallicTexture&wood_Wood_006_Roughness_3.jpg');
@@ -197,25 +193,39 @@
                 diffuseMap.encoding = THREE.sRGBEncoding;
                 material.map = diffuseMap;
 
-   
+
                 const obj_loader = new OBJLoader(manager)
                     .setPath('models/Wavefront/' + name + '/')
                 obj_loader.load('' + name + '.Wavefront', function (obj) {
-                   
-                        obj.scale.multiplyScalar(1.5);
 
-                        obj.traverse(function (child) {
 
-                            if (child.isMesh) {
+                    if (name == 'RhombicIcosahedron') {
+                        obj.scale.multiplyScalar(0.7);
+                    }
+                    else
+                    if (name == 'DisdyakisTriacontahedron') {
+                        obj.scale.multiplyScalar(0.35);
+                        }
+                    else
 
-                                child.material = material;
-                            }
+                    if (name == 'RhombicTriacontahedron') {
+                        obj.scale.multiplyScalar(0.7);
+                    }
+                    else { obj.scale.multiplyScalar(1.5); }
 
-                        })
+                    obj.traverse(function (child) {
 
-                 
-                    obj.name = 'test_name';
+                        if (child.isMesh) {
+
+                            child.material = material;
+                        }
+
+                    })
+
+
+                    obj.name = "test_name";
                     scene.add(obj);
+
                 });
 
             }
@@ -233,15 +243,15 @@
             loadEnvironment(params.scene);
 
             loadPolyhedron(params.polyhedron);
-            
+
 
             ////
-            
-            const  gui = new GUI({ width: 330 });
+
+            const gui = new GUI({ width: 350 });
 
             gui.add(params, 'scene', Object.keys(environments)).onChange(function (value) {
 
-              
+
                 loadEnvironment(value);
 
             });
@@ -250,13 +260,13 @@
             function removeEntity(objName) {
                 var selectedObject = scene.getObjectByName(objName);
                 scene.remove(selectedObject);
-            }	
+            }
 
             gui.add(params, 'polyhedron', Object.keys(objects_3D)).onChange(function (value) {
 
                 removeEntity("test_name");
                 loadPolyhedron(value);
-   
+
             });
 
 
@@ -278,16 +288,16 @@
             const controls = new OrbitControls(camera, renderer.domElement);
             controls.addEventListener('change', render); // use if there is no animation loop
             controls.minDistance = 2;
-            controls.maxDistance = 10;
+            controls.maxDistance = 15;
             controls.target.set(0, 0, - 0.2);
             controls.update();
-            
+
 
             window.addEventListener('resize', onWindowResize);
 
         }
 
-        	
+
 
         //
 
@@ -316,9 +326,9 @@
             requestAnimationFrame(animate);
             if (statsEnabled) stats.update();
 
-             //controls.update(); //trackball
+            //controls.update(); //trackball
             render();
-           
+
         }
 
         function render() {
