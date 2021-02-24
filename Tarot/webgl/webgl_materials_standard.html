@@ -24,14 +24,13 @@
         import { OrbitControls } from './jsm/controls/OrbitControls.js';
         import { OBJLoader } from './jsm/loaders/OBJLoader.js';
         import { RGBELoader } from './jsm/loaders/RGBELoader.js';
-        import { MTLLoader } from './jsm/loaders/MTLLoader.js';
 
 
         const statsEnabled = true;
 
         let container, stats, group;
 
-        let camera, renderer, scene
+        let camera, renderer, scene;
         
 
         init();
@@ -39,15 +38,13 @@
         render();
         loadPolyhedron();
         removeEntity();
-        wait();
-
-
-        
+     
 
         function init() {
 
             group = new THREE.Object3D();
             scene = new THREE.Scene();
+           
 
             container = document.createElement('div');
             document.body.appendChild(container);
@@ -184,32 +181,26 @@
 
 
             const manager = new THREE.LoadingManager();
-            let objloader = new OBJLoader(manager)
-
+          
             const material = new THREE.MeshStandardMaterial();
 
             function loadPolyhedron(name) {
 
-           
-
-             new MTLLoader(manager)
-                    .setPath('models/Wavefront/'+ name +'/')
-                    .load( name );
-
-             const loader = new THREE.TextureLoader()
+                const material_loader = new THREE.TextureLoader(manager)
                     .setPath('models/Wavefront/'+ name +'/')
 
                 //roughness is in G channel, metalness is in B channel
-                material.metalnessMap = material.roughnessMap = loader.load('metallicTexture&wood_Wood_006_Roughness_3.jpg');
-                material.normalMap = loader.load('wood_Wood_006_NormalMap.jpg');
+                material.metalnessMap = material.roughnessMap = material_loader.load('metallicTexture&wood_Wood_006_Roughness_3.jpg');
+                material.normalMap = material_loader.load('wood_Wood_006_NormalMap.jpg');
 
-                const diffuseMap = loader.load('wood_Wood_006_Color.jpg');
+                const diffuseMap = material_loader.load('wood_Wood_006_Color.jpg');
                 diffuseMap.encoding = THREE.sRGBEncoding;
                 material.map = diffuseMap;
 
    
-                objloader.setPath('models/Wavefront/' + name + '/')
-                    .load(''+ name +'.Wavefront', function (obj) {
+                const obj_loader = new OBJLoader(manager)
+                    .setPath('models/Wavefront/' + name + '/')
+                obj_loader.load(''+ name +'.Wavefront', function (obj) {
 
                         obj.scale.multiplyScalar(1.5);
 
@@ -224,11 +215,13 @@
 
                         });
 
-                        group.add(obj);
+                  
+                    group.add(obj);
                        
                     });
 
                 scene.add(group);
+                
             }
 
 
@@ -244,13 +237,10 @@
             loadEnvironment(params.scene);
 
             loadPolyhedron(params.polyhedron);
-            scene.add(group);
             
 
             ////
             
-
-            //const gui = new GUI();
             const  gui = new GUI({ width: 330 });
 
             gui.add(params, 'scene', Object.keys(environments)).onChange(function (value) {
@@ -268,11 +258,9 @@
                     group.remove(group.children[i]);
                 }
 
+             
                 loadPolyhedron(value);
-                //group.add(value);
-                //scene.add(group);
-               
-               // render();
+   
             });
 
 
