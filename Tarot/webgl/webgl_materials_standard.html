@@ -28,7 +28,7 @@
 
         const statsEnabled = true;
 
-        let container, stats, group;
+        let container, stats;
 
         let camera, renderer, scene;
         
@@ -42,7 +42,7 @@
 
         function init() {
 
-            group = new THREE.Object3D();
+          
             scene = new THREE.Scene();
            
 
@@ -200,28 +200,24 @@
    
                 const obj_loader = new OBJLoader(manager)
                     .setPath('models/Wavefront/' + name + '/')
-                obj_loader.load(''+ name +'.Wavefront', function (obj) {
-
+                obj_loader.load('' + name + '.Wavefront', function (obj) {
+                   
                         obj.scale.multiplyScalar(1.5);
 
                         obj.traverse(function (child) {
 
                             if (child.isMesh) {
 
-                                
                                 child.material = material;
-
                             }
 
-                        });
+                        })
 
-                  
-                    group.add(obj);
-                       
-                    });
+                 
+                    obj.name = 'test_name';
+                    scene.add(obj);
+                });
 
-                scene.add(group);
-                
             }
 
 
@@ -251,14 +247,14 @@
             });
 
 
+            function removeEntity(objName) {
+                var selectedObject = scene.getObjectByName(objName);
+                scene.remove(selectedObject);
+            }	
+
             gui.add(params, 'polyhedron', Object.keys(objects_3D)).onChange(function (value) {
 
-
-                for (var i = group.children.length - 1; i >= 0; i--) {
-                    group.remove(group.children[i]);
-                }
-
-             
+                removeEntity("test_name");
                 loadPolyhedron(value);
    
             });
@@ -291,13 +287,7 @@
 
         }
 
-        function removeEntity(name) {
-           
-            const selectedObject = scene.getObjectByName(name);
-          
-            scene.remove(selectedObject); 
-           
-        };			
+        	
 
         //
 
