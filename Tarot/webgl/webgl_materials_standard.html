@@ -29,25 +29,30 @@
 
         const statsEnabled = true;
 
-        let container, stats;
+        let container, stats, group;
 
-        let camera, scene, renderer;
+        let camera, renderer, scene
+        
 
         init();
         animate();
         render();
         loadPolyhedron();
-        removeEntity;
+        removeEntity();
+        wait();
+
+
+        
 
         function init() {
+
+            group = new THREE.Object3D();
+            scene = new THREE.Scene();
 
             container = document.createElement('div');
             document.body.appendChild(container);
 
             //
-
-            scene = new THREE.Scene();
-          
 
             camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.25, 20);
             camera.position.set(- 1.8, 0.6, 2.7);
@@ -70,8 +75,6 @@
 
             renderer.toneMappingExposure = 1;
 
-
-            //loadPolyhedron();
 
             const environments = {
 
@@ -147,6 +150,8 @@
 
             };
 
+            
+
             function loadEnvironment( name ) {
 
                 if (environments[name].texture !== undefined) {
@@ -173,30 +178,25 @@
 
                         environments[name].texture = envMap1.texture;
 
-                        render();
-
                     });
 
             }
 
 
-            function loadPolyhedron( name ) {
+            const manager = new THREE.LoadingManager();
+            let objloader = new OBJLoader(manager)
 
-                //if (objects_3D[name].object !== undefined) {
+            const material = new THREE.MeshStandardMaterial();
 
-                    // scene.background = environments[name].texture;
-                    // scene.environment = environments[name].texture;
-                    //return;
-               // }
+            function loadPolyhedron(name) {
 
-                const manager = new THREE.LoadingManager();
-                const material = new THREE.MeshStandardMaterial();
+           
 
-                new MTLLoader(manager)
+             new MTLLoader(manager)
                     .setPath('models/Wavefront/'+ name +'/')
                     .load( name );
 
-                const loader = new THREE.TextureLoader()
+             const loader = new THREE.TextureLoader()
                     .setPath('models/Wavefront/'+ name +'/')
 
                 //roughness is in G channel, metalness is in B channel
@@ -207,14 +207,13 @@
                 diffuseMap.encoding = THREE.sRGBEncoding;
                 material.map = diffuseMap;
 
-                new OBJLoader(manager)
+   
+                objloader.setPath('models/Wavefront/' + name + '/')
+                    .load(''+ name +'.Wavefront', function (obj) {
 
-                    .setPath('models/Wavefront/'+ name +'/')
-                    .load(''+ name +'.Wavefront', function (object) {
+                        obj.scale.multiplyScalar(1.5);
 
-                        object.scale.multiplyScalar(1.5);
-
-                        object.traverse(function (child) {
+                        obj.traverse(function (child) {
 
                             if (child.isMesh) {
 
@@ -225,13 +224,13 @@
 
                         });
 
-                        
-                        scene.add(object);
-                        
-
-                        render();
+                        group.add(obj);
+                       
                     });
+
+                scene.add(group);
             }
+
 
             const params = {
 
@@ -240,15 +239,15 @@
 
             };
 
-            loadEnvironment(params.scene);
-
             /////
 
+            loadEnvironment(params.scene);
 
             loadPolyhedron(params.polyhedron);
+            scene.add(group);
+            
 
             ////
-            
             
 
             //const gui = new GUI();
@@ -256,25 +255,31 @@
 
             gui.add(params, 'scene', Object.keys(environments)).onChange(function (value) {
 
+              
                 loadEnvironment(value);
 
             });
 
 
             gui.add(params, 'polyhedron', Object.keys(objects_3D)).onChange(function (value) {
-               
-                loadPolyhedron(value);
 
-              
- 
+
+                for (var i = group.children.length - 1; i >= 0; i--) {
+                    group.remove(group.children[i]);
+                }
+
+                loadPolyhedron(value);
+                //group.add(value);
+                //scene.add(group);
+               
+               // render();
             });
 
 
-            gui.open();
-          
-
             const pmremGenerator = new THREE.PMREMGenerator(renderer);
             pmremGenerator.compileEquirectangularShader();
+
+            gui.open();
 
             //
 
@@ -285,9 +290,6 @@
 
             }
 
-           // removeEntity(value);
-            
-
             //controls = new TrackballControls( camera, renderer.domElement );
             const controls = new OrbitControls(camera, renderer.domElement);
             controls.addEventListener('change', render); // use if there is no animation loop
@@ -295,40 +297,29 @@
             controls.maxDistance = 10;
             controls.target.set(0, 0, - 0.2);
             controls.update();
-
-            //controls.detach();
+            
 
             window.addEventListener('resize', onWindowResize);
 
         }
 
         function removeEntity(name) {
-            obj = scene.getObjectByName(name);
-            // dispose geometries and materials in scene
-
-
-            if (obj.geometry) {
-                obj.geometry.dispose()
-                // console.log("dispose geometry ", o.geometry)
-            }
-
-            if (obj.material) {
-                if (obj.material.length) {
-                    for (let i = 0; i < obj.material.length; ++i) {
-                        obj.material[i].dispose()
-                        // console.log("dispose material ", o.material[i])
-                    }
-                }
-                else {
-                    obj.material.dispose()
-                    //console.log("dispose material ", o.material)
-                }
-
-            }
-
+           
+            const selectedObject = scene.getObjectByName(name);
+          
+            scene.remove(selectedObject); 
+           
         };			
 
         //
+
+        function wait(ms) {
+            var start = new Date().getTime();
+            var end = start;
+            while (end < start + ms) {
+                end = new Date().getTime();
+            }
+        }
 
         function onWindowResize() {
 
