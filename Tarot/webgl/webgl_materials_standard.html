@@ -183,11 +183,11 @@
             const manager = new THREE.LoadingManager();
           
             const material = new THREE.MeshStandardMaterial();
-
+         
             function loadPolyhedron(name) {
 
                 const material_loader = new THREE.TextureLoader(manager)
-                    .setPath('models/Wavefront/'+ name +'/')
+                    .setPath('textures/wood/'+ name +'/')
 
                 //roughness is in G channel, metalness is in B channel
                 material.metalnessMap = material.roughnessMap = material_loader.load('metallicTexture&wood_Wood_006_Roughness_3.jpg');
