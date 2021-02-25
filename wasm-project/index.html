@@ -196,22 +196,35 @@ var links = [
 <br>
 <br>
 
+
+<body>
+
+  <span id="add"></span>  
+  <span id="sub"></span>
+
+</body>
+
+<script>
+
+fetch('../out/main.wasm').then(response =>
+  response.arrayBuffer()
+).then(bytes => WebAssembly.instantiate(bytes)).then(results => {
+  instance = results.instance;
+  
+  document.getElementById("add").innerHTML = "1 + 2 = " + instance.exports.add(1,2) + "<br />";
+  document.getElementById("sub").innerHTML = "1 - 2 = " + instance.exports.sub(1,2);
+
+}).catch(console.error);
+
+</script>
+
 </script>
 
 <br>
 
-<br>
-<iframe src = "./webgl/webgl_postprocessing_procedural.html"  width="950" height="510">
-</iframe>
-<br>
-<br>
-<iframe src = "./webgl/webgl_loader_ply.html"  width="660" height="510">
-</iframe>
-<iframe src = "./webgl/webgl_materials_standard.html"  width="950" height="510">
-</iframe>
-<br>
-<br>
-<iframe src = "./webgl/webgl_loader_obj_mtl.html"  width="660" height="510">
-</iframe>
+
+
+
+
 </body>
 </html>
