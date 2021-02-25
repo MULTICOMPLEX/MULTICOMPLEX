@@ -307,9 +307,10 @@ T TRNG()
   
   Write_a_string_to_the_end_of_a_file("./random_number_" + tel + ".txt", rngs);
 
-  create_html_file();
+  //create_html_file();
 
-  open_file_in_browser("http://localhost:8080/random_number_" + tel + ".html");
+  //open_file_in_browser("http://localhost:8080/random_number_" + tel + ".html");
+  open_file_in_browser("http://localhost:8080/random_number_0.html");
   
   return x;
 }

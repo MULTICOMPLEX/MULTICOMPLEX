@@ -22,18 +22,57 @@ color: rgb(238, 232, 213);}
 </head>
 <body>
 
-<h1>Random number from QRNG_ANU  &emsp; &emsp;(3.939165) :</h1>
+
+<h1>Random number :</h1> 
+
 <div class = "a">
-0X2269E7EC203703DF8491600EA3316896191B423B765A24E224048467379006CF4A512AFDBAAE09579E70481BD82DBE4DF2A56B061B1F3C7B1B9F1AED115AAD28<br>
+<p id="demo"></p>
+
+<script>
+
+function shannon(str) {
+    'use strict';
+
+    // Create an array of character frequencies.
+    const getFrequencies = str => {
+        let dict = new Set(str);
+        return [...dict].map(chr => {
+            return str.match(new RegExp(chr, 'g')).length;
+        });
+    };
+
+    // Measure the entropy of a string in bits per symbol.
+    shannon.entropy = str => getFrequencies(str)
+        .reduce((sum, frequency) => {
+            let p = frequency / str.length;
+            return sum - (p * Math.log(p) / Math.log(2));
+        }, 0);
+
+    // Measure the entropy of a string in total bits.
+    shannon.bits = str => shannon.entropy(str) * str.length;
+   
+	 return  shannon.entropy(str);
+}
+
+
+function genHexString(len) {
+    let output = '';
+    for (let i = 0; i < len; ++i) {
+        output += (Math.floor(Math.random() * 16)).toString(16).toUpperCase();
+    }
+    return "0X" + output;
+}
+
+rn = genHexString(128);
+
+document.getElementById("demo").innerHTML = ' '+rn+' <br> <br>'
++ 'Shannon entropy : <br>'
++ ''+shannon(rn)+'';
+
+</script>
 </div>
-<h1>Random number from RANDOM_ORG &ensp;(3.867071) :</h1>
-<div class = "a">
-0XED145CF1B46E4C2C75D1117409F82BDEE420C3E6F9FC90CBB75F1B95088BEA55492B5C50403F2EE0E919B427DF14B3BD4533CA54A105FFB218E92041D169B0FB<br>
-</div>
-<h1>Shuffled QRNG_ANU + RANDOM_ORG (3.853527) :</h1>
-<div class = "a">
-0XE07A04B0861FF76440B9D5216471677EBDAE5C2186D3EEB4E7F809A80D8B2099<br>
-</div>
+
+
 <br>
 <iframe src = "./webgl/webgl_postprocessing_procedural.html"  width="950" height="510">
 </iframe>
