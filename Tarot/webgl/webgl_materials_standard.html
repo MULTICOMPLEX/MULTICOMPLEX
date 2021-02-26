@@ -219,6 +219,7 @@
                 //roughness is in G channel, metalness is in B channel
                 material.metalnessMap = material.roughnessMap = material_loader.load(wood_metal);
                 material.normalMap = material_loader.load(wood_normals);
+                
 
                 const diffuseMap = material_loader.load(wood_base);
                 diffuseMap.encoding = THREE.sRGBEncoding;
@@ -267,13 +268,27 @@
                     wood_metal = 'metallicTexture&wood_Wood_006_Roughness_3.jpg';
                     wood_normals = 'wood_Wood_006_NormalMap.jpg';
                 }
-
                 else
-
                 if (name == 'b') {
                     wood_base = 'wood_027_base_1.jpg';
                     wood_metal = 'wood_027_Metalic_1&wood_027_Rough_1.jpg';
                     wood_normals = 'wood_027_Normal_1.jpg';
+
+                }
+				else
+				if (name == 'c') {
+                    wood_base = 'Wood_001_Color_3.jpg';
+                    wood_metal = 'metallicTexture&Wood_001_Roughness.jpg';
+                    wood_normals = 'Wood_001_NormalMap.jpg';
+
+                }
+				
+				else
+				if (name == 'd') {
+                    wood_base = 'Wood_012_Color.jpg';
+                    wood_metal = 'metallicTexture&Wood_012_Roughness.jpg';
+                    wood_normals = 'Wood_012_NormalMap.jpg';
+
                 }
             }
 
@@ -353,8 +368,6 @@
             window.addEventListener('resize', onWindowResize);
 
         }
-
-
 
         //
 
