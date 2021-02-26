@@ -132,10 +132,13 @@
 
     <script type="module">
 
-        import * as THREE from '../build/three.module.js';
-
-        import Stats from './jsm/libs/stats.module.js';
-        import { GUI } from './jsm/libs/dat.gui.module.js';
+        //import * as THREE from '../build/three.module.js';
+        //import Stats from './jsm/libs/stats.module.js';
+        //import { GUI } from './jsm/libs/dat.gui.module.js';
+		
+		//import { GUI } from 'https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.module.js';
+		import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r126/three.module.js';
+		import Stats from 'https://cdnjs.cloudflare.com/ajax/libs/stats.js/r17/Stats.min.js';
 
         let postCamera, postScene, renderer;
         let postMaterial, noiseRandom1DMaterial, noiseRandom2DMaterial, noiseRandom3DMaterial, postQuad;
