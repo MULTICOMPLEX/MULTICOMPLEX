@@ -1,0 +1,1 @@
+C:\cheerp\bin\clang++ -target cheerp segmented_sieve.cpp -o segmented_sieve.js -O3

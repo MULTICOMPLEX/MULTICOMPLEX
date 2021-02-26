@@ -1,0 +1,1 @@
+C:\cheerp\bin\clang++ -target cheerp hello.cpp -o hello.js
