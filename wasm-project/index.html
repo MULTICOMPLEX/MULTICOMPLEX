@@ -233,62 +233,12 @@ fetch('../out/main.wasm').then(response =>
 </head>
 
 <body>
-	<div id='myDiv'><!-- Plotly chart will be drawn inside this DIV --></div>
+	
+	 <div id='graph' style="background-color: rgb(0, 43, 54); width: 1200px; height:800px"></div>
+</body>
 </body>
 
-
-
-
-
 <script>
-
-
-const Plot = React.forwardRef((props, ref) => {
-  const theme = useTheme();
-  const layout = merge({
-    paper_bgcolor: theme.palette.background.paper,
-    plot_bgcolor: theme.palette.background.paper,
-    xaxis: {
-      color: theme.palette.text.primary
-    },
-    yaxis: {
-      color: theme.palette.text.primary
-    },
-    legend: {
-      font: {
-        color: theme.palette.text.primary
-      },
-    },
-    title: {
-      font: {
-        color: theme.palette.text.primary,
-      }
-    },
-    scene: {
-      xaxis: {
-        color: theme.palette.text.primary
-      },
-      yaxis: {
-        color: theme.palette.text.primary
-      },
-      zaxis: {
-        color: theme.palette.text.primary
-      },
-    }
-  }, props.layout);
-  const data = props.data.map(plotData => merge({
-    colorbar: {
-      tickfont: {
-        color: theme.palette.text.primary
-      }
-    }
-  }, plotData));
-  const customProps = {
-    layout,
-    data
-  };
-  return <PlotlyPlot ref={ref} {...customProps} />;
-});
 
 
 Plotly.d3.csv('https://raw.githubusercontent.com/plotly/datasets/master/clebsch-cubic.csv', function(err, rows){
@@ -324,10 +274,13 @@ var layout = {
                 z: 0.98
             }
         }
-    }
+    },
+	paper_bgcolor: 'rgba(0,0,0,0)',
+	plot_bgcolor: 'rgba(0,0,0,0)'
 };
 
-	Plotly.newPlot('myDiv', data, layout, {showSendToCloud: true});
+	
+	Plotly.newPlot('graph', data, layout);
 
 });
 
