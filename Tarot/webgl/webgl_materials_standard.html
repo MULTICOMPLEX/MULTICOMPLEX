@@ -97,32 +97,30 @@
 
                 'ObtuseGoldenRhombohedron': {
 
-
                 },
                 'AcuteGoldenRhombohedron': {
-
 
                 },
                 'BilinskiDodecahedron': {
 
-
                 },
                 'RhombicIcosahedron': {
-
 
                 },
                 'RhombicTriacontahedron': {
 
+                },
+				
+				'RhombicHexecontahedron': {
 
                 },
-                'DisdyakisTriacontahedron': {
 
+                'DisdyakisTriacontahedron': {
 
                 },
 
                 //Platonics
                 'Tetrahedron': {
-
 
                 },
                 'Cube': {
@@ -131,17 +129,13 @@
                 },
                 'Octahedron': {
 
-
                 },
                 'Dodecahedron': {
-
 
                 },
                 'Icosahedron': {
 
-
                 }
-
             };
 
 
@@ -149,30 +143,22 @@
 
                 'a': {
 
-
                 },
                 'b': {
-
 
                 },
                 'c': {
 
-
                 },
                 'd': {
-
 
                 },
                 'e': {
 
-
                 },
                 'f': {
 
-
                 }
-
-
             };
 
 
@@ -238,8 +224,11 @@
                         if (name == 'DisdyakisTriacontahedron') {
                             obj.scale.multiplyScalar(0.35);
                         }
+					else
+                        if (name == 'RhombicHexecontahedron') {
+                            obj.scale.multiplyScalar(0.35);
+                        }
                         else
-
                             if (name == 'RhombicTriacontahedron') {
                                 obj.scale.multiplyScalar(0.7);
                             }
@@ -288,6 +277,13 @@
                     wood_base = 'Wood_012_Color.jpg';
                     wood_metal = 'metallicTexture&Wood_012_Roughness.jpg';
                     wood_normals = 'Wood_012_NormalMap.jpg';
+
+                }
+				else
+				if (name == 'e') {
+                    wood_base = 'wood_Wood_006_Color_1.jpg';
+                    wood_metal = 'metallicTexture&wood_Wood_006_Roughness_3.jpg';
+                    wood_normals = 'wood_Wood_006_NormalMap.jpg';
 
                 }
             }
