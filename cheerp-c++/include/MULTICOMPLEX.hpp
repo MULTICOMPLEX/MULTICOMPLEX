@@ -1054,6 +1054,7 @@ typedef std::vector<REAL> Vec;
 //////////////////
 #include "operators.hpp"
 //////////////////
+#include "root.hpp"
 //////////////////
 #include "additional_functions.hpp"
 //////////////////
