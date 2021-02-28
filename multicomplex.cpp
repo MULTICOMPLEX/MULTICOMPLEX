@@ -45,11 +45,21 @@ int main(int argc, char** argv)
 	}
 
 	{
-		MX0 x(2, .5);
+		MX0 x(0.4, -0.5);
 		MX5 y;
 		sh(y, x);
-		std::cout << "d^5/dx^5(sqrt(x)) = 0.0571184 - 0.112895 i, x = 2 + .5i =\n ";
-		auto d = dv(sqrt(y));
+
+
+		std::cout << "d^5/dx^5(sin(sqrt(y))) = -16.4786 - 18.9303 i, x = 0.4 - 0.5i =\n ";
+		
+		auto begin = std::chrono::steady_clock::now();
+		
+		auto d = dv(sin(sqrt(y)));
+
+		auto end = std::chrono::steady_clock::now();
+		std::cout << "\nduration d^5/dx^5(sin(sqrt(y))) " <<
+			std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << " uS\n" << std::endl;
+
 		std::cout << d << std::endl << std::endl;
 
 		MX0 a = { -1,0 };

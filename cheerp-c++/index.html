@@ -230,12 +230,10 @@ fetch('../out/main.wasm').then(response =>
 <br>
 
 
-<script src="segmented_sieve_loader.js"></script>
-
  <font size="5px">
  <div id="mylog"></div>
    <script>
- 
+
 	const originalConsoleLog = console.log;
 	console.log = (...args) => {
     args.map(arg => document.querySelector("#mylog").innerHTML += arg + '<br>')
@@ -246,22 +244,13 @@ fetch('../out/main.wasm').then(response =>
  </font>
  
 
-<script src="func_input.js"></script>
+<script src="segmented_sieve_loader.js"></script>
+
+
 
 <script>
 
 
-JsStruct.promise.then(function(){
-        var obj = new JsStruct();
-        obj.test(); 
-		console.log(obj.factorial(10));
-});
-
-var testExport = new JsStruct();              // Instance created
-testExport.test();    
-
-
-console.log(factorial(23));
 	
 
 
