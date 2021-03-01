@@ -112,46 +112,51 @@ public:
 	
 	static void mainLoop()
 	{
-
+		//Retrieve the <body> element
 		static HTMLElement * body = document.get_body();
 		
+		//Create a new elements
+		static HTMLElement * h1 = document.createElement("h1");
+		//h1->setAttribute("style", "font-size: 25px;" "font-family: Consolas MS;");
+		
+
 		auto slider1 = static_cast<HTMLInputElement*>(document.getElementById("myRange1"));
+		auto slider2 = static_cast<HTMLInputElement*>(document.getElementById("myRange2"));
+		
 		auto output1 = static_cast<HTMLInputElement*>(document.getElementById("demo1"));
+		auto output2 = static_cast<HTMLInputElement*>(document.getElementById("demo2"));
 		
+		auto v1 = slider1->get_value();
+		//output1->set_textContent( v1 );
 		
+		auto v2 = slider2->get_value();
+		//output2->set_textContent( v2 );
 		
-		auto v = slider1->get_value();
-		output1->set_textContent( v );
-	
-		//Create a new <h4> element
-		static HTMLElement * aa = document.createElement("h4");
+		auto i1 = parseInt( v1 );
+		auto i2 = parseInt( v2 ); 		
 		
-		aa->setAttribute("style", "font-size: 25px;" "font-family: Consolas MS;");
+		x.real = i1/100.0;
+		x.imag = i2/100.0;
 		
-		auto i = parseInt( v ); 
-		x.real = i/100.0;
+		ss << "x = " << x << " = ";
 		
 		sh(y, x);
-		
-		ss << "x = " << x << "result = ";
 		
 		auto d = dv(sin(sqrt(y)));
 		ss << d;
 		
 		
-		aa->set_textContent( ss.str().c_str() );
-		
+		//Add the new elements to the <body>
+		h1->set_textContent( ss.str().c_str() );
 		ss.clear();
 		ss.str("");
 		
-		//Add the new elements to the <body>
-		body->appendChild( aa );
 		
-		//HTMLElement * lbr = document.createElement("<br />");
-		//body->appendChild( lbr );
-		
-		body->appendChild( slider1 );
-		
+		body->appendChild( h1 );
+
+		//body->appendChild( slider1 );
+
+		//body->appendChild( slider2 );
 
 	}
 	
@@ -180,7 +185,7 @@ void webMain()
 	std::cout << "d^5/dx^5(sin(sqrt(x))), x = 0.4 - 0.5i = ";	
 	std::cout << d << std::endl << std::endl;
 	
-	std::cout << "\nduration d^5/dx^5(sin(sqrt(x))) : " << int(
+	std::cout << "duration : " << int(
 	std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count()) << " uS\n" << std::endl;
 	
 }
