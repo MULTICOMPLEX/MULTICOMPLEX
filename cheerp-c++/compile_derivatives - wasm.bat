@@ -1,0 +1,1 @@
+C:\cheerp\bin\clang++ -target cheerp-wasm derivatives.cpp -o derivatives.js -O3
