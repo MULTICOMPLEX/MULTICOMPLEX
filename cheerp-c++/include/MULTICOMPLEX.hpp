@@ -10,13 +10,24 @@
 #include <random>
 
 
+struct fail 
+{
+	fail(char const* const m)
+	{
+		std::cout << "\n\n *** fail *** " << m << " *** \n\n"; 
+		exit(1);
+	}
+};
+
 
 //http://tamivox.org/eugene/multicomplex/index.html
 template <typename elem, int order>
 class multicomplex
 {
 
-	
+	static_assert (order >= 0, "multicomplex order must be nonnegative");
+	static_assert (order < 25, "sanity_check -- modify if desired");
+
 private:
 	std::int64_t i{};
 
@@ -1013,7 +1024,7 @@ std::ostream& operator <<
 }
 
 //typedefs
-	typedef double REAL;
+typedef double REAL;
 typedef multicomplex<REAL, 0 > MX0;
 typedef multicomplex<REAL, 1 > MX1;
 typedef multicomplex<REAL, 2 > MX2;
@@ -1054,12 +1065,19 @@ typedef std::vector<REAL> Vec;
 //////////////////
 #include "operators.hpp"
 //////////////////
-#include "root.hpp"
+#include "basic.hpp"
 //////////////////
 #include "additional_functions.hpp"
 //////////////////
+#include "derivative.hpp"
+//////////////////
+#include "root.hpp"
+//////////////////
 #include "elementry_functions.hpp"
 //////////////////
-
-
+//#include "integrator.hpp"
+//////////////////
+#include "test.hpp"
+//////////////////
+#include "linked_list.hpp"
 //////////////////

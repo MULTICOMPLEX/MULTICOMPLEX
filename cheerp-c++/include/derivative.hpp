@@ -5,8 +5,6 @@
 template <typename elem, int order>
 class multicomplex;
 
-#include "flat.hpp"
-
 template <typename elem, int order>
 multicomplex<elem, order+1> di
 (

@@ -4,7 +4,25 @@ template <typename elem, int order>
 class multicomplex;
 
 /// sqrt
-
+template <typename elem, int order> 
+multicomplex<elem,order> sqrtlp
+(
+  const multicomplex<elem,order>& x
+) 
+{
+ // if(x<0 && x > -lambda)return 0;
+ // if(x>0 && x <  lambda)return 0;
+  
+  multicomplex<elem,order> x_0{half,half};//initial guess
+  
+  unroll<14>([&](int iter){
+    
+  x_0 *= (x_0*x_0 + 3*x)/(3*x_0*x_0+x); //Halley 
+ //   x_0 = half*(x_0 + (x/x_0)); //Newton 
+  });
+    
+  return x_0;
+}
 
 //---------------------------------------------------
 
@@ -16,7 +34,7 @@ inline multicomplex<elem,order> sqrt
 { 
   multicomplex<elem,order> x_0{half,half};//initial guess
   
-  for(int t = 0; t < 8; t++){
+  for(int t = 0; t < 14; t++){
     x_0 *= (x_0*x_0 + 3*x)/(3*x_0*x_0+x); //Halley
     //x_0 = half*(x_0 + (x/x_0)); //Newton 
   }
@@ -446,8 +464,87 @@ T factorial
 
 const int N = 15;
 
+template <typename elem, int order> 
+inline multicomplex<elem,order> Sin 
+(
+  const multicomplex<elem,order>& x
+)
+{ 
+  multicomplex<elem,order> result;
+  elem j;
 
+  unroll<N>([&](size_t n){
+ // for(int n = 0; n < N; n++)
+ // { 
+    j = (1.0/factorial<elem>(2*n+1)) * std::pow(-1, n);
+    result += pow(x, 2*n+1) * j;
+   // std::cout << result << std::endl;
+ // }
+  
+    });
+    
+  return result;
+}
 
+//---------------------------------------------------
+
+template <typename elem, int order> 
+multicomplex<elem,order> Cos 
+(
+  const multicomplex<elem,order>& x
+) 
+{ 
+  multicomplex<elem,order> result;
+  elem j;
+  
+  for(int n = 0; n < N; n++)
+  {
+    j = (1.0/factorial<elem>(2*n)) * pow(-1, n);
+    result += pow(x, 2*n) * j;
+  }
+
+  return result;
+}
+
+//---------------------------------------------------
+
+template <typename elem, int order> 
+multicomplex<elem,order> Cosh 
+(
+  const multicomplex<elem,order>& x
+)
+{ 
+  multicomplex<elem,order> result;
+  elem j;
+  
+  for(int n = 0; n < N; n++)
+  {
+    j = 1.0/factorial<elem>(2*n);
+    result += pow(x, 2*n) * j;
+  }
+
+  return result;
+}
+
+//---------------------------------------------------
+
+template <typename elem, int order> 
+multicomplex<elem,order> Sinh 
+(
+  const multicomplex<elem,order>& x
+)
+{ 
+  multicomplex<elem,order> result;
+  elem j;
+  
+  for(int n = 0; n < N; n++)
+  {
+    j = 1.0/factorial<elem>(2*n+1);
+    result += pow(x, 2*n+1) * j;
+  }
+
+  return result;
+}
 
 //---------------------------------------------------
 
@@ -500,11 +597,39 @@ inline const elem abs
 
 //---------------------------------------------------
 
-
+template<typename elem, int order>
+inline multicomplex<elem,order> arg 
+(
+  const multicomplex<elem,order> & z
+) 
+{
+  std::complex a(z.real.real,z.real.imag);
+  auto x = std::arg(a);
+  
+  multicomplex<elem,order> b{x};
+  return 
+  {
+    b
+  };
+}
 
 //---------------------------------------------------
 
-
+template<typename elem>
+inline multicomplex<elem,0> arg 
+(
+  const multicomplex<elem,0> & z
+) 
+{
+  std::complex a(z.real,z.imag);
+  auto x = std::arg(a);
+  
+  multicomplex<elem,0> b{x};
+  return 
+  {
+    b
+  };
+}
 
 //---------------------------------------------------
 
@@ -570,7 +695,35 @@ multicomplex<elem, order> Riemann_Siegel_theta
 
 //---------------------------------------------------
 
+template <typename elem>
+multicomplex<elem, 0> Polygamma
+(
+  int n,
+  const multicomplex<elem, 0>& z
+) 
+{   
+  mcdv mcdv; 
+  
+  multicomplex<elem, 0> r;
+  
+  MX1 x1;
+  MX2 x2;
+  MX3 x3;
+  MX4 x4;
+  MX5 x5;
+  
+  n +=1; 
 
+  if(n == 1){ mcdv.sh<0>(x1, z);  r = mcdv.dv<0>(log(gamma(x1)));}
+  if(n == 2){ mcdv.sh<0>(x2, z);  r = mcdv.dv<0>(log(gamma(x2)));} 
+  if(n == 3){ mcdv.sh<0>(x3, z);  r = mcdv.dv<0>(log(gamma(x3)));} 
+  if(n == 4){ mcdv.sh<0>(x4, z);  r = mcdv.dv<0>(log(gamma(x4)));} 
+  if(n == 5){ mcdv.sh<0>(x5, z);  r = mcdv.dv<0>(log(gamma(x5)));}  
+  
+  return r;
+} 
+
+//---------------------------------------------------
 
 template <typename elem>
 elem Kronecker_Delta

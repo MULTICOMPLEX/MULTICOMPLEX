@@ -284,7 +284,7 @@ int main(int argc, char** argv)
 
 	std::cout.precision(12);
 	//MX0 sx {7,0};//(+ 1.1673039783 + 0.0000000000*i1)//initial guess
-	MX2 sx{ {{1.5,0},{0,1}},{{-0.1,-2},{1,0}} };//(+ 1.1673039783 + 0.0000000000*i1)//initial guess
+	MX2 sx;//(+ 1.1673039783 + 0.0000000000*i1)//initial guess
 	//MX0 sx {0,11};//-ProductLog[-3,1]  {4, 3} [1.53391331979357 4.37518515306190] -ProductLog[-1,1] 
 	//std::cout << -ps::LambertW(4, MX0{1,0}) << std::endl;//exp(x) + x
 	//std::cout << -ps::LambertW(4, MX0{-1,0}) << std::endl;//exp(x) - x
@@ -299,7 +299,7 @@ int main(int argc, char** argv)
 	std::cout << "ini" << sx << std::endl << std::endl;
 
 	//auto fx1 = [](const auto& x) { return Wilkinsons_polynomial(x, 20); };
-	auto fx1 = [](const auto& x) { return 2 * pow(x, 2) - 10 * x + 5; };
+	auto fx1 = [](const auto& x) { return 2. * pow(x, 2.) - 10. * x + 5.; };
 
 	root(fx1, sx, 15);
 	

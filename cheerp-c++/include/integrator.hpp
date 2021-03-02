@@ -1,7 +1,7 @@
 ///integrator 
 
 #include <functional>
-#include "hep/mc.hpp"
+#include "mc.hpp"
 
 template <typename elem, int order>
 class multicomplex;

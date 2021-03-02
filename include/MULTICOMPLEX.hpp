@@ -106,14 +106,11 @@ public:
 		};
 	}
 
+
 	template <typename T>
-	multicomplex operator+ (T const& o) const 
+	multicomplex operator+ (T const& o) const
 	{
-		return
-		{
-			real + o,
-			imag + o
-		};
+		return *this + multicomplex(o);
 	}
 
 	template <int o_order>
@@ -574,7 +571,7 @@ public:
 		return
 		{
 			real + o,
-			imag + o
+			imag 
 		};
 	}
 
@@ -650,7 +647,8 @@ public:
 			return *this - o;
 		}
 
-		multicomplex operator- (elem const& o)
+		template <typename T>
+		multicomplex operator- (T const& o) const
 		{
 			return
 			{
