@@ -417,8 +417,8 @@ public:
 		static_assert (x_order >= 0, "x_order < 0");
 		static_assert (x_order <= order, "x_order > order");
 		static int const full{ 1 << (order - x_order) };
-		//if (n < 0) throw fail{ "multicomplex::at_con ... n < 0" };
-		//if (n >= full) throw fail{ "multicomplex::at_con ... n >= full" };
+		if (n < 0) throw fail{ "multicomplex::at_con ... n < 0" };
+		if (n >= full) throw fail{ "multicomplex::at_con ... n >= full" };
 		return priv_at_con<x_order>(*this, n);
 	}
 
