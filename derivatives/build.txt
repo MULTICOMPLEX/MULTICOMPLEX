@@ -1,0 +1,2 @@
+cd /mnt/c/MULTICOMPLEX/MULTICOMPLEX/derivatives
+/opt/cheerp/bin/clang++ -target cheerp-wasm derivatives.cpp -o derivatives.js -O3 -std=c++17 -cheerp-use-bigints

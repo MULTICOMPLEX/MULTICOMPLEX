@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang = "en - US">
+<head>
+<title>Multicomplex Derivatives</title>
+<meta charset = "UTF - 8">
+<meta name = "keywords" content = "HTML, CSS, JavaScript">
+<meta name = "author" content = "MULTICOMPLEX">
+<style>
+div.a {
+line-height: normal;
+font-family: "Consolas MS";
+font-size: 22px;
+}
+
+h1 {
+font-family: "Consolas MS";
+font-size: 30px;
+}
+
+.slider {
+   width: 200px;
+ 
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+body {background-color: rgb(0, 43, 54);
+color: rgb(238, 232, 213);}
+
+.slidecontainer {
+font-size: 25px;
+font-family: "Consolas MS";
+  width: 100%;
+}
+
+</style>
+
+</head>
+<body>
+
+<br>
+
+
+<h1>Derivatives, using Multicomplex Numbers, WebAssembly :</h1> 
+
+ <font size="5px">
+ <div id="mylog"></div>
+   <script>
+
+	const originalConsoleLog = console.log;
+	console.log = (...args) => {
+    args.map(arg => document.querySelector("#mylog").innerHTML += arg + '<br>')
+	
+ }
+  //console.log = originalConsoleLog;
+</script>
+ </font>
+ 
+
+<script src="derivatives.js"></script>
+
+
+<div class="slidecontainer">
+	
+	<span id="demo1">&emsp;&emsp;&emsp;</span>
+	<input type="range" min="-100" max="100" value="40" step="1" class="slider" id="myRange1">
+
+	<span id="demo2">&ensp;</span>
+	<input type="range" min="-100" max="100" value="-50" step="1" class="slider" id="myRange2">
+  
+	  
+</div>
+
+
+<script>
+
+
+
+
+//var slider1 = document.getElementById("myRange1");
+//var output1 = document.getElementById("demo1");
+//output1.innerHTML = slider1.value;
+
+
+
+//slider1.oninput = function() {
+//  output1.innerHTML = this.value;
+//}
+
+//var console = {};
+//console.log = function(){};
+
+</script>
+
+</body>
+
+</html>
+
+
+
+
+
