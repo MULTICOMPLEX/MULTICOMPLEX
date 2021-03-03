@@ -427,8 +427,8 @@ public:
 		static_assert (x_order >= 0, "x_order < 0");
 		static_assert (x_order <= order, "x_order > order");
 		static int const full{ 1 << (order - x_order) };
-		//if (n < 0) throw fail{ "multicomplex::at_var ... n < 0" };
-		//if (n >= full) throw fail{ "multicomplex::at_var ... n >= full" };
+		if (n < 0) throw fail{ "multicomplex::at_var ... n < 0" };
+		if (n >= full) throw fail{ "multicomplex::at_var ... n >= full" };
 		return priv_at_var<x_order>(*this, n);
 	}
 
@@ -811,8 +811,8 @@ public:
 			static_assert (x_order >= 0, "x_order < 0");
 			static_assert (x_order <= order_value, "x_order > order");
 			static int const full{ 1 << (order_value - x_order) };
-			//if (n < 0) throw fail{ "multicomplex::at_con ... n < 0" };
-			//if (n >= full) throw fail{ "multicomplex::at_con ... n >= full" };
+			if (n < 0) throw fail{ "multicomplex::at_con ... n < 0" };
+			if (n >= full) throw fail{ "multicomplex::at_con ... n >= full" };
 			return priv_at_con<x_order>(*this, n);
 		}
 
@@ -821,8 +821,8 @@ public:
 			static_assert (x_order >= 0, "x_order < 0");
 			static_assert (x_order <= order_value, "x_order > order");
 			static int const full{ 1 << (order_value - x_order) };
-			//if (n < 0) throw fail{ "multicomplex::at_var ... n < 0" };
-			//if (n >= full) throw fail{ "multicomplex::at_var ... n >= full" };
+			if (n < 0) throw fail{ "multicomplex::at_var ... n < 0" };
+			if (n >= full) throw fail{ "multicomplex::at_var ... n >= full" };
 			return priv_at_var<x_order>(*this, n);
 		}
 
@@ -1057,25 +1057,25 @@ constexpr const REAL lambda = std::numeric_limits<REAL>::epsilon();
 typedef std::vector<REAL> Vec;
 
 //////////////////
-#include "mxws.hpp"
+#include <mxws.hpp>
 //////////////////
-#include "flat.hpp"
+#include <flat.hpp>
 //////////////////
-#include "operators.hpp"
+#include <operators.hpp>
 //////////////////
-#include "basic.hpp"
+#include <basic.hpp>
 //////////////////
-#include "additional_functions.hpp"
+#include <additional_functions.hpp>
 //////////////////
-#include "derivative.hpp"
+#include <derivative.hpp>
 //////////////////
-#include "root.hpp"
+#include <root.hpp>
 //////////////////
-#include "elementry_functions.hpp"
+#include <elementry_functions.hpp>
 //////////////////
-//#include "integrator.hpp"
+//#include <integrator.hpp>
 //////////////////
-#include "test.hpp"
+#include <test.hpp>
 //////////////////
-#include "linked_list.hpp"
+#include <linked_list.hpp>
 //////////////////

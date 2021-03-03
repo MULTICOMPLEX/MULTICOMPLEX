@@ -27,14 +27,14 @@ multicomplex<elem,order> sqrt
 //---------------------------------------------------
 
 template <typename elem, int order> 
-inline multicomplex<elem,order> sqrt_n 
+inline multicomplex<elem,order> sqrto 
 (
   const multicomplex<elem,order>& x
 ) //Newton method complex
 { 
   multicomplex<elem,order> x_0{half,half};//initial guess
   
-  for(int t = 0; t < 14; t++){
+  for(int t = 0; t < 8; t++){
     x_0 *= (x_0*x_0 + 3*x)/(3*x_0*x_0+x); //Halley
     //x_0 = half*(x_0 + (x/x_0)); //Newton 
   }
