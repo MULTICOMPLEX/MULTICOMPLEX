@@ -1,11 +1,7 @@
 
-
-#include <iostream>
-#include <chrono>
-
+#include <array>
 
 #include "include/multicomplex.hpp"
-#include <iomanip>
 
 #include <cheerp/client.h> //Misc client side stuff
 #include <cheerp/clientlib.h> //Complete DOM/HTML5 interface
@@ -14,17 +10,18 @@ using namespace client;
 using namespace cheerp;
 
 MX0 x(0.4, -0.5);
+MX0 d;
 MX5 y(0,0);
 
-#include <sstream>
-
 std::stringstream ss;
+
+std::array<double, 4> va {double(pow(2,64))-1,2,3,4};
+
 
 [[cheerp::genericjs]] void outputNumberOfElementsToTheConsole()
 {
         double number = document.getElementsByTagName("*")->get_length();
         console.log("Live elements = ", number);
-
 }
 
 [[cheerp::genericjs]] int domOutput(const char* str)
@@ -35,61 +32,46 @@ std::stringstream ss;
     return s->get_length();
 }
 
-[[cheerp::genericjs]] void setupInputAndDisplay()
-{
-	
-	//Retrieve the <body> element
-	HTMLElement * body = document.get_body();
-	
-	//Create a range input element <input type="range">
-	HTMLInputElement * inputSlider = static_cast<HTMLInputElement*>(document.createElement("input") );
-	inputSlider->setAttribute("type", "range");
-	
-	//This sets the default value
-	inputSlider->setAttribute("value", "0.5");
-	
-	//Create a new <h1> element
-	HTMLElement * slider = document.createElement("h1");
-
-	
-	//use a C++11 lambda to capture the variables we need
-	auto cb = [slider, inputSlider]() -> void { 
-	
-	//x.real += .1; 
-	String * text = inputSlider->get_value();
-	slider->set_textContent( text );
-	
-	};
-	
-	//Call the lambda to set the slider to the initial value
-	cb();
-	
-	//Set up the handler for the input event. Use a C++11 lambda to capture the variables we need
-	slider->addEventListener("input", cheerp::Callback(cb));
-	
-	//Add the new elements to the <body>
-	body->appendChild( slider );
-	body->appendChild( inputSlider );
-}
 
 //This function will be called only after the DOM is fully loaded
 
-class [[cheerp::genericjs]] Graphics
+class [[cheerp::jsexport]] [[cheerp::genericjs]] Graphics
 {
 
 private:
 	
 	// This method is the handler for requestAnimationFrame. The browser will call this
 	// in sync with its graphics loop, usually at 60 fps.
+	
+		
 	static void rafHandler()
 	{
 		mainLoop();
 		client::requestAnimationFrame(cheerp::Callback(rafHandler));
 	}
 	
+	
 public:
 	
-	Graphics()=default;
+	Graphics()
+	{
+		
+	};
+	
+	inline auto update_array()
+    {					
+		static client::Float64Array * vec = MakeTypedArray<TypedArrayForPointerType<double>::type>(&va, va.size() * sizeof(double));
+		
+		sh(y, x);
+		
+		auto d = dv(sin(sqrt(y)));
+		
+		va[0] = d.real;
+		va[1] = d.imag;
+		
+		return vec;
+     
+    }
 	
 	static void loadCallback()
 	{
@@ -102,9 +84,9 @@ public:
 		ss.setf(std::ios::fixed, std::ios::floatfield);
 		ss.precision(12);
 		
+		
 		//domOutput("Hi from loadCallback!");
        
-      
 		client::requestAnimationFrame(cheerp::Callback(rafHandler));
 		
 		//auto inputValue = static_cast<HTMLInputElement*>(document.getElementById("myRange1"))->get_value();
@@ -114,14 +96,17 @@ public:
 		
 	}	
 	
-	
 	static void mainLoop()
 	{
 		//Retrieve the <body> element
-		static HTMLElement * body = document.get_body();
+		
+		static HTMLElement * body;
+		
+		body = document.get_body();
 		
 		//Create a new elements
 		static HTMLElement * h1 = document.createElement("h1");
+		
 		//h1->setAttribute("style", "font-size: 25px;" "font-family: Consolas MS;");
 		
 
@@ -147,15 +132,14 @@ public:
 		
 		sh(y, x);
 		
-		auto d = dv(sin(sqrt(y)));
+		d = dv(sin(sqrt(y)));
 		ss << d;
-		
 		
 		//Add the new elements to the <body>
 		h1->set_textContent( ss.str().c_str() );
+		
 		ss.clear();
 		ss.str("");
-		
 		
 		body->appendChild( h1 );
 
@@ -166,11 +150,46 @@ public:
 	}
 	
 	static void init()
-	{
+	{	
 		document.addEventListener("DOMContentLoaded",cheerp::Callback(loadCallback));
 	}
+		
 	
 };
+
+
+
+class [[cheerp::jsexport]] [[cheerp::genericjs]] JsStruct
+{
+private:
+        float a;
+        int b;
+		
+		client::Float64Array * vec;
+		
+public:
+        JsStruct(float _a):a(_a),b(0)
+        {
+            //client::console.log("Instance created");
+			vec = MakeTypedArray<TypedArrayForPointerType<double>::type>(&va, va.size() * sizeof(double));
+        }
+		
+		inline auto test()
+        {					
+			return vec;
+            //client::console.log("Invoked test", a, b++);
+        }
+		
+		int factorial(int n)
+		{
+
+			if (n < 2)
+					return 1;
+			return n * factorial(n-1);
+		}
+	
+};
+
 
 MX2 sx;
  
@@ -179,7 +198,7 @@ void webMain()
 	//outputNumberOfElementsToTheConsole();
 	
 	//Graphics::init();
-	
+
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
 	std::cout.precision(10);
 	
@@ -198,12 +217,11 @@ void webMain()
 	//auto fx1 = [](const auto& x) { return Wilkinsons_polynomial(x, 20); };
 	auto fx1 = [](const auto& x) { return 2 * pow(x, 2) - 10 * x + 5; };
 
-	root(fx1, sx, 50);
+	root(fx1, sx, 40);
 	
 	std::cout << std::endl;
 	
 	auto begin = std::chrono::steady_clock::now();	
-	
 	
 	
 	sh(y, x);

@@ -29,67 +29,116 @@ font-family: "Consolas MS";
   opacity: 1;
 }
 
+.button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+}
 
 </style>
-
 </head>
+
+
 <body>
+	<h1>Derivatives, using Multicomplex Numbers -> template metaprogramming, WebAssembly :</h1> 
+</body>
 
-<br>
-
-
-<h1>Derivatives, using Multicomplex Numbers, WebAssembly :</h1> 
 
  <font size="5px">
  <div id="mylog"></div>
    <script>
 
-	const originalConsoleLog = console.log;
+	let myConsoleLog = console.log;
 	console.log = (...args) => {
     args.map(arg => document.querySelector("#mylog").innerHTML += arg + '<br>')
 	
  }
-  //console.log = originalConsoleLog;
+  //console.log = myConsoleLog;
 </script>
  </font>
  
+ 
+ <head>
+	<!-- Load plotly.js into the DOM -->
+	<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+</head>
+
+ <body>
+	 <div id='graph' style="background-color: rgb(0, 43, 54); width: 1200px; height:800px"></div> 
+</body>
+
 
 <script src="derivatives.js"></script>
 
+<script>
 
-<div class="slidecontainer">
-	
+
+Graphics.promise.then(function(){
+
+let obj = new Graphics;
+
+buffer = obj.update_array();
+
+var trace1 = {
+  x: [buffer[0]],
+  y: [buffer[1]],
+  mode: 'markers',
+  marker: {
+    color: 'rgb(17, 157, 255)',
+    size: 20,
+    line: {
+      color: 'rgb(231, 99, 250)',
+      width: 2
+    }
+}
+};
+
+var data = [trace1];
+
+Plotly.plot('graph', data,{
+	xaxis: {range: [-400, 400]},
+	yaxis: {range: [-400, 400]},
+	paper_bgcolor: 'rgba(0,0,0,0)',
+	plot_bgcolor: 'rgba(0,0,0,0)'}
+);
+
+
+function update() {
+buffer = obj.update_array();
+
+  Plotly.animate('graph', {
+    data: [{x: [buffer[0]], y: [buffer[1]]}]
+  }, {
+    transition: {
+      duration: 0
+    },
+    frame: {
+      duration: 0,
+	  redraw: false
+    }
+  })
+  requestAnimationFrame(update);
+}
+
+requestAnimationFrame(update);
+
+});
+
+
+</script>
+ 
+
+ <div class="slidecontainer">
+	<body>
 	<span id="demo1">&emsp;&emsp;&emsp;</span>
 	<input type="range" min="-100" max="100" value="40" step="1" class="slider" id="myRange1">
 
 	<span id="demo2">&ensp;</span>
 	<input type="range" min="-100" max="100" value="-50" step="1" class="slider" id="myRange2">
-  
-	  
+ </body>
 </div>
 
-
-<script>
-
-
-
-
-//var slider1 = document.getElementById("myRange1");
-//var output1 = document.getElementById("demo1");
-//output1.innerHTML = slider1.value;
-
-
-
-//slider1.oninput = function() {
-//  output1.innerHTML = this.value;
-//}
-
-//var console = {};
-//console.log = function(){};
-
-</script>
-
-</body>
 
 </html>
 
