@@ -64,7 +64,7 @@ public:
 		
 		sh(y, x);
 		
-		auto d = dv(sin(sqrt(y)));
+		auto d = dv(sin(y));
 		
 		va[0] = d.real;
 		va[1] = d.imag;
@@ -125,14 +125,14 @@ public:
 		auto i1 = parseInt( v1 );
 		auto i2 = parseInt( v2 ); 		
 		
-		x.real = i1/100.0;
-		x.imag = i2/100.0;
+		x.real = 2 * pi * (i1/1000.0);
+		x.imag = 2 * pi * (i2/1000.0);
 		
 		ss << "x = " << x << " = ";
 		
 		sh(y, x);
 		
-		d = dv(sin(sqrt(y)));
+		d = dv(sin((y)));
 		ss << d;
 		
 		//Add the new elements to the <body>
@@ -203,7 +203,7 @@ void webMain()
 	std::cout.precision(10);
 	
 	
-	Graphics::initialize();
+	
 	
 	std::cout << std::endl;
 
@@ -235,6 +235,9 @@ void webMain()
 	
 	std::cout << "duration : " << int(
 	std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count()) << " uS\n" << std::endl;
+	
+	
+	Graphics::initialize();//sliders
 	
 }
 

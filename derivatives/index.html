@@ -7,6 +7,7 @@
 <meta name = "keywords" content = "HTML, CSS, JavaScript">
 <meta name = "author" content = "MULTICOMPLEX">
 <style>
+
 div.a {
 line-height: normal;
 font-family: "Consolas MS";
@@ -21,6 +22,10 @@ font-size: 26px;
 body {background-color: rgb(0, 43, 54);
 color: rgb(238, 232, 213);}
 
+.slider
+{
+   width: 1000px;
+}
 
 .slidecontainer {
 font-size: 25px;
@@ -30,10 +35,16 @@ font-family: "Consolas MS";
 }
 
 .button {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 1;
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 13px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
 }
 
 </style>
@@ -65,18 +76,28 @@ font-family: "Consolas MS";
 </head>
 
  <body>
-	 <div id='graph' style="background-color: rgb(0, 43, 54); width: 1200px; height:800px"></div> 
+	 <div id='graph' style="background-color: rgb(0, 43, 54); width: 1200px; height:1200px"></div> 
+	  <button onclick="javascript:ClearAnimation();" class="button">Clear</button>
 </body>
+
+
 
 
 <script src="derivatives.js"></script>
 
 <script>
 
+let clear = false;
+
+
+function ClearAnimation() {clear = true;}
 
 Graphics.promise.then(function(){
 
 let obj = new Graphics;
+
+let arr1 = [];
+let arr2 = [];
 
 buffer = obj.update_array();
 
@@ -84,7 +105,7 @@ var trace1 = {
   x: [buffer[0]],
   y: [buffer[1]],
   name: 'IMAG',
-  mode: 'markers',
+  mode: 'lines+markers',
   marker: {
     color: 'rgb(17, 157, 255)',
     size: 20,
@@ -97,8 +118,21 @@ var trace1 = {
 
 var data = [trace1, {}];
 
-Plotly.plot('graph', data,{
-	xaxis: {range: [-400, 400],
+var annotations = [
+    {
+      text: 'Trace type:',
+      x: 0,
+      y: 1.085,
+      yref: 'paper',
+      align: 'left',
+      showarrow: false
+    }
+]
+
+var layout = {
+	//	annotations: annotations,
+	
+	xaxis: {range: [-50, 50],
 	
 	tickfont: {
       family: 'Old Standard TT, serif',
@@ -110,7 +144,7 @@ Plotly.plot('graph', data,{
 	
 	
 	},
-	yaxis: {range: [-400, 400],
+	yaxis: {range: [-50, 50],
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
@@ -122,28 +156,47 @@ Plotly.plot('graph', data,{
 	},
 	
 	paper_bgcolor: 'rgba(0,0,0,0)',
-	plot_bgcolor: 'rgba(0,0,0,0)'}
-);
+	plot_bgcolor: 'rgba(0,0,0,0)'
+}
 
+Plotly.plot('graph', data, layout);
 
 function update() {
+
+
+if(clear){
+	arr1 = [];
+	arr2 = [];
+	clear = false;	
+}
+
 buffer = obj.update_array();
 
+//arr1.push(buffer[0]);
+//arr2.push(buffer[1]);
+
+if(arr1.length < 400)arr1.push(buffer[0]);
+if(arr2.length < 400)arr2.push(buffer[1]);
+
   Plotly.animate('graph', {
-    data: [{x: [buffer[0]], y: [buffer[1]]}]
+    data: [{x: arr1, y: arr2}]
+	//data: [{x: [buffer[0]], y: [buffer[1]]}]
   }, {
     transition: {
-      duration: 0
+      duration: 0,
+	  redraw: true
     },
     frame: {
       duration: 0,
-	  redraw: false
+	  redraw: true
     }
   })
-  requestAnimationFrame(update);
-}
 
-requestAnimationFrame(update);
+  requestAnimationFrame(update)
+ 
+};
+
+requestAnimationFrame(update)
 
 });
 
@@ -153,11 +206,13 @@ requestAnimationFrame(update);
 
  <div class="slidecontainer">
 	<body>
-	<span id="demo1">&emsp;&emsp;&emsp;</span>
-	<input type="range" min="-100" max="100" value="40" step="1" class="slider" id="myRange1">
-
-	<span id="demo2">&ensp;</span>
-	<input type="range" min="-100" max="100" value="-50" step="1" class="slider" id="myRange2">
+	<span id="demo1"></span>
+	<input type="range" min="-1000" max="1000" value="400" step="1" class="slider" id="myRange1">
+	
+	<br>
+	
+	<span id="demo2"></span>
+	<input type="range" min="-1000" max="1000" value="-500" step="1" class="slider" id="myRange2">
  </body>
 </div>
 
