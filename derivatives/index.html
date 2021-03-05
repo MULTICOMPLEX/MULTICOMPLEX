@@ -83,6 +83,7 @@ buffer = obj.update_array();
 var trace1 = {
   x: [buffer[0]],
   y: [buffer[1]],
+  name: 'IMAG',
   mode: 'markers',
   marker: {
     color: 'rgb(17, 157, 255)',
@@ -94,11 +95,32 @@ var trace1 = {
 }
 };
 
-var data = [trace1];
+var data = [trace1, {}];
 
 Plotly.plot('graph', data,{
-	xaxis: {range: [-400, 400]},
-	yaxis: {range: [-400, 400]},
+	xaxis: {range: [-400, 400],
+	
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	
+	
+	},
+	yaxis: {range: [-400, 400],
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	
+	},
+	
 	paper_bgcolor: 'rgba(0,0,0,0)',
 	plot_bgcolor: 'rgba(0,0,0,0)'}
 );
