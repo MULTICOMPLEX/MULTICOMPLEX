@@ -76,7 +76,7 @@ font-family: "Consolas MS";
 </head>
 
  <body>
-	 <div id='graph' style="background-color: rgb(0, 43, 54); width: 1200px; height:1200px"></div> 
+	 <div id='graph' style="background-color: rgb(0, 43, 54); width: 800px; height:800px"></div> 
 	  <button onclick="javascript:ClearAnimation();" class="button">Clear</button>
 </body>
 
@@ -132,7 +132,7 @@ var annotations = [
 var layout = {
 	//	annotations: annotations,
 	
-	xaxis: {range: [-50, 50],
+	xaxis: {range: [-1000, 1000],
 	
 	tickfont: {
       family: 'Old Standard TT, serif',
@@ -144,7 +144,7 @@ var layout = {
 	
 	
 	},
-	yaxis: {range: [-50, 50],
+	yaxis: {range: [-1000, 1000],
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
@@ -202,7 +202,6 @@ requestAnimationFrame(update)
 
 
 </script>
- 
 
  <div class="slidecontainer">
 	<body>
@@ -216,6 +215,10 @@ requestAnimationFrame(update)
  </body>
 </div>
 
+<body>
+  <h1 id="pagetitle">Boring static text</h1>
+</body>
+  
 
 </html>
 

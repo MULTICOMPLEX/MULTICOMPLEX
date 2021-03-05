@@ -64,7 +64,7 @@ public:
 		
 		sh(y, x);
 		
-		auto d = dv(sin(y));
+		auto d = dv(log(sin(y)));
 		
 		va[0] = d.real;
 		va[1] = d.imag;
@@ -105,7 +105,10 @@ public:
 		body = document.get_body();
 		
 		//Create a new elements
-		static HTMLElement * h1 = document.createElement("h1");
+		//static HTMLElement * h1 = document.createElement("h1");
+	
+		 static client::Element* titleElement = 
+			client::document.getElementById("pagetitle");
 		
 		//h1->setAttribute("style", "font-size: 25px;" "font-family: Consolas MS;");
 		
@@ -125,23 +128,23 @@ public:
 		auto i1 = parseInt( v1 );
 		auto i2 = parseInt( v2 ); 		
 		
-		x.real = 2 * pi * (i1/1000.0);
-		x.imag = 2 * pi * (i2/1000.0);
+		x.real = (i1/1000.0);
+		x.imag = (i2/1000.0);
 		
 		ss << "x = " << x << " = ";
 		
 		sh(y, x);
 		
-		d = dv(sin((y)));
+		d = dv(log(sin(y)));
 		ss << d;
 		
 		//Add the new elements to the <body>
-		h1->set_textContent( ss.str().c_str() );
+		titleElement->set_textContent( ss.str().c_str() );
 		
 		ss.clear();
 		ss.str("");
 		
-		body->appendChild( h1 );
+		//body->appendChild( h1 );
 
 		//body->appendChild( slider1 );
 
@@ -226,11 +229,11 @@ void webMain()
 	
 	sh(y, x);
 	
-	auto d = dv(sin(sqrt(y)));
+	auto d = dv(log(sin(y)));
 	
 	auto end = std::chrono::steady_clock::now(); 
 	
-	std::cout << "d^5/dx^5(sin(sqrt(x))), x = 0.4 - 0.5i = ";	
+	std::cout << "d^5/dx^5(log(sin(x))), x = 0.4 - 0.5i = ";	
 	std::cout << d << std::endl << std::endl;
 	
 	std::cout << "duration : " << int(
