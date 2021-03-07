@@ -47,6 +47,7 @@ font-family: "Consolas MS";
   cursor: pointer;
 }
 
+
 </style>
 </head>
 
@@ -75,6 +76,9 @@ font-family: "Consolas MS";
 	<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
 </head>
 
+
+
+
  <body>
 	 <div id='graph1' style="background-color: rgb(0, 43, 54); width: 1000px; height:1000px"></div>
 	
@@ -87,8 +91,44 @@ font-family: "Consolas MS";
 	<span id="demo2"></span>
 	<input type="range" min="-1000" max="1000" value="-500" step="1" class="slider" id="myRange2">
 	</div>
+	
+	<br>
+	
+	<script>
+	
+				// Create anchor element. 
+                var a = document.createElement('a');  
+                
+				 
+                // Create the text node for anchor element. 
+                var link = document.createTextNode("Möbius transformation"); 
 
-	<div id='graph2' style="background-color: rgb(0, 43, 54); width: 1000px; height:1000px"></div> 	 
+                // Append the text node to anchor element. 
+				a.appendChild(link);
+				a.style.fontSize = "25px"; 
+				a.style.color = "rgb(238, 232, 213)";
+				
+				
+                // Set the title. 
+                //a.title = "See Tarot Card";  
+                  
+                // Set the href property. 
+                a.href = 'https://en.wikipedia.org/wiki/M%C3%B6bius_transformation';  
+                  
+                // Append the anchor element to the body. 
+                document.body.appendChild(a);  
+				
+	</script>
+	
+	<div id='graph2' style="background-color: rgb(0, 43, 54); width: 1000px; height:1000px"></div>
+<!--
+<style>
+ div#graph2 {
+ transform: rotate(-90deg); 
+}
+
+</style>
+-->	
 	<!--  <button onclick="javascript:ClearAnimation();" class="button">Clear</button> -->
 </body>
 
@@ -208,7 +248,7 @@ let obj = new Graphics;
 var layout2 = {
 
 	title: {
-    text:'d^1/dx^1(sqrt(z))',
+    text:'(d^2/dz^2(gamma(log(z)))) i',
     font: {
       family: 'Courier New, monospace',
 	  color: 'rgb(238, 232, 213)',
@@ -245,27 +285,24 @@ var layout2 = {
 	plot_bgcolor: 'rgba(0,0,0,0)'
 }
 
-	var complex_array1 = [];
-	var complex_array2 = [];
-
+	var complex_array = [];
+	
+	let N = 200;
+	
 	function compute_conformal_map()
 	{	
-		complex_array1 = obj.conformal_map1(200);
-		complex_array2 = obj.conformal_map2(200);
+		complex_array = obj.conformal_map(N);		
 	}
 
-	
 	compute_conformal_map();
 	
-	var real1 = complex_array1.slice(0,  200*5);
-	var imag1 = complex_array1.slice(200*5,complex_array1.size);
-	
-	var real2 = complex_array2.slice(0,  200*5);
-	var imag2 = complex_array2.slice(200*5,complex_array2.size);
+
+	var real = complex_array.slice(0,  N*5*2);
+	var imag = complex_array.slice(N*5*2,complex_array.size);
 
 	var trace1 = {
-	x: real1,
-	y: imag1,
+	x: real,
+	y: imag,
 	name: 'X',
 	mode: 'markers',
 	marker: {
@@ -276,20 +313,7 @@ var layout2 = {
       width: 2}}
 	};
 
-	var trace2 = {
-	x: real2,
-	y: imag2,
-	name: 'Y',
-	mode: 'markers',
-	marker: {
-		color: 'rgb(17, 157, 255)',
-		size: 6,
-		line: {
-		color: 'rgb(231, 99, 250)',
-		width: 2}}
-	};
-
-	var data = [trace1, trace2];
+	var data = [trace1,{}];
 	
 	Plotly.plot('graph2', data, layout2);
 
@@ -298,7 +322,7 @@ var layout2 = {
 
 </script>
 
- 
+
 
 
 </html>

@@ -17,9 +17,6 @@ std::stringstream ss;
 
 std::array<double, 4> va {double(pow(2,64))-1,2,3,4};
 
-std::array<double, 200*5*2> complex_array1;
-std::array<double, 200*5*2> complex_array2;
-
 
 [[cheerp::genericjs]] void outputNumberOfElementsToTheConsole()
 {
@@ -38,7 +35,7 @@ std::array<double, 200*5*2> complex_array2;
 
 //This function will be called only after the DOM is fully loaded
 
-class [[cheerp::jsexport]] [[cheerp::genericjs]] Graphics
+class [[cheerp::jsexport]] [[cheerp::genericjs]]  Graphics
 {
 
 private:
@@ -89,79 +86,57 @@ public:
         return (val - min) / delta;
 	}
 	
-	
-	inline auto conformal_map1(int N)
+		
+	inline auto conformal_map(int N)
     {					
+		[[cheerp::wasm]] static std::array<double, 200*5*2 *2> complex_array;
 		
 		static client::Float64Array * vec = 
-			MakeTypedArray<TypedArrayForPointerType<double>::type>(&complex_array1, complex_array1.size() * sizeof(double));
+			MakeTypedArray<TypedArrayForPointerType<double>::type>(&complex_array, complex_array.size() * sizeof(double));
 		
 		MX0 mc;
-		MX1 derivative;
+		MX2 derivative;
+		
+		MX0 r;
+		r.real = 0;
+		r.imag = 1;
 		
 		int tel = 0;
 		int total_index = 0;
+		
+		auto func = [](const auto& z) { return dv( gamma(log(z)) ); };
 		
 		for(double y = -1; y <= 1; y+=0.5)
 		{
 			for(int i = 0; i < N; i++)
 			{		
 				double t = (i-100)/100.;
-
+				
 				mc.real = t;
 				mc.imag = y;
-
+		
 				sh(derivative, mc);
 		
-				auto d = dv(log(derivative));
+				auto d = func(derivative) * r;
 				
 				//auto d = gamma(mc);
 				
 				auto index = i+ tel * N;
 				
-				complex_array1[index]       = d.real;
-				complex_array1[N*5 + index] = d.imag;
-			}
-			
-			tel++;
-		}
-
-		return vec;
-     
-    }
-	
-	
-	inline auto conformal_map2(int N)
-    {					
-		
-		static client::Float64Array * vec = 
-			MakeTypedArray<TypedArrayForPointerType<double>::type>(&complex_array2, complex_array2.size() * sizeof(double));
-		
-		MX0 mc;
-		MX1 derivative;
-		
-		int tel = 0;
-		int total_index = 0;
-		
-		for(double y = -1; y <= 1; y+=0.5)
-		{
-			for(int i = 0; i < N; i++)
-			{		
-				double t = (i-100)/100.;
+				complex_array[index]             = d.real;
+				complex_array[N*5 + N*5 + index] = d.imag;
 				
+				/////
 				mc.real = y;
 				mc.imag = t;
 		
 				sh(derivative, mc);
 		
-				auto d = dv(log(derivative));
+				d = func(derivative) * r;
 				
-				//auto d = gamma(mc);
+				complex_array[N*5 + index]             = d.real;
+				complex_array[N*5 + N*5 + N*5 + index] = d.imag;
 				
-				auto index = i+ tel * N;
-				
-				complex_array2[index]       = d.real;
-				complex_array2[N*5 + index] = d.imag;
 			}
 			
 			tel++;
@@ -305,7 +280,7 @@ void webMain()
 
 	sx.random(-10,10);
 
-	std::cout << "multicomplex roots : 2 x^2 - 10 x + 5" << std::endl <<  std::endl;
+	std::cout << "multicomplex roots, 2 x^2 - 10 x + 5 = 0" << std::endl <<  std::endl;
 	
 	std::cout << "initial : " << sx << std::endl << std::endl;
 		
@@ -326,7 +301,7 @@ void webMain()
 	
 	auto end = std::chrono::steady_clock::now(); 
 	
-	std::cout << "d^5/dx^5(sin(sqrt(z))), x = 0.4 - 0.5i = ";	
+	std::cout << "d^5/dz^5(sin(sqrt(z))), z = 0.4 - 0.5i = ";	
 	std::cout << d << std::endl << std::endl;
 	
 	std::cout << "duration : " << int(
