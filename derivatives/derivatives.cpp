@@ -87,15 +87,12 @@ public:
 	}
 	
 		
-	inline auto conformal_map(int N)
+	inline auto conformal_map(int formula)
     {					
-		[[cheerp::wasm]] static std::array<double, 200*5*2 *2> complex_array;
-		
-		static client::Float64Array * vec = 
-			MakeTypedArray<TypedArrayForPointerType<double>::type>(&complex_array, complex_array.size() * sizeof(double));
-		
+		int N = 200;
 		MX0 mc;
 		MX2 derivative;
+		mcdv mcdv;
 		
 		MX0 r;
 		r.real = 0;
@@ -104,38 +101,80 @@ public:
 		int tel = 0;
 		int total_index = 0;
 		
-		auto func = [](const auto& z) { return dv( gamma(log(z)) ); };
+		constexpr double grid_spacing = 0.25;
 		
-		for(double y = -1; y <= 1; y+=0.5)
+		constexpr double max = 1.0;
+		
+		constexpr int n_grid_lines = (2*max)/grid_spacing + 1;
+		
+		std::array<double, int(2*max*100)*n_grid_lines*4> complex_array;
+		
+		static client::Float64Array * vec = 
+			MakeTypedArray<TypedArrayForPointerType<double>::type>(&complex_array, complex_array.size() * sizeof(double));
+		
+		
+		auto func1 = [formula](const auto& z){ 
+		
+			if     (formula == 1) return dv(gamma(log(z)));
+			else if(formula == 2) return dv(gamma(sqrt(z)));
+			else if(formula == 3) return dv(gamma(sin(z)));
+			else if(formula == 4) return dv(gamma(cos(z)));
+			else if(formula == 5) return dv(gamma(tan(z)));
+			else if(formula == 6) return dv(gamma(sinh(z)));
+			else if(formula == 7) return dv(gamma(cosh(z)));
+			else if(formula == 8) return dv(gamma(tanh(z)));
+			else if(formula == 9) return dv(gamma(LambertW(0,z)));
+			else return dv(gamma(log(z)));
+		};
+		
+			
+				
+		for(double y = -max; y <= max; y+=grid_spacing)
 		{
 			for(int i = 0; i < N; i++)
 			{		
-				double t = (i-100)/100.;
+				double t = (i-(max*100))/100.;
 				
 				mc.real = t;
 				mc.imag = y;
 		
 				sh(derivative, mc);
+				//mcdv.sh<0>(derivative, mc);
 		
-				auto d = func(derivative) * r;
+				MX0 d;
+				
+				d = func1(derivative) * r;
+				
+				
+				//auto d = mcdv.dv<0>( gamma(log(derivative)) )  * r; 
+				
+				//d = mc;
 				
 				//auto d = gamma(mc);
 				
 				auto index = i+ tel * N;
 				
 				complex_array[index]             = d.real;
-				complex_array[N*5 + N*5 + index] = d.imag;
+				complex_array[N*n_grid_lines + N*n_grid_lines + index] = d.imag;
 				
 				/////
 				mc.real = y;
 				mc.imag = t;
 		
 				sh(derivative, mc);
+				//mcdv.sh<0>(derivative, mc);
 		
-				d = func(derivative) * r;
 				
-				complex_array[N*5 + index]             = d.real;
-				complex_array[N*5 + N*5 + N*5 + index] = d.imag;
+				//d = mcdv.dv<0>( gamma(log(derivative)) )  * r; 
+				
+								
+				d = func1(derivative) * r;
+				
+				
+				//d = mc;
+				
+				complex_array[N*n_grid_lines + index]             = d.real;
+				complex_array[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.imag;
 				
 			}
 			
