@@ -76,11 +76,10 @@ font-family: "Consolas MS";
 </head>
 
  <body>
-	 <div id='graph' style="background-color: rgb(0, 43, 54); width: 800px; height:800px"></div> 
-	  <button onclick="javascript:ClearAnimation();" class="button">Clear</button>
+	 <div id='graph' style="background-color: rgb(0, 43, 54); width: 1000px; height:1000px"></div>
+	<div id='graph2' style="background-color: rgb(0, 43, 54); width: 1000px; height:1000px"></div> 	 
+	<!--  <button onclick="javascript:ClearAnimation();" class="button">Clear</button> -->
 </body>
-
-
 
 
 <script src="derivatives.js"></script>
@@ -94,6 +93,8 @@ function ClearAnimation() {clear = true;}
 
 Graphics.promise.then(function(){
 
+let N = 1000;
+
 let obj = new Graphics;
 
 let arr1 = [];
@@ -101,14 +102,26 @@ let arr2 = [];
 
 buffer = obj.update_array();
 
+function compute()
+	{
+		for (var i = 0; i < N; i++){
+			var t = (i-400)/100.;
+			arr1[i] = t;
+			arr2[i] = obj.update_array(t, 0)[0];
+		
+		}
+	}
+
+compute();
+
 var trace1 = {
-  x: [buffer[0]],
-  y: [buffer[1]],
-  name: 'IMAG',
+  x: arr1,
+  y: arr2,
+  name: 'REAL',
   mode: 'lines+markers',
   marker: {
     color: 'rgb(17, 157, 255)',
-    size: 20,
+    size: 7,
     line: {
       color: 'rgb(231, 99, 250)',
       width: 2
@@ -118,21 +131,12 @@ var trace1 = {
 
 var data = [trace1, {}];
 
-var annotations = [
-    {
-      text: 'Trace type:',
-      x: 0,
-      y: 1.085,
-      yref: 'paper',
-      align: 'left',
-      showarrow: false
-    }
-]
 
-var layout = {
+var layout1 = {
 	//	annotations: annotations,
 	
-	xaxis: {range: [-1000, 1000],
+	
+	xaxis: {range: [-4, 6], //for gamma
 	
 	tickfont: {
       family: 'Old Standard TT, serif',
@@ -142,9 +146,9 @@ var layout = {
 	
 	tickformat: ''
 	
-	
 	},
-	yaxis: {range: [-1000, 1000],
+	
+	yaxis: {range: [-30, 30], //for gamma
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
@@ -159,44 +163,99 @@ var layout = {
 	plot_bgcolor: 'rgba(0,0,0,0)'
 }
 
-Plotly.plot('graph', data, layout);
 
-function update() {
+Plotly.plot('graph', data, layout1);
+
+var annotations = [
+    {
+      text: 'Trace type:',
+      x: 0,
+      y: 1.085,
+      yref: 'paper',
+      align: 'left',
+      showarrow: false
+    }
+]
 
 
-if(clear){
-	arr1 = [];
-	arr2 = [];
-	clear = false;	
+var layout = {
+	//	annotations: annotations,
+	
+	xaxis: {range: [-2, 2],
+		
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	
+	
+	},
+	yaxis: {range: [-2, 2],
+	
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	
+	},
+	
+	paper_bgcolor: 'rgba(0,0,0,0)',
+	plot_bgcolor: 'rgba(0,0,0,0)'
 }
 
-buffer = obj.update_array();
+	var complex_array1 = [];
+	var complex_array2 = [];
 
-//arr1.push(buffer[0]);
-//arr2.push(buffer[1]);
+	function compute_conformal_map()
+	{	
+		complex_array1 = obj.conformal_map1(200);
+		complex_array2 = obj.conformal_map2(200);
+	}
 
-if(arr1.length < 400)arr1.push(buffer[0]);
-if(arr2.length < 400)arr2.push(buffer[1]);
+	
+	compute_conformal_map();
+	
+	var real1 = complex_array1.slice(0,  200*5);
+	var imag1 = complex_array1.slice(200*5,complex_array1.size);
+	
+	var real2 = complex_array2.slice(0,  200*5);
+	var imag2 = complex_array2.slice(200*5,complex_array2.size);
 
-  Plotly.animate('graph', {
-    data: [{x: arr1, y: arr2}]
-	//data: [{x: [buffer[0]], y: [buffer[1]]}]
-  }, {
-    transition: {
-      duration: 0,
-	  redraw: true
-    },
-    frame: {
-      duration: 0,
-	  redraw: true
-    }
-  })
+	var trace1 = {
+	x: real1,
+	y: imag1,
+	name: 'X',
+	mode: 'markers',
+	marker: {
+		color: 'rgb(17, 157, 255)',
+		size: 6,
+		line: {
+      color: 'rgb(231, 99, 250)',
+      width: 2}}
+	};
 
-  requestAnimationFrame(update)
- 
-};
+	var trace2 = {
+	x: real2,
+	y: imag2,
+	name: 'Y',
+	mode: 'markers',
+	marker: {
+		color: 'rgb(17, 157, 255)',
+		size: 6,
+		line: {
+		color: 'rgb(231, 99, 250)',
+		width: 2}}
+	};
 
-requestAnimationFrame(update)
+	var data = [trace1, trace2];
+	
+	Plotly.plot('graph2', data, layout);
 
 });
 
@@ -216,7 +275,7 @@ requestAnimationFrame(update)
 </div>
 
 <body>
-  <h1 id="pagetitle">Boring static text</h1>
+  <h1 id="pagetitle"><!-- Boring static text --></h1>
 </body>
   
 

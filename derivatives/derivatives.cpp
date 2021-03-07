@@ -17,6 +17,9 @@ std::stringstream ss;
 
 std::array<double, 4> va {double(pow(2,64))-1,2,3,4};
 
+std::array<double, 200*5*2> complex_array1;
+std::array<double, 200*5*2> complex_array2;
+
 
 [[cheerp::genericjs]] void outputNumberOfElementsToTheConsole()
 {
@@ -58,13 +61,20 @@ public:
 		
 	};
 	
-	inline auto update_array()
+	inline auto update_array(double r, double i)
     {					
+		
 		static client::Float64Array * vec = MakeTypedArray<TypedArrayForPointerType<double>::type>(&va, va.size() * sizeof(double));
 		
-		sh(y, x);
+		MX0 x;
 		
-		auto d = dv(log(sin(y)));
+		x.real = r;
+		x.imag = i;
+		
+		//sh(y, x);
+		
+		//auto d = dv(gamma(sin(y)));
+		auto d = gamma(x);
 		
 		va[0] = d.real;
 		va[1] = d.imag;
@@ -72,6 +82,95 @@ public:
 		return vec;
      
     }
+	
+	inline auto normalize(double val, double min, double max, int N) 
+	{
+		double delta = max - min;
+        return (val - min) / delta;
+	}
+	
+	
+	inline auto conformal_map1(int N)
+    {					
+		
+		static client::Float64Array * vec = 
+			MakeTypedArray<TypedArrayForPointerType<double>::type>(&complex_array1, complex_array1.size() * sizeof(double));
+		
+		MX0 mc;
+		MX1 derivative;
+		
+		int tel = 0;
+		int total_index = 0;
+		
+		for(double y = -1; y <= 1; y+=0.5)
+		{
+			for(int i = 0; i < N; i++)
+			{		
+				double t = (i-100)/100.;
+
+				mc.real = t;
+				mc.imag = y;
+
+				sh(derivative, mc);
+		
+				auto d = dv(log(derivative));
+				
+				//auto d = gamma(mc);
+				
+				auto index = i+ tel * N;
+				
+				complex_array1[index]       = d.real;
+				complex_array1[N*5 + index] = d.imag;
+			}
+			
+			tel++;
+		}
+
+		return vec;
+     
+    }
+	
+	
+	inline auto conformal_map2(int N)
+    {					
+		
+		static client::Float64Array * vec = 
+			MakeTypedArray<TypedArrayForPointerType<double>::type>(&complex_array2, complex_array2.size() * sizeof(double));
+		
+		MX0 mc;
+		MX1 derivative;
+		
+		int tel = 0;
+		int total_index = 0;
+		
+		for(double y = -1; y <= 1; y+=0.5)
+		{
+			for(int i = 0; i < N; i++)
+			{		
+				double t = (i-100)/100.;
+				
+				mc.real = y;
+				mc.imag = t;
+		
+				sh(derivative, mc);
+		
+				auto d = dv(log(derivative));
+				
+				//auto d = gamma(mc);
+				
+				auto index = i+ tel * N;
+				
+				complex_array2[index]       = d.real;
+				complex_array2[N*5 + index] = d.imag;
+			}
+			
+			tel++;
+		}
+
+		return vec;
+     
+    }
+	
 	
 	static void loadCallback()
 	{
@@ -131,12 +230,13 @@ public:
 		x.real = (i1/1000.0);
 		x.imag = (i2/1000.0);
 		
-		ss << "x = " << x << " = ";
+		ss << "gamma(z) = " << x << " = ";
 		
 		sh(y, x);
 		
-		d = dv(log(sin(y)));
-		ss << d;
+		//d = dv(gamma(sin(y)));
+		//ss << d;
+		ss << gamma(x);
 		
 		//Add the new elements to the <body>
 		titleElement->set_textContent( ss.str().c_str() );
@@ -145,21 +245,16 @@ public:
 		ss.str("");
 		
 		//body->appendChild( h1 );
-
 		//body->appendChild( slider1 );
-
-		//body->appendChild( slider2 );
 
 	}
 	
 	static void init()
 	{	
 		document.addEventListener("DOMContentLoaded",cheerp::Callback(loadCallback));
-	}
-		
+	}	
 	
 };
-
 
 
 class [[cheerp::jsexport]] [[cheerp::genericjs]] JsStruct
@@ -205,9 +300,7 @@ void webMain()
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
 	std::cout.precision(10);
 	
-	
-	
-	
+
 	std::cout << std::endl;
 
 	sx.random(-10,10);
@@ -229,11 +322,11 @@ void webMain()
 	
 	sh(y, x);
 	
-	auto d = dv(log(sin(y)));
+	auto d = dv(sin(sqrt(y)));
 	
 	auto end = std::chrono::steady_clock::now(); 
 	
-	std::cout << "d^5/dx^5(log(sin(x))), x = 0.4 - 0.5i = ";	
+	std::cout << "d^5/dx^5(sin(sqrt(x))), x = 0.4 - 0.5i = ";	
 	std::cout << d << std::endl << std::endl;
 	
 	std::cout << "duration : " << int(
