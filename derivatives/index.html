@@ -76,7 +76,18 @@ font-family: "Consolas MS";
 </head>
 
  <body>
-	 <div id='graph' style="background-color: rgb(0, 43, 54); width: 1000px; height:1000px"></div>
+	 <div id='graph1' style="background-color: rgb(0, 43, 54); width: 1000px; height:1000px"></div>
+	
+	<h1 id="pagetitle"><!-- Sliders --></h1>
+	
+	<div class="slidecontainer">
+	<span id="demo1"></span>
+	<input type="range" min="-1000" max="1000" value="400" step="1" class="slider" id="myRange1">
+	<br>
+	<span id="demo2"></span>
+	<input type="range" min="-1000" max="1000" value="-500" step="1" class="slider" id="myRange2">
+	</div>
+
 	<div id='graph2' style="background-color: rgb(0, 43, 54); width: 1000px; height:1000px"></div> 	 
 	<!--  <button onclick="javascript:ClearAnimation();" class="button">Clear</button> -->
 </body>
@@ -87,13 +98,10 @@ font-family: "Consolas MS";
 <script>
 
 let clear = false;
-
-
 function ClearAnimation() {clear = true;}
 
-Graphics.promise.then(function(){
 
-let N = 1000;
+Graphics.promise.then(function(){
 
 let obj = new Graphics;
 
@@ -101,6 +109,8 @@ let arr1 = [];
 let arr2 = [];
 
 buffer = obj.update_array();
+
+let N = 1000;
 
 function compute()
 	{
@@ -132,9 +142,30 @@ var trace1 = {
 var data = [trace1, {}];
 
 
+var annotations = [
+    {
+      text: 'Trace type:',
+      x: 0,
+      y: 1.085,
+      yref: 'paper',
+      align: 'left',
+      showarrow: false
+    }
+]
+
 var layout1 = {
 	//	annotations: annotations,
 	
+	title: {
+    text:'Gamma function',
+    font: {
+      family: 'Courier New, monospace',
+	  color: 'rgb(238, 232, 213)',
+      size: 24
+    },
+    xref: 'paper',
+    x: 0.05,
+  },
 	
 	xaxis: {range: [-4, 6], //for gamma
 	
@@ -164,24 +195,29 @@ var layout1 = {
 }
 
 
-Plotly.plot('graph', data, layout1);
 
-var annotations = [
-    {
-      text: 'Trace type:',
-      x: 0,
-      y: 1.085,
-      yref: 'paper',
-      align: 'left',
-      showarrow: false
-    }
-]
+Plotly.plot('graph1', data, layout1);
+
+});
 
 
-var layout = {
-	//	annotations: annotations,
-	
-	xaxis: {range: [-2, 2],
+Graphics.promise.then(function(){
+
+let obj = new Graphics;
+
+var layout2 = {
+
+	title: {
+    text:'d^1/dx^1(sqrt(z))',
+    font: {
+      family: 'Courier New, monospace',
+	  color: 'rgb(238, 232, 213)',
+      size: 24
+    },
+    xref: 'paper',
+    x: 0.05,
+  },
+	xaxis: {range: [-2.1, 2.1],
 		
 	tickfont: {
       family: 'Old Standard TT, serif',
@@ -193,7 +229,7 @@ var layout = {
 	
 	
 	},
-	yaxis: {range: [-2, 2],
+	yaxis: {range: [-2.1, 2.1],
 	
 	tickfont: {
       family: 'Old Standard TT, serif',
@@ -255,29 +291,15 @@ var layout = {
 
 	var data = [trace1, trace2];
 	
-	Plotly.plot('graph2', data, layout);
+	Plotly.plot('graph2', data, layout2);
 
 });
 
 
 </script>
 
- <div class="slidecontainer">
-	<body>
-	<span id="demo1"></span>
-	<input type="range" min="-1000" max="1000" value="400" step="1" class="slider" id="myRange1">
-	
-	<br>
-	
-	<span id="demo2"></span>
-	<input type="range" min="-1000" max="1000" value="-500" step="1" class="slider" id="myRange2">
- </body>
-</div>
+ 
 
-<body>
-  <h1 id="pagetitle"><!-- Boring static text --></h1>
-</body>
-  
 
 </html>
 

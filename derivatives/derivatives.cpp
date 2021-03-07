@@ -326,7 +326,7 @@ void webMain()
 	
 	auto end = std::chrono::steady_clock::now(); 
 	
-	std::cout << "d^5/dx^5(sin(sqrt(x))), x = 0.4 - 0.5i = ";	
+	std::cout << "d^5/dx^5(sin(sqrt(z))), x = 0.4 - 0.5i = ";	
 	std::cout << d << std::endl << std::endl;
 	
 	std::cout << "duration : " << int(
