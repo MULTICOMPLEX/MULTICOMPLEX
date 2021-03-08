@@ -114,12 +114,20 @@ public:
 		
 		auto func1 = [formula](const auto & z0)   { 
 			
-			MX0 r;
-			r.real = 0;
-			r.imag = 1;
-			MX2 z;
+			MX0 i;
+			i.real = 0;
+			i.imag = 1;
 			
-			sh(z, z0);
+			MX1 z1;
+			MX2 z2;
+			MX3 z3;
+			MX4 z4;
+			
+				 if(formula>11 && formula <22) sh(z1, z0);
+			else if(formula>21 && formula <32) sh(z2, z0);
+			else if(formula>31 && formula <42) sh(z3, z0);
+			else if(formula>41 && formula <52) sh(z4, z0);
+			else if(formula>51) sh(z2, z0);
 			
 			if(formula == 1) return z0;
 			
@@ -131,29 +139,65 @@ public:
 			else if(formula == 7) return sinh(z0);
 			else if(formula == 8) return cosh(z0);
 			else if(formula == 9) return tanh(z0);
-			else if(formula == 10) return LambertW(0,z0);
+			else if(formula == 10) return gamma(z0);
+			else if(formula == 11) return LambertW(0,z0);
 			
-			else if(formula == 11) return dv(gamma(log(z))) * r;
-			else if(formula == 12) return dv(gamma(sqrt(z))) * r;
-			else if(formula == 13) return dv(gamma(sin(z))) * r;
-			else if(formula == 14) return dv(gamma(cos(z))) * r;
-			else if(formula == 15) return dv(gamma(tan(z))) * r;
-			else if(formula == 16) return dv(gamma(sinh(z))) * r;
-			else if(formula == 17) return dv(gamma(cosh(z))) * r;
-			else if(formula == 18) return dv(gamma(tanh(z))) * r;
-			else if(formula == 19) return dv(gamma(LambertW(0,z))) * r;
+			else if(formula == 12) return dv(log(z1));
+			else if(formula == 13) return dv(sqrt(z1));
+			else if(formula == 14) return dv(sin(z1));
+			else if(formula == 15) return dv(cos(z1));
+			else if(formula == 16) return dv(tan(z1));
+			else if(formula == 17) return dv(sinh(z1));
+			else if(formula == 18) return dv(cosh(z1));
+			else if(formula == 19) return dv(tanh(z1));
+			else if(formula == 20) return dv(gamma(z1));
+			else if(formula == 21) return dv(LambertW(0,z1));
 			
-			else if(formula == 20) return dv(log(z));
-			else if(formula == 21) return dv(sqrt(z));
-			else if(formula == 22) return dv(sin(z));
-			else if(formula == 23) return dv(cos(z));
-			else if(formula == 24) return dv(tan(z));
-			else if(formula == 25) return dv(sinh(z));
-			else if(formula == 26) return dv(cosh(z));
-			else if(formula == 27) return dv(tanh(z));
-			else if(formula == 28) return dv(LambertW(0,z));
+			else if(formula == 22) return dv(log(z2));
+			else if(formula == 23) return dv(sqrt(z2));
+			else if(formula == 24) return dv(sin(z2));
+			else if(formula == 25) return dv(cos(z2));
+			else if(formula == 26) return dv(tan(z2));
+			else if(formula == 27) return dv(sinh(z2));
+			else if(formula == 28) return dv(cosh(z2));
+			else if(formula == 29) return dv(tanh(z2));
+			else if(formula == 30) return dv(gamma(z2));
+			else if(formula == 31) return dv(LambertW(0,z2));
 			
-			else return dv(gamma(log(z)));
+			else if(formula == 32) return dv(log(z3));
+			else if(formula == 33) return dv(sqrt(z3));
+			else if(formula == 34) return dv(sin(z3));
+			else if(formula == 35) return dv(cos(z3));
+			else if(formula == 36) return dv(tan(z3));
+			else if(formula == 37) return dv(sinh(z3));
+			else if(formula == 38) return dv(cosh(z3));
+			else if(formula == 39) return dv(tanh(z3));
+			else if(formula == 40) return dv(gamma(z3));
+			else if(formula == 41) return dv(LambertW(0,z3));
+			
+			else if(formula == 42) return dv(log(z4));
+			else if(formula == 43) return dv(sqrt(z4));
+			else if(formula == 44) return dv(sin(z4));
+			else if(formula == 45) return dv(cos(z4));
+			else if(formula == 46) return dv(tan(z4));
+			else if(formula == 47) return dv(sinh(z4));
+			else if(formula == 48) return dv(cosh(z4));
+			else if(formula == 49) return dv(tanh(z4));
+			else if(formula == 50) return dv(gamma(z4));
+			else if(formula == 51) return dv(LambertW(0,z4));
+			
+			else if(formula == 52) return dv(gamma(log(z2))) * i;
+			else if(formula == 53) return dv(gamma(sqrt(z2))) * i;
+			else if(formula == 54) return dv(gamma(sin(z2))) * i;
+			else if(formula == 55) return dv(gamma(cos(z2))) * i;
+			else if(formula == 56) return dv(gamma(tan(z2))) * i;
+			else if(formula == 57) return dv(gamma(sinh(z2))) * i;
+			else if(formula == 58) return dv(gamma(cosh(z2))) * i;
+			else if(formula == 59) return dv(gamma(tanh(z2))) * i;
+			else if(formula == 60) return dv(gamma(LambertW(0,z2))) * i;
+			
+			
+			else return dv(gamma(log(z2)));
 		};
 		
 			
