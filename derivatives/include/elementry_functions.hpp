@@ -13,12 +13,24 @@ multicomplex<elem,order> sqrt
  // if(x<0 && x > -lambda)return 0;
  // if(x>0 && x <  lambda)return 0;
   
-  multicomplex<elem,order> x_0{half,half};//initial guess
+  //multicomplex<elem,order> x_0{half,half};//initial guess
+  
+  multicomplex<elem,order> x_0;//initial guess 
+  
+  elem a = 1;
+  elem k = 1;
+  
+  //start in the right quadrant
+  if(x.signr()<0){k = -k;}
+  if(x.signi()<0){a = -a;}
+  
+  multicomplex<elem,0> ig{k,a};//initial guess
+  x_0 += ig; 
   
   unroll<14>([&](int iter){
     
   x_0 *= (x_0*x_0 + 3*x)/(3*x_0*x_0+x); //Halley 
- //   x_0 = half*(x_0 + (x/x_0)); //Newton 
+  //  x_0 = half*(x_0 + (x/x_0)); //Newton 
   });
     
   return x_0;

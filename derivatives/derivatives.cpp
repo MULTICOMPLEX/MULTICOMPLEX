@@ -90,14 +90,13 @@ public:
 	inline auto conformal_map(int formula)
     {					
 		int N = 200;
+		
+		
 		MX0 mc;
-		MX2 derivative;
+		
 		mcdv mcdv;
 		
-		MX0 r;
-		r.real = 0;
-		r.imag = 1;
-		
+	
 		int tel = 0;
 		int total_index = 0;
 		
@@ -113,17 +112,47 @@ public:
 			MakeTypedArray<TypedArrayForPointerType<double>::type>(&complex_array, complex_array.size() * sizeof(double));
 		
 		
-		auto func1 = [formula](const auto& z){ 
-		
-			if     (formula == 1) return dv(gamma(log(z)));
-			else if(formula == 2) return dv(gamma(sqrt(z)));
-			else if(formula == 3) return dv(gamma(sin(z)));
-			else if(formula == 4) return dv(gamma(cos(z)));
-			else if(formula == 5) return dv(gamma(tan(z)));
-			else if(formula == 6) return dv(gamma(sinh(z)));
-			else if(formula == 7) return dv(gamma(cosh(z)));
-			else if(formula == 8) return dv(gamma(tanh(z)));
-			else if(formula == 9) return dv(gamma(LambertW(0,z)));
+		auto func1 = [formula](const auto & z0)   { 
+			
+			MX0 r;
+			r.real = 0;
+			r.imag = 1;
+			MX2 z;
+			
+			sh(z, z0);
+			
+			if(formula == 1) return z0;
+			
+			else if(formula == 2) return log(z0);
+			else if(formula == 3) return sqrt(z0);
+			else if(formula == 4) return sin(z0);
+			else if(formula == 5) return cos(z0);
+			else if(formula == 6) return tan(z0);
+			else if(formula == 7) return sinh(z0);
+			else if(formula == 8) return cosh(z0);
+			else if(formula == 9) return tanh(z0);
+			else if(formula == 10) return LambertW(0,z0);
+			
+			else if(formula == 11) return dv(gamma(log(z))) * r;
+			else if(formula == 12) return dv(gamma(sqrt(z))) * r;
+			else if(formula == 13) return dv(gamma(sin(z))) * r;
+			else if(formula == 14) return dv(gamma(cos(z))) * r;
+			else if(formula == 15) return dv(gamma(tan(z))) * r;
+			else if(formula == 16) return dv(gamma(sinh(z))) * r;
+			else if(formula == 17) return dv(gamma(cosh(z))) * r;
+			else if(formula == 18) return dv(gamma(tanh(z))) * r;
+			else if(formula == 19) return dv(gamma(LambertW(0,z))) * r;
+			
+			else if(formula == 20) return dv(log(z));
+			else if(formula == 21) return dv(sqrt(z));
+			else if(formula == 22) return dv(sin(z));
+			else if(formula == 23) return dv(cos(z));
+			else if(formula == 24) return dv(tan(z));
+			else if(formula == 25) return dv(sinh(z));
+			else if(formula == 26) return dv(cosh(z));
+			else if(formula == 27) return dv(tanh(z));
+			else if(formula == 28) return dv(LambertW(0,z));
+			
 			else return dv(gamma(log(z)));
 		};
 		
@@ -138,20 +167,17 @@ public:
 				mc.real = t;
 				mc.imag = y;
 		
-				sh(derivative, mc);
+				
 				//mcdv.sh<0>(derivative, mc);
 		
 				MX0 d;
 				
-				d = func1(derivative) * r;
+				d = func1(mc);
 				
 				
 				//auto d = mcdv.dv<0>( gamma(log(derivative)) )  * r; 
 				
-				//d = mc;
-				
-				//auto d = gamma(mc);
-				
+			
 				auto index = i+ tel * N;
 				
 				complex_array[index]             = d.real;
@@ -161,17 +187,13 @@ public:
 				mc.real = y;
 				mc.imag = t;
 		
-				sh(derivative, mc);
+				
 				//mcdv.sh<0>(derivative, mc);
-		
-				
 				//d = mcdv.dv<0>( gamma(log(derivative)) )  * r; 
+							
 				
-								
-				d = func1(derivative) * r;
+				d = func1(mc);
 				
-				
-				//d = mc;
 				
 				complex_array[N*n_grid_lines + index]             = d.real;
 				complex_array[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.imag;

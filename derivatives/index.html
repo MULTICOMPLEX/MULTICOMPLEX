@@ -136,15 +136,37 @@ font-family: "Consolas MS";
 
 
 <select id="change_chart" class="dropbtn">
-    <option value="1" selected>(d^2/dz^2(gamma(log(z)))) i</option>
-    <option value="2">(d^2/dz^2(gamma(sqrt(z)))) i</option>
-    <option value="3">(d^2/dz^2(gamma(sin(z))))  i</option>
-	<option value="4">(d^2/dz^2(gamma(cos(z))))  i</option>
-	<option value="5">(d^2/dz^2(gamma(tan(z))))  i</option>
-	<option value="6">(d^2/dz^2(gamma(sinh(z)))) i</option>
-	<option value="7">(d^2/dz^2(gamma(cosh(z)))) i</option>
-	<option value="8">(d^2/dz^2(gamma(tanh(z)))) i</option>
-	<option value="9">(d^2/dz^2(gamma(LambertW(0,z))))  i</option>
+    
+	<option value="1" selected>z</option>
+	<option value="2">log(z)</option>
+    <option value="3">sqrt(z)</option>
+    <option value="4">sin(z)</option>
+	<option value="5">cos(z)</option>
+	<option value="6">tan(z)</option>
+	<option value="7">sinh(z)</option>
+	<option value="8">cosh(z)</option>
+	<option value="9">tanh(z)</option>
+	<option value="10">LambertW(0,z)</option>
+	
+	<option value="11">(d^2/dz^2(gamma(log(z)))) i</option>
+    <option value="12">(d^2/dz^2(gamma(sqrt(z)))) i</option>
+    <option value="13">(d^2/dz^2(gamma(sin(z))))  i</option>
+	<option value="14">(d^2/dz^2(gamma(cos(z))))  i</option>
+	<option value="15">(d^2/dz^2(gamma(tan(z))))  i</option>
+	<option value="16">(d^2/dz^2(gamma(sinh(z)))) i</option>
+	<option value="17">(d^2/dz^2(gamma(cosh(z)))) i</option>
+	<option value="18">(d^2/dz^2(gamma(tanh(z)))) i</option>
+	<option value="19">(d^2/dz^2(gamma(LambertW(0,z)))) i</option>
+	
+	<option value="20">d^2/dz^2(log(z))</option>
+    <option value="21">d^2/dz^2(sqrt(z))</option>
+    <option value="22">d^2/dz^2(sin(z))</option>
+	<option value="23">d^2/dz^2(cos(z))</option>
+	<option value="24">d^2/dz^2(tan(z))</option>
+	<option value="25">d^2/dz^2(sinh(z))</option>
+	<option value="26">d^2/dz^2(cosh(z))</option>
+	<option value="27">d^2/dz^2(tanh(z))</option>
+	<option value="28">d^2/dz^2(LambertW(0,z))</option>
 	
 	
 </select>
@@ -365,26 +387,10 @@ var menu = document.getElementById("change_chart");
 menu.addEventListener("change", generateData);
 
 function generateData(event) {
-  if 		(menu.value == '1') {
-    formula = 1;
-  } else if (menu.value == '2') {
-    formula = 2;
-  } else if (menu.value == '3') {
-    formula = 3;
-  } else if (menu.value == '4') {
-    formula = 4;
-  } else if (menu.value == '5') {
-    formula = 5;
-  } else if (menu.value == '6') {
-    formula = 6;
-  } else if (menu.value == '7') {
-	formula = 7;
-  } else if (menu.value == '8') {
-    formula = 8;
-  } else if (menu.value == '9') {
-    formula = 9;
-  }
+
+ formula = parseInt(menu.value);
  plot_conformal_map(formula);
+ 
 };
 
 
