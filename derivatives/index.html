@@ -289,7 +289,10 @@ var layout2 = {
     x: 0.05,
   },
 	xaxis: {range: [-2.1, 2.1],
-		
+	
+	showtickprefix: 'last',
+    tickprefix: 'REAL ',
+	
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
@@ -301,7 +304,8 @@ var layout2 = {
 	
 	},
 	yaxis: {range: [-2.1, 2.1],
-	
+	showtickprefix: 'last',
+    tickprefix: 'IMAG ',
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
@@ -337,7 +341,7 @@ var layout2 = {
 	var trace1 = {
 	x: real,
 	y: imag,
-	name: 'X',
+	name: '',
 	mode: 'markers',
 	marker: {
 		color: 'rgb(17, 157, 255)',
