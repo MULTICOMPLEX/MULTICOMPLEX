@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 	//diverse tests :
 	//rankOfMatrix_driver();
 	
-	fast_hadamard_transform_driver<MX0>();
+	//fast_hadamard_transform_driver<MX0>();
 
 	std::cout << std::endl;
 	
@@ -42,6 +42,8 @@ int main(int argc, char** argv)
 		MX0 x(2, .5);
 		x -= 3;
 		std::cout << x << std::endl << std::endl;
+		std::cout << 1/x << std::endl << std::endl;
+
 	}
 
 	{

@@ -4,7 +4,42 @@
     <meta charset="utf-8">
     <title>Cheerp test</title>
     <script src="cheerpWorkerHost.js"></script>
-  </head>
-  <body>
-  </body>
+	
+
+ <style> 
+    body {background-color: rgb(0, 43, 54);
+	color: rgb(238, 232, 213);}
+	
+	h1 {
+font-family: "Consolas MS";
+font-size: 26px;
+}
+	
+</style>
+
+  <font size="5px">
+ <div id="mylog"></div>
+   <script>
+
+	let myConsoleLog = console.log;
+	console.log = (...args) => {
+    args.map(arg => document.querySelector("#mylog").innerHTML += arg + '<br>')
+	
+ }
+  //console.log = myConsoleLog;
+</script>
+ </font>
+ 
+ <body>
+ <h1 id="pagetitle"><!-- Sliders --></h1>
+ </body>
+ 
+  <script>
+//	Graphics.promise.then(function(){
+//	let obj = new Graphics;
+	
+//	});
+</script>
+
+
 </html>
