@@ -912,10 +912,11 @@ multicomplex<elem,order> function
 			MX3 z3;
 			MX4 z4;
 			
-				 if(formula>18 && formula <31) sh(z1, z0);
-			else if(formula>30 && formula <43) sh(z2, z0);
-			else if(formula>42 && formula <54) sh(z3, z0);
-			else if(formula>64 && formula <75) sh(z4, z0);
+				 if(formula>=19 && formula <=30) sh(z1, z0);
+			else if(formula>=31 && formula <=42) sh(z2, z0);
+			else if(formula>=43 && formula <=53) sh(z3, z0);
+			else if(formula>=54 && formula <=64) sh(z4, z0);
+			else if(formula>=65 && formula <=74) sh(z4, z0);
 			else if(formula>74) sh(z2, z0);
 			
 			
