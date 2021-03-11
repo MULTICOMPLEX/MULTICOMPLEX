@@ -39,9 +39,9 @@ int main(int argc, char** argv)
 	std::cout.precision(12);
 
 	{
-		MX0 x(2, .5);
-		x -= 3;
-		std::cout << x << std::endl << std::endl;
+		MX0 x;
+		x = -0.5;
+		std::cout << "atan(x) = " << atan(x) << std::endl << std::endl;
 		std::cout << 1/x << std::endl << std::endl;
 
 	}

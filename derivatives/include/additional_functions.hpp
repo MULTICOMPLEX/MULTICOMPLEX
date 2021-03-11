@@ -3,23 +3,7 @@
 template <typename elem, int order>
 class multicomplex;
 
-// arctangent
-template <typename elem, int order>
-multicomplex<elem, order> atan
-(
-	const multicomplex<elem, order>& z)
-{
-	multicomplex<elem, order> c;
-
-	for (int k = 0; k < 32; k++)
-		c = c + pow(-1, k) * pow(z, -1 - 2 * k) / (1 + 2 * k);
-
-	if (gr(z) >= 1) return ((pi * sqrt(z * z)) / (2 * z)) - c;
-	return c;
-}
-
 // Gamma function, Spouge's approximation
-
 
 const int A = 35;
 

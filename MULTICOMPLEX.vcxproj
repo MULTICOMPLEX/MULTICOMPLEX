@@ -159,6 +159,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fast_hadamard_transform_test.hpp" />
+    <ClInclude Include="include\elementry_functions.hpp" />
     <ClInclude Include="include\matrix.hpp" />
     <ClInclude Include="include\MULTICOMPLEX.hpp" />
     <ClInclude Include="include\mxws.hpp" />

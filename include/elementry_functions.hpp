@@ -1,4 +1,4 @@
-/// primary functions
+﻿/// primary functions
 /*
 template <typename elem, int order>
 class multicomplex;
@@ -849,4 +849,44 @@ T erf
     s += T(std::pow(-1,n)) * pow(z,2*n+1) / (factorial<T> (n) * (2*n+1));
   
   return (2./std::sqrt(pi)) * s;
+}
+
+
+template <typename T>
+T asin
+(
+  T const& z
+)
+{
+  MX0 i;
+  i.real = 0;
+  i.imag = 1;
+
+  return -i * log(sqrt(1 - z * z) + i * z);	//-i log(sqrt(1 - z^2) + i z)	
+}
+
+
+template <typename T>
+T acos
+(
+  T const& z
+)
+{
+  MX0 i;
+  i.real = 0;
+  i.imag = 1;
+
+  return half_pi + i * log(sqrt(1 - z * z) + i * z);//π/2 + i log(sqrt(1 - z^2) + i z)		
+}
+
+template <typename elem, int order>
+multicomplex<elem, order> atan
+(
+  const multicomplex<elem, order>& z
+)
+{
+  MX0 i;
+  i.real = 0;
+  i.imag = 1;
+  return half * i * log(1 - i * z) - half * i * log(1 + i * z);//1/2 i log(1 - i z) - 1/2 i log(1 + i z)		
 }

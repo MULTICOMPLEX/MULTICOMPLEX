@@ -56,5 +56,8 @@
     <ClInclude Include="fast_hadamard_transform_test.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\elementry_functions.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

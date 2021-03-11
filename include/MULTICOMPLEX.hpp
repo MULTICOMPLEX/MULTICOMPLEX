@@ -566,13 +566,13 @@ public:
 	}
 
 	template <typename T>
-	multicomplex operator+ (T const& o) const 
-	{
+	multicomplex operator+ (T const& o) const
+	{			
 		return
 		{
 			real + o,
-			imag 
-		};
+			imag
+		};		
 	}
 
 	// prefix increment operator overloading 
@@ -591,15 +591,6 @@ public:
 		return *this;
 	}
 
-	multicomplex operator+ (elem const& o)
-	{
-		return
-		{
-			real + o,
-			imag + o
-		};
-	}
-
 	multicomplex operator+= (elem const& o) 
 	{
 		return
@@ -610,7 +601,7 @@ public:
 	}
 
 	// subtraction
-			template <int o_order>
+		template <int o_order>
 		typename std::enable_if <(0 < o_order), multicomplex<elem, o_order>>::type
 			operator- (multicomplex<elem, o_order> const& o) const 
 		{

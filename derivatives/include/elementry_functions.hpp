@@ -827,3 +827,185 @@ T erf
   
   return (2./std::sqrt(pi)) * s;
 }
+
+
+template <typename elem, int order> 
+multicomplex<elem,order> asin 
+(
+	const multicomplex<elem,order> & z 
+) 
+{
+	MX0 i;
+	i.real = 0;
+	i.imag = 1;
+		
+	return -i * log(sqrt(1 - z*z) + i * z);	//-i log(sqrt(1 - z^2) + i z)	
+}
+
+template <typename elem, int order> 
+multicomplex<elem,order> acos 
+(
+	const multicomplex<elem,order> & z 
+) 
+{
+	MX0 i;
+	i.real = 0;
+	i.imag = 1;
+		
+	return half_pi + i * log(sqrt(1 - z*z) + i * z);//π/2 + i log(sqrt(1 - z^2) + i z)		
+}
+
+template <typename elem, int order> 
+multicomplex<elem,order> atan
+(
+  const multicomplex<elem,order>& z
+) 
+{
+	MX0 i;
+	i.real = 0;
+	i.imag = 1;
+	return half * i * log(1 - i * z) - half * i * log(1 + i * z);//1/2 i log(1 - i z) - 1/2 i log(1 + i z)		
+}
+
+
+template <typename elem, int order> 
+multicomplex<elem,order> asinh 
+(
+	const multicomplex<elem,order> & z 
+) 
+{		
+	return log(sqrt(z*z + 1) + z);	//log(sqrt(z^2 + 1) + z)
+}
+
+template <typename elem, int order> 
+multicomplex<elem,order> acosh 
+(
+	const multicomplex<elem,order> & z 
+) 
+{		
+	return log(z + sqrt(z - 1) * sqrt(z + 1));//log(z + sqrt(z - 1) sqrt(z + 1))
+}
+
+template <typename elem, int order> 
+multicomplex<elem,order> atanh
+(
+  const multicomplex<elem,order>& z
+) 
+{
+	return half * log(z + 1) - half * log(1 - z);//1/2 log(z + 1) - 1/2 log(1 - z)		
+}
+
+template <typename elem, int order> 
+multicomplex<elem,order> function
+(
+  const multicomplex<elem,order>& z0,
+  const int formula
+) 
+{ 
+			
+			MX0 i;
+			i.real = 0;
+			i.imag = 1;
+			
+			MX1 z1;
+			MX2 z2;
+			MX3 z3;
+			MX4 z4;
+			
+				 if(formula>18 && formula <31) sh(z1, z0);
+			else if(formula>30 && formula <43) sh(z2, z0);
+			else if(formula>42 && formula <54) sh(z3, z0);
+			else if(formula>64 && formula <75) sh(z4, z0);
+			else if(formula>74) sh(z2, z0);
+			
+			
+			if(formula == 1) return z0;
+			
+			else if(formula == 2) return log(z0);
+			else if(formula == 3) return sqrt(z0);
+			else if(formula == 4) return sin(z0);
+			else if(formula == 5) return cos(z0);
+			else if(formula == 6) return tan(z0);
+			else if(formula == 7) return sinh(z0);
+			else if(formula == 8) return cosh(z0);
+			else if(formula == 9) return tanh(z0);
+			else if(formula == 10) return asin(z0);
+			else if(formula == 11) return acos(z0);
+			else if(formula == 12) return atan(z0);
+			else if(formula == 13) return asinh(z0);
+			else if(formula == 14) return acosh(z0);
+			else if(formula == 15) return atanh(z0);
+			else if(formula == 16) return exp(z0);
+			else if(formula == 17) return gamma(z0);
+			else if(formula == 18) return LambertW(0,z0);
+			
+			else if(formula == 19) return dv((z1));
+			else if(formula == 20) return dv(log(z1));
+			else if(formula == 21) return dv(sqrt(z1));
+			else if(formula == 22) return dv(sin(z1));
+			else if(formula == 23) return dv(cos(z1));
+			else if(formula == 24) return dv(tan(z1));
+			else if(formula == 25) return dv(sinh(z1));
+			else if(formula == 26) return dv(cosh(z1));
+			else if(formula == 27) return dv(tanh(z1));
+			else if(formula == 28) return dv(exp(z1));
+			else if(formula == 29) return dv(gamma(z1));
+			else if(formula == 30) return dv(LambertW(0,z1));
+			
+			else if(formula == 31) return dv((z2));
+			else if(formula == 32) return dv(log(z2));
+			else if(formula == 33) return dv(sqrt(z2));
+			else if(formula == 34) return dv(sin(z2));
+			else if(formula == 35) return dv(cos(z2));
+			else if(formula == 36) return dv(tan(z2));
+			else if(formula == 37) return dv(sinh(z2));
+			else if(formula == 38) return dv(cosh(z2));
+			else if(formula == 39) return dv(tanh(z2));
+			else if(formula == 40) return dv(exp(z2));
+			else if(formula == 41) return dv(gamma(z2));
+			else if(formula == 42) return dv(LambertW(0,z2));
+			
+			else if(formula == 43) return dv(log(z3));
+			else if(formula == 44) return dv(sqrt(z3));
+			else if(formula == 45) return dv(sin(z3));
+			else if(formula == 46) return dv(cos(z3));
+			else if(formula == 47) return dv(tan(z3));
+			else if(formula == 48) return dv(sinh(z3));
+			else if(formula == 49) return dv(cosh(z3));
+			else if(formula == 50) return dv(tanh(z3));
+			else if(formula == 51) return dv(exp(z3));
+			else if(formula == 52) return dv(gamma(z3));
+			else if(formula == 53) return dv(LambertW(0,z3));
+			
+			else if(formula == 54) return dv(log(z4));
+			else if(formula == 55) return dv(sqrt(z4));
+			else if(formula == 56) return dv(sin(z4));
+			else if(formula == 57) return dv(cos(z4));
+			else if(formula == 58) return dv(tan(z4));
+			else if(formula == 59) return dv(sinh(z4));
+			else if(formula == 60) return dv(cosh(z4));
+			else if(formula == 61) return dv(tanh(z4));
+			else if(formula == 62) return dv(exp(z4));
+			else if(formula == 63) return dv(gamma(z4));
+			else if(formula == 64) return dv(LambertW(0,z4));
+			
+			else if(formula == 65) return dv(gamma(log(z2))) * i;
+			else if(formula == 66) return dv(gamma(sqrt(z2))) * i;
+			else if(formula == 67) return dv(gamma(sin(z2))) * i;
+			else if(formula == 68) return dv(gamma(cos(z2))) * i;
+			else if(formula == 69) return dv(gamma(tan(z2))) * i;
+			else if(formula == 70) return dv(gamma(sinh(z2))) * i;
+			else if(formula == 71) return dv(gamma(cosh(z2))) * i;
+			else if(formula == 72) return dv(gamma(tanh(z2))) * i;
+			else if(formula == 73) return dv(gamma(exp(z2))) * i;
+			else if(formula == 74) return dv(gamma(LambertW(0,z2))) * i;
+			
+			
+			else return dv(gamma(log(z2)));
+		};
+
+
+
+
+
+
