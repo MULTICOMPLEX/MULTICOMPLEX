@@ -135,7 +135,7 @@ font-family: "Consolas MS";
 <script src="derivatives.js"></script>
 
 
-<select id="change_chart" class="dropbtn">
+<select id="change_formula" class="dropbtn">
     
 	<option value="1" selected>z</option>
 	<option value="2">log(z)</option>
@@ -217,7 +217,7 @@ font-family: "Consolas MS";
 	<option value="71">(d^2/dz^2(gamma(cosh(z))))i</option>
 	<option value="72">(d^2/dz^2(gamma(tanh(z))))i</option>
 	<option value="73">(d^2/dz^2(gamma(exp(z))))i</option>
-	<option value="74">(d^2/dz^2(gamma(LambertW(0,z))))i</option>	
+	<option value="74">(d^2/dz^2(gamma(LambertW(0,z))))i</option>
 	
 </select>
 
@@ -338,17 +338,14 @@ Plotly.plot('graph1', data, layout1);
 
 });
 
-
 function plot_conformal_map(formula)
 {
 
 Graphics.promise.then(function() {
 
-let obj = new Graphics;
+var obj = new Graphics;
 
-
-
-var layout2 = {
+var layout = {
 
 	title: {
     //text:'(d^2/dz^2(gamma(log(z)))) i',
@@ -425,15 +422,13 @@ var layout2 = {
 
 	var data = [trace1,{}];
 	
-	Plotly.newPlot('graph2', data, layout2);
+	Plotly.newPlot('graph2', data, layout);
 
 })}
 
 plot_conformal_map(1);
 
-var formula;
-
-var menu = document.getElementById("change_chart");
+var menu = document.getElementById("change_formula");
 menu.addEventListener("change", generateData);
 
 function generateData(event) {
@@ -446,7 +441,290 @@ function generateData(event) {
 
 </script>
 
+<script>
+	
+				// Create anchor element. 
+                var a1 = document.createElement('a');
+				var a2 = document.createElement('a');  				
+                
+                // Create the text node for anchor element. 
+                var link1 = document.createTextNode("Multicomplex_number"); 
+				var link2 = document.createTextNode("Numerical differentiation"); 
 
+                // Append the text node to anchor element. 
+				a1.appendChild(link1);
+				a1.style.fontSize = "25px"; 
+				a1.style.color = "rgb(238, 232, 213)";
+				
+				a2.appendChild(link2);
+				a2.style.fontSize = "25px"; 
+				a2.style.color = "rgb(238, 232, 213)";
+				
+                a1.href = 'https://en.wikipedia.org/wiki/Bicomplex_number'; 
+				document.body.appendChild(a1); 
+				
+				
+		
+	</script>
+	<br>
+	<script>
+		a2.href = 'https://en.wikipedia.org/wiki/Numerical_differentiation';				 
+		document.body.appendChild(a2);				
+	</script>
+	
+<br><br>
+
+<select id="change_formula2" class="dropbtn">
+    
+	<option value="1" selected>z</option>
+	<option value="2">log(z)</option>
+    <option value="3">sqrt(z)</option>
+    <option value="4">sin(z)</option>
+	<option value="5">cos(z)</option>
+	<option value="6">tan(z)</option>
+	<option value="7">sinh(z)</option>
+	<option value="8">cosh(z)</option>
+	<option value="9">tanh(z)</option>
+	
+	<option value="10">asin(z)</option>
+	<option value="11">acos(z)</option>
+	<option value="12">atan(z)</option>
+	<option value="13">asinh(z)</option>
+	<option value="14">acosh(z)</option>
+	<option value="15">atanh(z)</option>
+	
+	<option value="16">exp(z)</option>
+	<option value="17">gamma(z)</option>
+	<option value="18">LambertW(0,z)</option>
+	
+	<option value="19">d^1/dz^1(z)</option>
+	<option value="20">d^1/dz^1(log(z))</option>
+    <option value="21">d^1/dz^1(sqrt(z))</option>
+    <option value="22">d^1/dz^1(sin(z))</option>
+	<option value="23">d^1/dz^1(cos(z))</option>
+	<option value="24">d^1/dz^1(tan(z))</option>
+	<option value="25">d^1/dz^1(sinh(z))</option>
+	<option value="26">d^1/dz^1(cosh(z))</option>
+	<option value="27">d^1/dz^1(tanh(z))</option>
+	<option value="28">d^1/dz^1(exp(z))</option>
+	<option value="29">d^1/dz^1(gamma(z))</option>
+	<option value="30">d^1/dz^1(LambertW(0,z))</option>
+	
+	<option value="31">d^2/dz^2(z)</option>
+	<option value="32">d^2/dz^2(log(z))</option>
+    <option value="33">d^2/dz^2(sqrt(z))</option>
+    <option value="34">d^2/dz^2(sin(z))</option>
+	<option value="35">d^2/dz^2(cos(z))</option>
+	<option value="36">d^2/dz^2(tan(z))</option>
+	<option value="37">d^2/dz^2(sinh(z))</option>
+	<option value="38">d^2/dz^2(cosh(z))</option>
+	<option value="39">d^2/dz^2(tanh(z))</option>
+	<option value="40">d^2/dz^2(exp(z))</option>
+	<option value="41">d^2/dz^2(gamma(z))</option>
+	<option value="42">d^2/dz^2(LambertW(0,z))</option>
+	
+	<option value="43">d^3/dz^3(log(z))</option>
+    <option value="44">d^3/dz^3(sqrt(z))</option>
+    <option value="45">d^3/dz^3(sin(z))</option>
+	<option value="46">d^3/dz^3(cos(z))</option>
+	<option value="47">d^3/dz^3(tan(z))</option>
+	<option value="48">d^3/dz^3(sinh(z))</option>
+	<option value="49">d^3/dz^3(cosh(z))</option>
+	<option value="50">d^3/dz^3(tanh(z))</option>
+	<option value="51">d^3/dz^3(exp(z))</option>
+	<option value="52">d^3/dz^3(gamma(z))</option>
+	<option value="53">d^3/dz^3(LambertW(0,z))</option>
+	
+	<option value="54">d^4/dz^4(log(z))</option>
+    <option value="55">d^4/dz^4(sqrt(z))</option>
+    <option value="56">d^4/dz^4(sin(z))</option>
+	<option value="57">d^4/dz^4(cos(z))</option>
+	<option value="58">d^4/dz^4(tan(z))</option>
+	<option value="59">d^4/dz^4(sinh(z))</option>
+	<option value="60">d^4/dz^4(cosh(z))</option>
+	<option value="61">d^4/dz^4(tanh(z))</option>
+	<option value="62">d^4/dz^4(exp(z))</option>
+	<option value="63">d^4/dz^4(gamma(z))</option>
+	<option value="64">d^4/dz^4(LambertW(0,z))</option>
+	
+	<option value="65">(d^2/dz^2(gamma(log(z))))i</option>
+    <option value="66">(d^2/dz^2(gamma(sqrt(z))))i</option>
+    <option value="67">(d^2/dz^2(gamma(sin(z))))i</option>
+	<option value="68">(d^2/dz^2(gamma(cos(z))))i</option>
+	<option value="69">(d^2/dz^2(gamma(tan(z))))i</option>
+	<option value="70">(d^2/dz^2(gamma(sinh(z))))i</option>
+	<option value="71">(d^2/dz^2(gamma(cosh(z))))i</option>
+	<option value="72">(d^2/dz^2(gamma(tanh(z))))i</option>
+	<option value="73">(d^2/dz^2(gamma(exp(z))))i</option>
+	<option value="74">(d^2/dz^2(gamma(LambertW(0,z))))i</option>
+	
+</select>
+
+	
+<div id='graph3' style="background-color: rgb(0, 43, 54); width: 1600px; height:800px"></div>
+
+<script>
+
+function plot_conformal_map2(formula)
+{
+
+Graphics.promise.then(function() {
+
+var obj = new Graphics;
+
+var layout = {
+	grid: {rows: 1, columns: 2, pattern: 'independent'},
+	
+	title: {
+    //text:'(d^2/dz^2(gamma(log(z)))) i',
+    font: {
+      family: 'Courier New, monospace',
+	  color: 'rgb(238, 232, 213)',
+      size: 24
+    },
+    xref: 'paper',
+    x: 0.05,
+  },
+	
+	xaxis: {range: [-2.1, 2.1],
+	
+	
+	showtickprefix: 'last',
+    tickprefix: 'REAL ',
+	
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	},
+	
+	
+	xaxis2: {range: [-2.1, 2.1],
+	
+	
+	showtickprefix: 'last',
+    tickprefix: 'REAL ',
+	
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	},
+	
+	
+	yaxis: {range: [-2.1, 2.1],
+	
+	
+	showtickprefix: 'last',
+    tickprefix: 'IMAG ',
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	
+	},
+	
+	
+	yaxis2: {range: [-2.1, 2.1],
+	
+	
+	showtickprefix: 'last',
+    tickprefix: 'IMAG ',
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	
+	},
+	
+	
+	paper_bgcolor: 'rgba(0,0,0,0)',
+	plot_bgcolor: 'rgba(0,0,0,0)'
+}
+
+	var complex_array1 = [];
+	var complex_array2 = [];
+	
+	let N = 200;
+	
+	function compute_conformal_map()
+	{	
+		complex_array1 = obj.conformal_map2(formula, 0);
+		complex_array2 = obj.conformal_map2(formula, 1);				
+	}
+
+	compute_conformal_map();
+	
+
+	var real1 = complex_array1.slice(0,  N*9*2);
+	var imag1 = complex_array1.slice(N*9*2,complex_array1.size);
+	
+	var real2 = complex_array2.slice(0,  N*9*2);
+	var imag2 = complex_array2.slice(N*9*2,complex_array2.size);
+
+	var trace1 = {
+	x: real1,
+	y: imag1,
+	type: 'scatter',
+	name: '',
+	mode: 'markers',
+	marker: {
+		color: 'rgb(17, 157, 255)',
+		size: 6,
+		line: {
+      color: 'rgb(231, 99, 250)',
+      width: 2}}
+	};
+
+	var trace2 = {
+	x: real2,
+	y: imag2,
+	xaxis: 'x2',
+	yaxis: 'y2',
+	type: 'scatter',
+	name: '',
+	mode: 'markers',
+	marker: {
+		color: 'rgb(17, 157, 255)',
+		size: 6,
+		line: {
+      color: 'rgb(231, 99, 250)',
+      width: 2}}
+	};
+	
+	var data = [trace1,trace2];
+	
+	Plotly.newPlot('graph3', data, layout);
+
+})}
+
+plot_conformal_map2(1);
+
+
+
+function generateData(event) {
+
+ formula = parseInt(menu2.value);
+ plot_conformal_map2(formula);
+ 
+};
+
+var menu2 = document.getElementById("change_formula2");
+menu2.addEventListener("change", generateData);
+
+</script>
 
 </html>
 

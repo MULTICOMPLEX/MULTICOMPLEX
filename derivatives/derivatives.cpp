@@ -87,16 +87,12 @@ public:
 	}
 	
 		
-	inline auto conformal_map(int formula)
+	auto conformal_map(int formula)
     {					
-		int N = 200;
-		
+		int N = 200;	
 		
 		MX0 mc;
-		
-		mcdv mcdv;
-		
-	
+
 		int tel = 0;
 		int total_index = 0;
 		
@@ -121,16 +117,10 @@ public:
 				mc.real = t;
 				mc.imag = y;
 		
-				
-				//mcdv.sh<0>(derivative, mc);
 		
 				MX0 d;
 				
 				d = function(mc, formula);
-				
-				
-				//auto d = mcdv.dv<0>( gamma(log(derivative)) )  * r; 
-				
 			
 				auto index = i+ tel * N;
 				
@@ -138,13 +128,10 @@ public:
 				complex_array[N*n_grid_lines + N*n_grid_lines + index] = d.imag;
 				
 				/////
+				
 				mc.real = y;
 				mc.imag = t;
 		
-				
-				//mcdv.sh<0>(derivative, mc);
-				//d = mcdv.dv<0>( gamma(log(derivative)) )  * r; 
-							
 				
 				d = function(mc, formula);
 				
@@ -158,6 +145,91 @@ public:
 		}
 
 		return vec;
+     
+    }
+	
+	auto conformal_map2(int formula, int mc_index)
+    {					
+		int N = 200;
+		
+		MX1 mc;
+		
+		int tel = 0;
+		int total_index = 0;
+		
+		constexpr double grid_spacing = 0.25;
+		
+		constexpr double max = 1.0;
+		
+		constexpr int n_grid_lines = (2*max)/grid_spacing + 1;
+		
+		std::array<double, int(2*max*100)*n_grid_lines*4> complex_array1;
+		std::array<double, int(2*max*100)*n_grid_lines*4> complex_array2;
+		
+		static client::Float64Array * vec1 = 
+			MakeTypedArray<TypedArrayForPointerType<double>::type>(&complex_array1, complex_array1.size() * sizeof(double));
+			
+		static client::Float64Array * vec2 = 
+			MakeTypedArray<TypedArrayForPointerType<double>::type>(&complex_array2, complex_array2.size() * sizeof(double));
+		
+	
+		for(double y = -max; y <= max; y+=grid_spacing)
+		{
+			for(int i = 0; i < N; i++)
+			{		
+				double t = (i-(max*100))/100.;
+				
+				mc.real.real = t;
+				mc.real.imag = y;
+				
+				mc.imag.real = t;
+				mc.imag.imag = y;
+		
+				MX1 d;
+				
+				d = function(mc, formula);
+				
+			
+				auto index = i+ tel * N;
+				
+				if(mc_index==0){
+				complex_array1[index]             = d.real.real;
+				complex_array1[N*n_grid_lines + N*n_grid_lines + index] = d.real.imag;
+				}
+				
+				if(mc_index==1){
+				complex_array2[index]             = d.imag.real;
+				complex_array2[N*n_grid_lines + N*n_grid_lines + index] = d.imag.imag;
+				}
+				
+				/////
+				mc.real.real = y;
+				mc.real.imag = t;
+				
+				mc.imag.real = y;
+				mc.imag.imag = t;
+							
+				
+				d = function(mc, formula);
+				
+				if(mc_index==0){
+				complex_array1[N*n_grid_lines + index]             = d.real.real;
+				complex_array1[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.real.imag;
+				}
+				
+				if(mc_index==1){
+				complex_array2[N*n_grid_lines + index]             = d.imag.real;
+				complex_array2[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.imag.imag;
+				}
+				
+			}
+			
+			tel++;
+		}
+
+		if(mc_index==0)
+			return vec1;
+		else return vec2;
      
     }
 	

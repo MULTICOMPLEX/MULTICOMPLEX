@@ -1,9 +1,9 @@
-cd /mnt/c/MULTICOMPLEX/MULTICOMPLEX/workers
+cd /mnt/c/MULTICOMPLEX/MULTICOMPLEX/web_workers
 
-/opt/cheerp/bin/clang++ -target cheerp-wasm -DNDEBUG cheerpWorkerHost.cpp -o cheerpWorkerHost.js -O3 -std=c++17 -cheerp-use-bigints -fexceptions -pedantic 
+/opt/cheerp/bin/clang++ -target cheerp -DNDEBUG cheerpWorkerHost.cpp -o cheerpWorkerHost.js -O3 -std=c++17 -cheerp-use-bigints -fexceptions -pedantic 
 -I./include
 
-/opt/cheerp/bin/clang++ -target cheerp-wasm -DNDEBUG cheerpWorker.cpp -o cheerpWorker.js -O3 -std=c++17 -cheerp-use-bigints -fexceptions -pedantic 
+/opt/cheerp/bin/clang++ -target cheerp -DNDEBUG cheerpWorker.cpp -o cheerpWorker.js -O3 -std=c++17 -cheerp-use-bigints -fexceptions -pedantic 
 -I./include
 
 needed to build cheerp :

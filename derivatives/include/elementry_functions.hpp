@@ -895,6 +895,7 @@ multicomplex<elem,order> atanh
 	return half * log(z + 1) - half * log(1 - z);//1/2 log(z + 1) - 1/2 log(1 - z)		
 }
 
+
 template <typename elem, int order> 
 multicomplex<elem,order> function
 (
@@ -902,22 +903,23 @@ multicomplex<elem,order> function
   const int formula
 ) 
 { 
+			mcdv mcdv;
 			
 			MX0 i;
 			i.real = 0;
 			i.imag = 1;
 			
-			MX1 z1;
-			MX2 z2;
-			MX3 z3;
-			MX4 z4;
+			multicomplex<elem,order+1> z1;
+			multicomplex<elem,order+2> z2;
+			multicomplex<elem,order+3> z3;
+			multicomplex<elem,order+4> z4;
 			
-				 if(formula>=19 && formula <=30) sh(z1, z0);
-			else if(formula>=31 && formula <=42) sh(z2, z0);
-			else if(formula>=43 && formula <=53) sh(z3, z0);
-			else if(formula>=54 && formula <=64) sh(z4, z0);
-			else if(formula>=65 && formula <=74) sh(z4, z0);
-			else if(formula>74) sh(z2, z0);
+				 if(formula>=19 && formula <=30) mcdv.sh<order>(z1, z0);
+			else if(formula>=31 && formula <=42) mcdv.sh<order>(z2, z0);
+			else if(formula>=43 && formula <=53) mcdv.sh<order>(z3, z0);
+			else if(formula>=54 && formula <=64) mcdv.sh<order>(z4, z0);
+			else if(formula>=65 && formula <=74) mcdv.sh<order>(z2, z0);
+			else if(formula>74) mcdv.sh<order>(z2, z0);
 			
 			
 			if(formula == 1) return z0;
@@ -940,71 +942,70 @@ multicomplex<elem,order> function
 			else if(formula == 17) return gamma(z0);
 			else if(formula == 18) return LambertW(0,z0);
 			
-			else if(formula == 19) return dv((z1));
-			else if(formula == 20) return dv(log(z1));
-			else if(formula == 21) return dv(sqrt(z1));
-			else if(formula == 22) return dv(sin(z1));
-			else if(formula == 23) return dv(cos(z1));
-			else if(formula == 24) return dv(tan(z1));
-			else if(formula == 25) return dv(sinh(z1));
-			else if(formula == 26) return dv(cosh(z1));
-			else if(formula == 27) return dv(tanh(z1));
-			else if(formula == 28) return dv(exp(z1));
-			else if(formula == 29) return dv(gamma(z1));
-			else if(formula == 30) return dv(LambertW(0,z1));
+			else if(formula == 19) return mcdv.dv<order>((z1));
+			else if(formula == 20) return mcdv.dv<order>(log(z1));
+			else if(formula == 21) return mcdv.dv<order>(sqrt(z1));
+			else if(formula == 22) return mcdv.dv<order>(sin(z1));
+			else if(formula == 23) return mcdv.dv<order>(cos(z1));
+			else if(formula == 24) return mcdv.dv<order>(tan(z1));
+			else if(formula == 25) return mcdv.dv<order>(sinh(z1));
+			else if(formula == 26) return mcdv.dv<order>(cosh(z1));
+			else if(formula == 27) return mcdv.dv<order>(tanh(z1));
+			else if(formula == 28) return mcdv.dv<order>(exp(z1));
+			else if(formula == 29) return mcdv.dv<order>(gamma(z1));
+			else if(formula == 30) return mcdv.dv<order>(LambertW(0,z1));
 			
-			else if(formula == 31) return dv((z2));
-			else if(formula == 32) return dv(log(z2));
-			else if(formula == 33) return dv(sqrt(z2));
-			else if(formula == 34) return dv(sin(z2));
-			else if(formula == 35) return dv(cos(z2));
-			else if(formula == 36) return dv(tan(z2));
-			else if(formula == 37) return dv(sinh(z2));
-			else if(formula == 38) return dv(cosh(z2));
-			else if(formula == 39) return dv(tanh(z2));
-			else if(formula == 40) return dv(exp(z2));
-			else if(formula == 41) return dv(gamma(z2));
-			else if(formula == 42) return dv(LambertW(0,z2));
+			else if(formula == 31) return mcdv.dv<order>((z2));
+			else if(formula == 32) return mcdv.dv<order>(log(z2));
+			else if(formula == 33) return mcdv.dv<order>(sqrt(z2));
+			else if(formula == 34) return mcdv.dv<order>(sin(z2));
+			else if(formula == 35) return mcdv.dv<order>(cos(z2));
+			else if(formula == 36) return mcdv.dv<order>(tan(z2));
+			else if(formula == 37) return mcdv.dv<order>(sinh(z2));
+			else if(formula == 38) return mcdv.dv<order>(cosh(z2));
+			else if(formula == 39) return mcdv.dv<order>(tanh(z2));
+			else if(formula == 40) return mcdv.dv<order>(exp(z2));
+			else if(formula == 41) return mcdv.dv<order>(gamma(z2));
+			else if(formula == 42) return mcdv.dv<order>(LambertW(0,z2));
 			
-			else if(formula == 43) return dv(log(z3));
-			else if(formula == 44) return dv(sqrt(z3));
-			else if(formula == 45) return dv(sin(z3));
-			else if(formula == 46) return dv(cos(z3));
-			else if(formula == 47) return dv(tan(z3));
-			else if(formula == 48) return dv(sinh(z3));
-			else if(formula == 49) return dv(cosh(z3));
-			else if(formula == 50) return dv(tanh(z3));
-			else if(formula == 51) return dv(exp(z3));
-			else if(formula == 52) return dv(gamma(z3));
-			else if(formula == 53) return dv(LambertW(0,z3));
+			else if(formula == 43) return mcdv.dv<order>(log(z3));
+			else if(formula == 44) return mcdv.dv<order>(sqrt(z3));
+			else if(formula == 45) return mcdv.dv<order>(sin(z3));
+			else if(formula == 46) return mcdv.dv<order>(cos(z3));
+			else if(formula == 47) return mcdv.dv<order>(tan(z3));
+			else if(formula == 48) return mcdv.dv<order>(sinh(z3));
+			else if(formula == 49) return mcdv.dv<order>(cosh(z3));
+			else if(formula == 50) return mcdv.dv<order>(tanh(z3));
+			else if(formula == 51) return mcdv.dv<order>(exp(z3));
+			else if(formula == 52) return mcdv.dv<order>(gamma(z3));
+			else if(formula == 53) return mcdv.dv<order>(LambertW(0,z3));
 			
-			else if(formula == 54) return dv(log(z4));
-			else if(formula == 55) return dv(sqrt(z4));
-			else if(formula == 56) return dv(sin(z4));
-			else if(formula == 57) return dv(cos(z4));
-			else if(formula == 58) return dv(tan(z4));
-			else if(formula == 59) return dv(sinh(z4));
-			else if(formula == 60) return dv(cosh(z4));
-			else if(formula == 61) return dv(tanh(z4));
-			else if(formula == 62) return dv(exp(z4));
-			else if(formula == 63) return dv(gamma(z4));
-			else if(formula == 64) return dv(LambertW(0,z4));
+			else if(formula == 54) return mcdv.dv<order>(log(z4));
+			else if(formula == 55) return mcdv.dv<order>(sqrt(z4));
+			else if(formula == 56) return mcdv.dv<order>(sin(z4));
+			else if(formula == 57) return mcdv.dv<order>(cos(z4));
+			else if(formula == 58) return mcdv.dv<order>(tan(z4));
+			else if(formula == 59) return mcdv.dv<order>(sinh(z4));
+			else if(formula == 60) return mcdv.dv<order>(cosh(z4));
+			else if(formula == 61) return mcdv.dv<order>(tanh(z4));
+			else if(formula == 62) return mcdv.dv<order>(exp(z4));
+			else if(formula == 63) return mcdv.dv<order>(gamma(z4));
+			else if(formula == 64) return mcdv.dv<order>(LambertW(0,z4));
 			
-			else if(formula == 65) return dv(gamma(log(z2))) * i;
-			else if(formula == 66) return dv(gamma(sqrt(z2))) * i;
-			else if(formula == 67) return dv(gamma(sin(z2))) * i;
-			else if(formula == 68) return dv(gamma(cos(z2))) * i;
-			else if(formula == 69) return dv(gamma(tan(z2))) * i;
-			else if(formula == 70) return dv(gamma(sinh(z2))) * i;
-			else if(formula == 71) return dv(gamma(cosh(z2))) * i;
-			else if(formula == 72) return dv(gamma(tanh(z2))) * i;
-			else if(formula == 73) return dv(gamma(exp(z2))) * i;
-			else if(formula == 74) return dv(gamma(LambertW(0,z2))) * i;
+			else if(formula == 65) return mcdv.dv<order>(gamma(log(z2))) * i;
+			else if(formula == 66) return mcdv.dv<order>(gamma(sqrt(z2))) * i;
+			else if(formula == 67) return mcdv.dv<order>(gamma(sin(z2))) * i;
+			else if(formula == 68) return mcdv.dv<order>(gamma(cos(z2))) * i;
+			else if(formula == 69) return mcdv.dv<order>(gamma(tan(z2))) * i;
+			else if(formula == 70) return mcdv.dv<order>(gamma(sinh(z2))) * i;
+			else if(formula == 71) return mcdv.dv<order>(gamma(cosh(z2))) * i;
+			else if(formula == 72) return mcdv.dv<order>(gamma(tanh(z2))) * i;
+			else if(formula == 73) return mcdv.dv<order>(gamma(exp(z2))) * i;
+			else if(formula == 74) return mcdv.dv<order>(gamma(LambertW(0,z2))) * i;
 			
 			
-			else return dv(gamma(log(z2)));
+			else return mcdv.dv<order>(gamma(log(z2)));
 		};
-
 
 
 
