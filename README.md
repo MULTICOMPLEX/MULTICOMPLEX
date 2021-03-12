@@ -14,3 +14,8 @@ https://en.wikipedia.org/wiki/Bicomplex_number
 Conformal map
 
 https://en.wikipedia.org/wiki/Conformal_map
+
+
+Diverse
+
+https://multicomplex.github.io/MULTICOMPLEX/Tarot/
