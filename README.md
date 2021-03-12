@@ -17,6 +17,9 @@ Conformal map
 
 https://en.wikipedia.org/wiki/Conformal_map
 
+Using Multicomplex Variables for Automatic Computation of High-Order Derivatives
+
+https://dl.acm.org/doi/10.1145/2168773.2168774
 
 Diverse
 
