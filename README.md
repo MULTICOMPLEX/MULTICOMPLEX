@@ -1,3 +1,4 @@
+![tan(z)_3d_conformal_map](https://user-images.githubusercontent.com/75379917/110993875-2f6e3d00-8378-11eb-8004-a391b85a3545.png)
 ![sinh(z)_3d_conformal_map](https://user-images.githubusercontent.com/75379917/110993538-b66ee580-8377-11eb-8d77-c9751b14faea.png)
 
 - ⚡ Wherever I go I start building.
