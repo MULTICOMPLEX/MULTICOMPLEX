@@ -86,69 +86,8 @@ public:
         return (val - min) / delta;
 	}
 	
-		
-	auto conformal_map(int formula)
-    {					
-		int N = 200;	
-		
-		MX0 mc;
-
-		int tel = 0;
-		int total_index = 0;
-		
-		constexpr double grid_spacing = 0.25;
-		
-		constexpr double max = 1.0;
-		
-		constexpr int n_grid_lines = (2*max)/grid_spacing + 1;
-		
-		std::array<double, int(2*max*100)*n_grid_lines*4> complex_array;
-		
-		static client::Float64Array * vec = 
-			MakeTypedArray<TypedArrayForPointerType<double>::type>(&complex_array, complex_array.size() * sizeof(double));
-		
 	
-		for(double y = -max; y <= max; y+=grid_spacing)
-		{
-			for(int i = 0; i < N; i++)
-			{		
-				double t = (i-(max*100))/100.;
-				
-				mc.real = t;
-				mc.imag = y;
-		
-		
-				MX0 d;
-				
-				d = function(mc, formula);
-			
-				auto index = i+ tel * N;
-				
-				complex_array[index]             = d.real;
-				complex_array[N*n_grid_lines + N*n_grid_lines + index] = d.imag;
-				
-				/////
-				
-				mc.real = y;
-				mc.imag = t;
-		
-				
-				d = function(mc, formula);
-				
-				
-				complex_array[N*n_grid_lines + index]             = d.real;
-				complex_array[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.imag;
-				
-			}
-			
-			tel++;
-		}
-
-		return vec;
-     
-    }
-	
-	auto conformal_map2(int formula, int mc_index)
+	auto conformal_map(int formula, int mc_index)
     {					
 		int N = 200;
 		
@@ -163,14 +102,19 @@ public:
 		
 		constexpr int n_grid_lines = (2*max)/grid_spacing + 1;
 		
-		std::array<double, int(2*max*100)*n_grid_lines*4> complex_array1;
-		std::array<double, int(2*max*100)*n_grid_lines*4> complex_array2;
+		std::array<double, int(2*max*100)*n_grid_lines*4> complex_array1; //bicomplex real 
+		std::array<double, int(2*max*100)*n_grid_lines*4> complex_array2; //bicomplex imag
+		
+		std::array<double, int(2*max*100)*n_grid_lines*4> complex_array10;//complex
 		
 		static client::Float64Array * vec1 = 
 			MakeTypedArray<TypedArrayForPointerType<double>::type>(&complex_array1, complex_array1.size() * sizeof(double));
 			
 		static client::Float64Array * vec2 = 
 			MakeTypedArray<TypedArrayForPointerType<double>::type>(&complex_array2, complex_array2.size() * sizeof(double));
+			
+		static client::Float64Array * vec3 = 
+			MakeTypedArray<TypedArrayForPointerType<double>::type>(&complex_array10, complex_array10.size() * sizeof(double));
 		
 	
 		for(double y = -max; y <= max; y+=grid_spacing)
@@ -187,19 +131,33 @@ public:
 		
 				MX1 d;
 				
-				d = function(mc, formula);
-				
-			
 				auto index = i+ tel * N;
 				
+				//bicomplex
 				if(mc_index==0){
+				
+				d = function(mc, formula);
 				complex_array1[index]             = d.real.real;
 				complex_array1[N*n_grid_lines + N*n_grid_lines + index] = d.real.imag;
 				}
 				
+				//bicomplex
 				if(mc_index==1){
+				
+				d = function(mc, formula);
 				complex_array2[index]             = d.imag.real;
 				complex_array2[N*n_grid_lines + N*n_grid_lines + index] = d.imag.imag;
+				}
+				
+				//complex
+				if(mc_index==10){
+				
+				mc.imag.real = 0;
+				mc.imag.imag = 0;
+				d = function(mc, formula);
+				
+				complex_array10[index]             = d.real.real;
+				complex_array10[N*n_grid_lines + N*n_grid_lines + index] = d.real.imag;
 				}
 				
 				/////
@@ -209,17 +167,30 @@ public:
 				mc.imag.real = y;
 				mc.imag.imag = t;
 							
-				
-				d = function(mc, formula);
-				
+
+				//bicomplex
 				if(mc_index==0){
+					d = function(mc, formula);
 				complex_array1[N*n_grid_lines + index]             = d.real.real;
 				complex_array1[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.real.imag;
 				}
 				
+				//bicomplex
 				if(mc_index==1){
+					d = function(mc, formula);
 				complex_array2[N*n_grid_lines + index]             = d.imag.real;
 				complex_array2[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.imag.imag;
+				}
+				
+				//complex
+				if(mc_index==10){
+				
+				mc.imag.real = 0;
+				mc.imag.imag = 0;
+				d = function(mc, formula);
+				
+				complex_array10[N*n_grid_lines + index]             = d.real.real;
+				complex_array10[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.real.imag;
 				}
 				
 			}
@@ -229,7 +200,10 @@ public:
 
 		if(mc_index==0)
 			return vec1;
-		else return vec2;
+		else if(mc_index==1)
+			return vec2;
+		else 
+			return vec3;
      
     }
 	

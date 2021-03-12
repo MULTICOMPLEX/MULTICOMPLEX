@@ -239,7 +239,6 @@ font-family: "Consolas MS";
 let clear = false;
 function ClearAnimation() {clear = true;}
 
-
 Graphics.promise.then(function(){
 
 let obj = new Graphics;
@@ -398,7 +397,7 @@ var layout = {
 	
 	function compute_conformal_map()
 	{	
-		complex_array = obj.conformal_map(formula);		
+		complex_array = obj.conformal_map(formula,10);		
 	}
 
 	compute_conformal_map();
@@ -681,7 +680,7 @@ var layout3d = {
 	//linewidth: 1,
 		
 	showtickprefix: 'last',
-    tickprefix: 'RR ',
+    tickprefix: 'REAL.REAL ',
 	
 	tickfont: {
       family: 'Old Standard TT, serif',
@@ -709,7 +708,7 @@ var layout3d = {
 	
 	
 	showtickprefix: 'last',
-    tickprefix: 'RI  ',
+    tickprefix: 'REAL.IMAG ',
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
@@ -735,7 +734,7 @@ var layout3d = {
 	//linewidth: 1,
 	
 	showtickprefix: 'last',
-    tickprefix: 'IR ',
+    tickprefix: 'IMAG.REAL ',
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
@@ -776,7 +775,7 @@ var layout3d = {
 	//linewidth: 1,
 	
 	showtickprefix: 'last',
-    tickprefix: 'RR ',
+    tickprefix: 'REAL.REAL ',
 	
 	tickfont: {
       family: 'Old Standard TT, serif',
@@ -802,7 +801,7 @@ var layout3d = {
 	//linewidth: 1,
 	
 	showtickprefix: 'last',
-    tickprefix: 'RI ',
+    tickprefix: 'REAL.IMAG ',
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
@@ -830,7 +829,7 @@ var layout3d = {
 	
 	
 	showtickprefix: 'last',
-    tickprefix: 'II  ',
+    tickprefix: 'IMAG.IMAG ',
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
@@ -866,8 +865,8 @@ var layout3d = {
 	
 	function compute_conformal_map()
 	{	
-		complex_array1 = obj.conformal_map2(formula, 0);
-		complex_array2 = obj.conformal_map2(formula, 1);				
+		complex_array1 = obj.conformal_map(formula, 0);
+		complex_array2 = obj.conformal_map(formula, 1);				
 	}
 
 	compute_conformal_map();
