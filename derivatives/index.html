@@ -633,7 +633,6 @@ var layout = {
 	
 	},
 	
-	
 	yaxis2: {range: [-2.1, 2.1],
 	
 	
@@ -649,9 +648,211 @@ var layout = {
 	
 	},
 	
-	
 	paper_bgcolor: 'rgba(0,0,0,0)',
 	plot_bgcolor: 'rgba(0,0,0,0)'
+}
+
+
+var layout3d = {
+
+	scene1: {
+	
+	 aspectmode: "manual",
+   aspectratio: {
+     x: 1, y: 1, z: 1,
+    },
+        domain: {
+            x: [0.0, 0.5],
+            y: [1.0, 1.0]
+        },
+		
+	xaxis: {range: [-2.1, 2.1],
+	
+	//backgroundcolor: "rgb(0, 0, 0)",
+	//showbackground: true,
+	
+	zerolinecolor: "rgb(255, 255, 255)",
+	zerolinewidth: 1,
+	
+	gridcolor: "rgb(255, 255, 255)",
+	gridwidth: 1,
+	
+	//linecolor: "rgb(255, 255, 255)",
+	//linewidth: 1,
+		
+	showtickprefix: 'last',
+    tickprefix: 'RR ',
+	
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	},
+	
+	yaxis: {range: [-2.1, 2.1],
+	
+	//backgroundcolor: "rgb(0, 0, 0)",
+	//showbackground: true,
+	
+	zerolinecolor: "rgb(255, 255, 255)",
+	zerolinewidth: 1,
+	
+	gridcolor: "rgb(255, 255, 255)",
+	gridwidth: 1,
+	
+	//linecolor: "rgb(255, 255, 255)",
+	//linewidth: 1,
+	
+	
+	showtickprefix: 'last',
+    tickprefix: 'RI  ',
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	
+	},
+	
+	zaxis: {range: [-2.1, 2.1],
+	 
+	//backgroundcolor: "rgb(0, 0, 0)",
+	//showbackground: true,
+	
+	zerolinecolor: "rgb(255, 255, 255)",
+	zerolinewidth: 1,
+	
+	gridcolor: "rgb(255, 255, 255)",
+	gridwidth: 1,
+	
+	//linecolor: "rgb(255, 255, 255)",
+	//linewidth: 1,
+	
+	showtickprefix: 'last',
+    tickprefix: 'IR ',
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	
+	},
+	
+		},
+		
+    scene2: {
+	
+	aspectmode: "manual",
+	aspectratio: {
+     x: 1, y: 1, z: 1,
+    },
+        domain: {
+            x: [0.5, 1.0],
+            y: [1.0, 1.0]
+        },
+		
+	xaxis: {range: [-2.1, 2.1],
+	
+	//backgroundcolor: "rgb(0, 0, 0)",
+	//showbackground: true,
+	
+	zerolinecolor: "rgb(255, 255, 255)",
+	zerolinewidth: 1,
+	
+	gridcolor: "rgb(255, 255, 255)",
+	gridwidth: 1,
+	
+	//linecolor: "rgb(255, 255, 255)",
+	//linewidth: 1,
+	
+	showtickprefix: 'last',
+    tickprefix: 'RR ',
+	
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	},
+	
+	yaxis: {range: [-2.1, 2.1],
+	
+	//backgroundcolor: "rgb(0, 0, 0)",
+	//showbackground: true,
+	
+	zerolinecolor: "rgb(255, 255, 255)",
+	zerolinewidth: 1,
+	
+	gridcolor: "rgb(255, 255, 255)",
+	gridwidth: 1,
+	
+	//linecolor: "rgb(255, 255, 255)",
+	//linewidth: 1,
+	
+	showtickprefix: 'last',
+    tickprefix: 'RI ',
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	
+	},
+	
+	zaxis: {range: [-2.1, 2.1],
+	
+	//backgroundcolor: "rgb(0, 0, 0)",
+	//showbackground: true,
+	
+	zerolinecolor: "rgb(255, 255, 255)",
+	zerolinewidth: 1,
+	
+	gridcolor: "rgb(255, 255, 255)",
+	gridwidth: 1,
+	
+	//linecolor: "rgb(255, 255, 255)",
+	//linewidth: 1,
+	
+	
+	showtickprefix: 'last',
+    tickprefix: 'II  ',
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	
+	},
+		},
+
+	
+	
+	title: {
+    //text:'(d^2/dz^2(gamma(log(z)))) i',
+    font: {
+      family: 'Courier New, monospace',
+	  color: 'rgb(238, 232, 213)',
+      size: 24
+    },
+    xref: 'paper',
+    x: 0.05,
+  },
+	
+	paper_bgcolor: 'rgba(0,0,0,0)',
+//	plot_bgcolor: 'rgba(0,0,0,0)'
 }
 
 	var complex_array1 = [];
@@ -677,6 +878,8 @@ var layout = {
 	var trace1 = {
 	x: real1,
 	y: imag1,
+	xaxis: 'x',
+	yaxis: 'y',
 	type: 'scatter',
 	name: '',
 	mode: 'markers',
@@ -704,14 +907,58 @@ var layout = {
       width: 2}}
 	};
 	
-	var data = [trace1,trace2];
+	///////////
 	
-	Plotly.newPlot('graph3', data, layout);
+	var trace1_3d = {
+	x: real1,
+	y: imag1,
+	z: real2,
+	scene: "scene1",
+	xaxis: 'x',
+	yaxis: 'y',
+	zaxis: 'z',
+	type: 'scatter3d',
+	name: '',
+	mode: 'markers',
+	marker: {
+		color: 'rgb(17, 157, 255)',
+		size: 6,
+		line: {
+      color: 'rgb(231, 99, 250)',
+      width: 2}}, 
+	  type: 'scatter3d'
+	};
 
+	var trace2_3d = {
+	x: real1,
+	y: imag1,
+	z: imag2,
+	scene: "scene2",
+	xaxis: 'x2',
+	yaxis: 'y2',
+	zaxis: 'z2',
+	type: 'scatter3d',
+	name: '',
+	mode: 'markers',
+	marker: {
+		color: 'rgb(17, 157, 255)',
+		size: 6,
+		line: {
+      color: 'rgb(231, 99, 250)',
+      width: 2}}, 
+	  type: 'scatter3d'
+	 
+	};
+	
+	//var data = [trace1,trace2];
+	//Plotly.newPlot('graph3', data, layout);
+
+	var data = [trace1_3d,trace2_3d];	
+	Plotly.newPlot('graph3', data, layout3d);
+	
 })}
 
 plot_conformal_map2(1);
-
 
 
 function generateData(event) {
