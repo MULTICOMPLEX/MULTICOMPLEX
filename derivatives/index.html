@@ -79,13 +79,21 @@ font-family: "Consolas MS";
 </script>
  </font>
  
- 
+   <script> 
+ function time_event(event) {
+	var t0 = performance.now()
+	//do something	
+	var t1 = performance.now()
+	console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.")
+}
+    </script>
+	
  <head>
 	<!-- Load plotly.js into the DOM -->
 	<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
 </head>
 
-
+<script src='jQuery v3.6.0.js'></script>
 
 
  <body>
@@ -135,7 +143,7 @@ font-family: "Consolas MS";
 <script src="derivatives.js"></script>
 
 
-<select id="change_formula" class="dropbtn">
+<select id="change_formula1" class="dropbtn">
     
 	<option value="1" selected>z</option>
 	<option value="2">log(z)</option>
@@ -427,7 +435,7 @@ var layout = {
 
 plot_conformal_map(1);
 
-var menu = document.getElementById("change_formula");
+var menu = document.getElementById("change_formula1");
 menu.addEventListener("change", generateData);
 
 function generateData(event) {
@@ -473,28 +481,17 @@ function generateData(event) {
 	
 <br><br>
 
-<script src='jQuery v3.6.0.js'></script>
-
-
 <select id="change_formula2" class="dropbtn"></select>
     
 <script>
 
-$('#change_formula option').clone().appendTo('#change_formula2');
+$('#change_formula1 option').clone().appendTo('#change_formula2');
 
 </script>
-
 	
 <div id='graph3' style="background-color: rgb(0, 43, 54); width: 1600px; height:800px"></div>
 
 <script>
-
-function plot_conformal_map2(formula)
-{
-
-Graphics.promise.then(function() {
-
-var obj = new Graphics;
 
 var layout = {
 	grid: {rows: 1, columns: 2, pattern: 'independent'},
@@ -577,12 +574,16 @@ var layout = {
 }
 
 
+function plot_conformal_map2(formula, graph)
+{
+
 var layout3d = {
 
-	scene1: {
+	scene1: 
+	{
 	
-	 aspectmode: "manual",
-   aspectratio: {
+	aspectmode: "manual",
+	aspectratio: {
      x: 1, y: 1, z: 1,
     },
         domain: {
@@ -672,7 +673,8 @@ var layout3d = {
 	
 		},
 		
-    scene2: {
+    scene2: 
+	{
 	
 	aspectmode: "manual",
 	aspectratio: {
@@ -765,7 +767,387 @@ var layout3d = {
 	
 	},
 		},
-
+		
+	scene3: 
+	{
+	
+	aspectmode: "manual",
+	aspectratio: {
+     x: 1, y: 1, z: 1,
+    },
+        domain: {
+            x: [0.0, 0.5],
+            y: [0.5, 1.0]
+        },
+		
+	xaxis: {range: [-2.1, 2.1],
+	
+	showspikes: false,
+	
+	//backgroundcolor: "rgb(0, 0, 0)",
+	//showbackground: true,
+	
+	zerolinecolor: "rgb(255, 255, 255)",
+	zerolinewidth: 1,
+	
+	gridcolor: "rgb(255, 255, 255)",
+	gridwidth: 1,
+	
+	//linecolor: "rgb(255, 255, 255)",
+	//linewidth: 1,
+	
+	showtickprefix: 'last',
+    tickprefix: 'REAL.REAL.REAL ',
+	
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	},
+	
+	yaxis: {range: [-2.1, 2.1],
+	showspikes: false,
+	//backgroundcolor: "rgb(0, 0, 0)",
+	//showbackground: true,
+	
+	zerolinecolor: "rgb(255, 255, 255)",
+	zerolinewidth: 1,
+	
+	gridcolor: "rgb(255, 255, 255)",
+	gridwidth: 1,
+	
+	//linecolor: "rgb(255, 255, 255)",
+	//linewidth: 1,
+	
+	showtickprefix: 'last',
+    tickprefix: 'REAL.REAL.IMAG ',
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	
+	},
+	
+	zaxis: {range: [-2.1, 2.1],
+	showspikes: false,
+	
+	//backgroundcolor: "rgb(0, 0, 0)",
+	//showbackground: true,
+	
+	zerolinecolor: "rgb(255, 255, 255)",
+	zerolinewidth: 1,
+	
+	gridcolor: "rgb(255, 255, 255)",
+	gridwidth: 1,
+	
+	//linecolor: "rgb(255, 255, 255)",
+	//linewidth: 1,
+	
+	
+	showtickprefix: 'last',
+    tickprefix: 'REAL.IMAG.REAL ',
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	
+	},
+		},
+		
+	scene4: 
+	{
+	
+	aspectmode: "manual",
+	aspectratio: {
+     x: 1, y: 1, z: 1,
+    },
+        domain: {
+            x: [0.5, 1.0],
+            y: [0.5, 1.0]
+        },
+		
+	xaxis: {range: [-2.1, 2.1],
+	
+	showspikes: false,
+	
+	//backgroundcolor: "rgb(0, 0, 0)",
+	//showbackground: true,
+	
+	zerolinecolor: "rgb(255, 255, 255)",
+	zerolinewidth: 1,
+	
+	gridcolor: "rgb(255, 255, 255)",
+	gridwidth: 1,
+	
+	//linecolor: "rgb(255, 255, 255)",
+	//linewidth: 1,
+	
+	showtickprefix: 'last',
+    tickprefix: 'REAL.REAL.REAL ',
+	
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	},
+	
+	yaxis: {range: [-2.1, 2.1],
+	showspikes: false,
+	//backgroundcolor: "rgb(0, 0, 0)",
+	//showbackground: true,
+	
+	zerolinecolor: "rgb(255, 255, 255)",
+	zerolinewidth: 1,
+	
+	gridcolor: "rgb(255, 255, 255)",
+	gridwidth: 1,
+	
+	//linecolor: "rgb(255, 255, 255)",
+	//linewidth: 1,
+	
+	showtickprefix: 'last',
+    tickprefix: 'REAL.REAL.IMAG ',
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	
+	},
+	
+	zaxis: {range: [-2.1, 2.1],
+	showspikes: false,
+	
+	//backgroundcolor: "rgb(0, 0, 0)",
+	//showbackground: true,
+	
+	zerolinecolor: "rgb(255, 255, 255)",
+	zerolinewidth: 1,
+	
+	gridcolor: "rgb(255, 255, 255)",
+	gridwidth: 1,
+	
+	//linecolor: "rgb(255, 255, 255)",
+	//linewidth: 1,
+	
+	
+	showtickprefix: 'last',
+    tickprefix: 'REAL.IMAG.IMAG ',
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	
+	},
+		},
+				
+	scene5: 
+	{
+	
+	aspectmode: "manual",
+	aspectratio: {
+     x: 1, y: 1, z: 1,
+    },
+        domain: {
+            x: [0.0, 0.5],
+            y: [0.0, 0.5]
+        },
+		
+	xaxis: {range: [-2.1, 2.1],
+	
+	showspikes: false,
+	
+	//backgroundcolor: "rgb(0, 0, 0)",
+	//showbackground: true,
+	
+	zerolinecolor: "rgb(255, 255, 255)",
+	zerolinewidth: 1,
+	
+	gridcolor: "rgb(255, 255, 255)",
+	gridwidth: 1,
+	
+	//linecolor: "rgb(255, 255, 255)",
+	//linewidth: 1,
+	
+	showtickprefix: 'last',
+    tickprefix: 'IMAG.REAL.REAL ',
+	
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	},
+	
+	yaxis: {range: [-2.1, 2.1],
+	showspikes: false,
+	//backgroundcolor: "rgb(0, 0, 0)",
+	//showbackground: true,
+	
+	zerolinecolor: "rgb(255, 255, 255)",
+	zerolinewidth: 1,
+	
+	gridcolor: "rgb(255, 255, 255)",
+	gridwidth: 1,
+	
+	//linecolor: "rgb(255, 255, 255)",
+	//linewidth: 1,
+	
+	showtickprefix: 'last',
+    tickprefix: 'IMAG.REAL.IMAG ',
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	
+	},
+	
+	zaxis: {range: [-2.1, 2.1],
+	showspikes: false,
+	
+	//backgroundcolor: "rgb(0, 0, 0)",
+	//showbackground: true,
+	
+	zerolinecolor: "rgb(255, 255, 255)",
+	zerolinewidth: 1,
+	
+	gridcolor: "rgb(255, 255, 255)",
+	gridwidth: 1,
+	
+	//linecolor: "rgb(255, 255, 255)",
+	//linewidth: 1,
+	
+	
+	showtickprefix: 'last',
+    tickprefix: 'IMAG.IMAG.REAL ',
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	
+	},
+		},
+	
+	scene6: 
+	{
+	
+	aspectmode: "manual",
+	aspectratio: {
+     x: 1, y: 1, z: 1,
+    },
+        domain: {
+            x: [0.5, 1.0],
+            y: [0.0, 0.5]
+        },
+		
+	xaxis: {range: [-2.1, 2.1],
+	
+	showspikes: false,
+	
+	//backgroundcolor: "rgb(0, 0, 0)",
+	//showbackground: true,
+	
+	zerolinecolor: "rgb(255, 255, 255)",
+	zerolinewidth: 1,
+	
+	gridcolor: "rgb(255, 255, 255)",
+	gridwidth: 1,
+	
+	//linecolor: "rgb(255, 255, 255)",
+	//linewidth: 1,
+	
+	showtickprefix: 'last',
+    tickprefix: 'IMAG.REAL.REAL ',
+	
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	},
+	
+	yaxis: {range: [-2.1, 2.1],
+	showspikes: false,
+	//backgroundcolor: "rgb(0, 0, 0)",
+	//showbackground: true,
+	
+	zerolinecolor: "rgb(255, 255, 255)",
+	zerolinewidth: 1,
+	
+	gridcolor: "rgb(255, 255, 255)",
+	gridwidth: 1,
+	
+	//linecolor: "rgb(255, 255, 255)",
+	//linewidth: 1,
+	
+	showtickprefix: 'last',
+    tickprefix: 'IMAG.REAL.IMAG ',
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	
+	},
+	
+	zaxis: {range: [-2.1, 2.1],
+	showspikes: false,
+	
+	//backgroundcolor: "rgb(0, 0, 0)",
+	//showbackground: true,
+	
+	zerolinecolor: "rgb(255, 255, 255)",
+	zerolinewidth: 1,
+	
+	gridcolor: "rgb(255, 255, 255)",
+	gridwidth: 1,
+	
+	//linecolor: "rgb(255, 255, 255)",
+	//linewidth: 1,
+	
+	
+	showtickprefix: 'last',
+    tickprefix: 'IMAG.IMAG.IMAG ',
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'green'
+    },
+	
+	tickformat: ''
+	
+	},
+		},
+			
 	
 	
 	title: {
@@ -780,34 +1162,64 @@ var layout3d = {
   },
 	
 	paper_bgcolor: 'rgba(0,0,0,0)',
-//	plot_bgcolor: 'rgba(0,0,0,0)'
+	plot_bgcolor: 'rgba(0,0,0,0)'
 }
+
+Graphics.promise.then(function() {
+
+var obj = new Graphics;
 
 	var complex_array1 = [];
 	var complex_array2 = [];
+	
+	var complex_array3 = [];
+	var complex_array4 = [];
+	var complex_array5 = [];
+	var complex_array6 = [];
 	
 	let N = 200;
 	
 
 	function compute_conformal_map()
 	{	
+		if(graph === 'graph3'){
+		
 		complex_array1 = obj.conformal_map(formula, 0);
-		complex_array2 = obj.conformal_map(formula, 1);				
+		complex_array2 = obj.conformal_map(formula, 1);
+		}
+		
+		if(graph === 'graph4'){
+			complex_array3 = obj.conformal_map(formula, 2);
+			complex_array4 = obj.conformal_map(formula, 3);
+			complex_array5 = obj.conformal_map(formula, 4);
+			complex_array6 = obj.conformal_map(formula, 5);	
+		}
 	}
-
+	
 	compute_conformal_map();
 	
-
-
+	
 	var real1 = complex_array1.slice(0,  N*9*2);
 	var imag1 = complex_array1.slice(N*9*2,complex_array1.size);
 	
 	var real2 = complex_array2.slice(0,  N*9*2);
 	var imag2 = complex_array2.slice(N*9*2,complex_array2.size);
+	
+	////
+	
+	var real3 = complex_array3.slice(0,  N*9*2);
+	var imag3 = complex_array3.slice(N*9*2,complex_array3.size);
+	
+	var real4 = complex_array4.slice(0,  N*9*2);
+	var imag4 = complex_array4.slice(N*9*2,complex_array4.size);
+	
+	var real5 = complex_array5.slice(0,  N*9*2);
+	var imag5 = complex_array5.slice(N*9*2,complex_array5.size);
+	
+	var real6 = complex_array6.slice(0,  N*9*2);
+	var imag6 = complex_array6.slice(N*9*2,complex_array6.size);
 
-
-
-	var trace1 = {
+	var trace1_2d = {
 	x: real1,
 	y: imag1,
 	xaxis: 'x',
@@ -823,7 +1235,7 @@ var layout3d = {
       width: 2}}
 	};
 
-	var trace2 = {
+	var trace2_2d = {
 	x: real2,
 	y: imag2,
 	xaxis: 'x2',
@@ -882,37 +1294,158 @@ var layout3d = {
 	 
 	};
 	
-	//var data = [trace1,trace2];
-	//Plotly.newPlot('graph3', data, layout);
-
-	var data = [trace1_3d,trace2_3d];	
-	Plotly.newPlot('graph3', data, layout3d);
+	/////
 	
-})}
+	var trace3_3d = {
+	x: real3,
+	y: imag3,
+	z: real4,
+	scene: "scene3",
+	xaxis: 'x',
+	yaxis: 'y',
+	zaxis: 'z',
+	type: 'scatter3d',
+	name: '',
+	mode: 'markers',
+	marker: {
+		color: 'rgb(17, 157, 255)',
+		size: 6,
+		line: {
+      color: 'rgb(231, 99, 250)',
+      width: 2}}, 
+	  type: 'scatter3d'
+	};
+	
+	var trace4_3d = {
+	x: real3,
+	y: imag3,
+	z: imag4,
+	scene: "scene4",
+	xaxis: 'x',
+	yaxis: 'y',
+	zaxis: 'z',
+	type: 'scatter3d',
+	name: '',
+	mode: 'markers',
+	marker: {
+		color: 'rgb(17, 157, 255)',
+		size: 6,
+		line: {
+      color: 'rgb(231, 99, 250)',
+      width: 2}}, 
+	  type: 'scatter3d'
+	};
+	
+	
+	var trace5_3d = {
+	x: real5,
+	y: imag5,
+	z: real6,
+	scene: "scene5",
+	xaxis: 'x',
+	yaxis: 'y',
+	zaxis: 'z',
+	type: 'scatter3d',
+	name: '',
+	mode: 'markers',
+	marker: {
+		color: 'rgb(17, 157, 255)',
+		size: 6,
+		line: {
+      color: 'rgb(231, 99, 250)',
+      width: 2}}, 
+	  type: 'scatter3d'
+	};
+	
+	var trace6_3d = {
+	x: real5,
+	y: imag5,
+	z: imag6,
+	scene: "scene6",
+	xaxis: 'x',
+	yaxis: 'y',
+	zaxis: 'z',
+	type: 'scatter3d',
+	name: '',
+	mode: 'markers',
+	marker: {
+		color: 'rgb(17, 157, 255)',
+		size: 6,
+		line: {
+      color: 'rgb(231, 99, 250)',
+      width: 2}}, 
+	  type: 'scatter3d'
+	};
+	
+	//var data = [trace1_2d,trace2_2d];
+	//Plotly.newPlot('graph', data, layout);
+	
+	
+	var data1 = [trace1_3d,trace2_3d];	
+	var data2 = [trace3_3d,trace4_3d,trace5_3d,trace6_3d];
+	
+	
+	if(graph === 'graph3'){
+	
+	Plotly.newPlot(graph, data1, layout3d);}
+	
+	if(graph === 'graph4'){
+	
+	Plotly.newPlot(graph, data2, layout3d);}
+	
+}
 
-plot_conformal_map2(1);
+)}
 
+plot_conformal_map2(1, 'graph3');
+
+var menu2 = document.getElementById("change_formula2");
 
 function generateData(event) {
 
  var formula = parseInt(menu2.value);
- plot_conformal_map2(formula);
+ plot_conformal_map2(formula, 'graph3');
  
 };
 
-
-var menu2 = document.getElementById("change_formula2");
 menu2.addEventListener("change", generateData);
 
 
-function time_event(event) {
-	var t0 = performance.now()
-	//do something	
-	var t1 = performance.now()
-	console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.")
-}
+
 
 </script>
+
+
+<select id="change_formula3" class="dropbtn"></select>
+
+<br>
+<div id='graph4' style="background-color: rgb(0, 43, 54); width: 1600px; height:1600px"></div>
+
+<script>
+
+function initplot()
+{
+	
+	$('#change_formula2 option').clone().appendTo('#change_formula3');
+
+	var menu = document.getElementById("change_formula3");	
+	
+	function generateData(event) {
+
+		var formula = parseInt(menu.value);
+		plot_conformal_map2(formula, 'graph4');
+	};
+	
+	menu.addEventListener("change", generateData);
+	
+};
+
+initplot();
+
+plot_conformal_map2(1, 'graph4');
+
+</script>
+
 
 </html>
 
