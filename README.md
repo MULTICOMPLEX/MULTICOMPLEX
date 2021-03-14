@@ -1,5 +1,7 @@
 ![tan(z)_3d_conformal_map](https://user-images.githubusercontent.com/75379917/110993875-2f6e3d00-8378-11eb-8004-a391b85a3545.png)
 ![sinh(z)_3d_conformal_map](https://user-images.githubusercontent.com/75379917/110993538-b66ee580-8377-11eb-8d77-c9751b14faea.png)
+![newplot](https://user-images.githubusercontent.com/75379917/111082122-e5679180-8506-11eb-93c9-64f3a86ec459.png)
+
 
 - ⚡ Wherever I go I start building.
 
