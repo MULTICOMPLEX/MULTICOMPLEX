@@ -173,9 +173,10 @@ public:
 				
 				}
 				
+				
 				//bicomplex
 				if(mc_index==0){
-				
+
 				MX1 mc;
 				mc.real.real = t;
 				mc.real.imag = y;
@@ -189,6 +190,9 @@ public:
 				complex_array1[index]             = d.real.real;
 				complex_array1[N*n_grid_lines + N*n_grid_lines + index] = d.real.imag;
 				
+				complex_array2[index]             = d.imag.real;
+				complex_array2[N*n_grid_lines + N*n_grid_lines + index] = d.imag.imag;
+				
 				mc.real.real = y;
 				mc.real.imag = t;
 				
@@ -200,38 +204,11 @@ public:
 				complex_array1[N*n_grid_lines + index]             = d.real.real;
 				complex_array1[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.real.imag;
 				
-				}
-				
-				//bicomplex
-				if(mc_index==1){
-				
-				MX1 mc;
-				mc.real.real = t;
-				mc.real.imag = y;
-				
-				mc.imag.real = t;
-				mc.imag.imag = y;
-				
-				MX1 d;
-				d = function(mc, formula);
-				
-				complex_array2[index]             = d.imag.real;
-				complex_array2[N*n_grid_lines + N*n_grid_lines + index] = d.imag.imag;
-				
-				
-				mc.real.real = y;
-				mc.real.imag = t;
-				
-				mc.imag.real = y;
-				mc.imag.imag = t;
-				
-				d = function(mc, formula);
-				
 				complex_array2[N*n_grid_lines + index]             = d.imag.real;
 				complex_array2[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.imag.imag;
 				
 				}
-				
+
 				
 				//tricomplex
 				if(mc_index==2){
@@ -249,6 +226,9 @@ public:
 				complex_array3[index]             = d.real.real.real;
 				complex_array3[N*n_grid_lines + N*n_grid_lines + index] = d.real.real.imag;
 				
+				complex_array4[index]             = d.real.imag.real;
+				complex_array4[N*n_grid_lines + N*n_grid_lines + index] = d.real.imag.imag;
+				
 				mc.real.real.real = y;
 				mc.real.real.imag = t;
 				
@@ -259,33 +239,6 @@ public:
 				
 				complex_array3[N*n_grid_lines + index]             = d.real.real.real;
 				complex_array3[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.real.real.imag;
-				
-				}
-				
-				//tricomplex
-				if(mc_index==3){
-				
-				MX2 mc;
-				mc.real.real.real = t;
-				mc.real.real.imag = y;
-				
-				mc.real.imag.real = t;
-				mc.real.imag.imag = y;
-				
-				MX2 d;
-				d = function(mc, formula);
-				
-				complex_array4[index]             = d.real.imag.real;
-				complex_array4[N*n_grid_lines + N*n_grid_lines + index] = d.real.imag.imag;
-				
-				
-				mc.real.real.real = y;
-				mc.real.real.imag = t;
-				
-				mc.real.imag.real = y;
-				mc.real.imag.imag = t;
-				
-				d = function(mc, formula);
 				
 				complex_array4[N*n_grid_lines + index]             = d.real.imag.real;
 				complex_array4[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.real.imag.imag;
@@ -301,13 +254,16 @@ public:
 				mc.imag.real.imag = y;
 				
 				mc.imag.imag.real = t;
-				mc.real.imag.imag = y;
+				mc.imag.imag.imag = y;
 				
 				MX2 d;
 				d = function(mc, formula);
 				
 				complex_array5[index]             = d.imag.real.real;
 				complex_array5[N*n_grid_lines + N*n_grid_lines + index] = d.imag.real.imag;
+				
+				complex_array6[index]             = d.imag.imag.real;
+				complex_array6[N*n_grid_lines + N*n_grid_lines + index] = d.imag.imag.imag;
 				
 				mc.imag.real.real = y;
 				mc.imag.real.imag = t;
@@ -320,39 +276,11 @@ public:
 				complex_array5[N*n_grid_lines + index]             = d.imag.real.real;
 				complex_array5[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.imag.real.imag;
 				
-				}
-				
-				//tricomplex
-				if(mc_index==5){
-				
-				MX2 mc;
-				mc.imag.real.real = t;
-				mc.imag.real.imag = y;
-				
-				mc.imag.imag.real = t;
-				mc.imag.imag.imag = y;
-				
-				MX2 d;
-				d = function(mc, formula);
-				
-				complex_array6[index]             = d.imag.imag.real;
-				complex_array6[N*n_grid_lines + N*n_grid_lines + index] = d.imag.imag.imag;
-				
-				
-				mc.imag.real.real = y;
-				mc.imag.real.imag = t;
-				
-				mc.imag.imag.real = y;
-				mc.imag.imag.imag = t;
-				
-				d = function(mc, formula);
-				
 				complex_array6[N*n_grid_lines + index]             = d.imag.imag.real;
 				complex_array6[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.imag.imag.imag;
 				
 				}
-
-			}
+			}	
 			
 			tel++;
 		}
