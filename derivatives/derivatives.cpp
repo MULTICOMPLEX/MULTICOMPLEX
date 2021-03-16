@@ -204,6 +204,7 @@ public:
 				complex_array1[N*n_grid_lines + index]             = d.real.real;
 				complex_array1[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.real.imag;
 				
+				
 				complex_array2[N*n_grid_lines + index]             = d.imag.real;
 				complex_array2[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.imag.imag;
 				
