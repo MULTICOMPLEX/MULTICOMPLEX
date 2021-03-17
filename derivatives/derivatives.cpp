@@ -50,7 +50,6 @@ private:
 		client::requestAnimationFrame(cheerp::Callback(rafHandler));
 	}
 	
-	
 public:
 	
 	Graphics()
@@ -87,7 +86,7 @@ public:
 	}
 	
 	
-	auto conformal_map(int formula, int mc_index)
+	client::Float64Array * conformal_map(int formula, int mc_index)
     {					
 		int N = 200;
 		
@@ -140,8 +139,8 @@ public:
 			MakeTypedArray<TypedArrayForPointerType<double>::type>(&complex_array6, complex_array6.size() * sizeof(double));
 			
 		////
-		
 	
+		
 		for(double y = -max; y <= max; y+=grid_spacing)
 		{
 			for(int i = 0; i < N; i++)
@@ -155,8 +154,8 @@ public:
 				if(mc_index==10){
 				
 				MX0 mc;
-				mc.real = t;
-				mc.imag = y;
+				mc.real = t*half_pi;
+				mc.imag = y*half_pi;
 				
 				MX0 d;
 				d = function(mc, formula);
@@ -164,8 +163,8 @@ public:
 				complex_array10[index]             = d.real;
 				complex_array10[N*n_grid_lines + N*n_grid_lines + index] = d.imag;
 				
-				mc.real = y;
-				mc.imag = t;
+				mc.real = y*half_pi;
+				mc.imag = t*half_pi;
 				
 				d = function(mc, formula);
 				complex_array10[N*n_grid_lines + index]             = d.real;
@@ -178,11 +177,11 @@ public:
 				if(mc_index==0){
 
 				MX1 mc;
-				mc.real.real = t;
-				mc.real.imag = y;
+				mc.real.real = t*half_pi;
+				mc.real.imag = y*half_pi;
 				
-				mc.imag.real = t;
-				mc.imag.imag = y;
+				mc.imag.real = t*half_pi;
+				mc.imag.imag = y*half_pi;
 				
 				MX1 d;
 				d = function(mc, formula);
@@ -193,11 +192,11 @@ public:
 				complex_array2[index]             = d.imag.real;
 				complex_array2[N*n_grid_lines + N*n_grid_lines + index] = d.imag.imag;
 				
-				mc.real.real = y;
-				mc.real.imag = t;
+				mc.real.real = y*half_pi;
+				mc.real.imag = t*half_pi;
 				
-				mc.imag.real = y;
-				mc.imag.imag = t;
+				mc.imag.real = y*half_pi;
+				mc.imag.imag = t*half_pi;
 				
 				d = function(mc, formula);
 				
@@ -215,72 +214,62 @@ public:
 				if(mc_index==2){
 				
 				MX2 mc;
-				mc.real.real.real = t;
-				mc.real.real.imag = y;
+				mc.real.real.real = t*half_pi;
+				mc.real.real.imag = y*half_pi;
 				
-				mc.real.imag.real = t;
-				mc.real.imag.imag = y;
+				mc.real.imag.real = t*half_pi;
+				mc.real.imag.imag = y*half_pi;
+				
+				
+				mc.imag.real.real = t*half_pi;
+				mc.imag.real.imag = y*half_pi;
+				
+				mc.imag.imag.real = t*half_pi;
+				mc.imag.imag.imag = y*half_pi;
 				
 				MX2 d;
 				d = function(mc, formula);
 				
-				complex_array3[index]             = d.real.real.real;
+				complex_array3[index]             						= d.real.real.real;
 				complex_array3[N*n_grid_lines + N*n_grid_lines + index] = d.real.real.imag;
 				
-				complex_array4[index]             = d.real.imag.real;
+				complex_array4[index]             						= d.real.imag.real;
 				complex_array4[N*n_grid_lines + N*n_grid_lines + index] = d.real.imag.imag;
 				
-				mc.real.real.real = y;
-				mc.real.real.imag = t;
-				
-				mc.real.imag.real = y;
-				mc.real.imag.imag = t;
-				
-				d = function(mc, formula);
-				
-				complex_array3[N*n_grid_lines + index]             = d.real.real.real;
-				complex_array3[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.real.real.imag;
-				
-				complex_array4[N*n_grid_lines + index]             = d.real.imag.real;
-				complex_array4[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.real.imag.imag;
-				
-				}
-				
-				
-				//tricomplex
-				if(mc_index==4){
-				
-				MX2 mc;
-				mc.imag.real.real = t;
-				mc.imag.real.imag = y;
-				
-				mc.imag.imag.real = t;
-				mc.imag.imag.imag = y;
-				
-				MX2 d;
-				d = function(mc, formula);
-				
-				complex_array5[index]             = d.imag.real.real;
+				complex_array5[index]             						= d.imag.real.real;
 				complex_array5[N*n_grid_lines + N*n_grid_lines + index] = d.imag.real.imag;
 				
-				complex_array6[index]             = d.imag.imag.real;
+				complex_array6[index]             						= d.imag.imag.real;
 				complex_array6[N*n_grid_lines + N*n_grid_lines + index] = d.imag.imag.imag;
 				
-				mc.imag.real.real = y;
-				mc.imag.real.imag = t;
+				mc.real.real.real = y*half_pi;
+				mc.real.real.imag = t*half_pi;
 				
-				mc.imag.imag.real = y;
-				mc.imag.imag.imag = t;
+				mc.real.imag.real = y*half_pi;
+				mc.real.imag.imag = t*half_pi;
+				
+				mc.imag.real.real = y*half_pi;
+				mc.imag.real.imag = t*half_pi;
+				
+				mc.imag.imag.real = y*half_pi;
+				mc.imag.imag.imag = t*half_pi;
 				
 				d = function(mc, formula);
 				
-				complex_array5[N*n_grid_lines + index]             = d.imag.real.real;
+				complex_array3[N*n_grid_lines + index]             						 = d.real.real.real;
+				complex_array3[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.real.real.imag;
+				
+				complex_array4[N*n_grid_lines + index]             						 = d.real.imag.real;
+				complex_array4[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.real.imag.imag;
+				
+				complex_array5[N*n_grid_lines + index]             						 = d.imag.real.real;
 				complex_array5[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.imag.real.imag;
 				
-				complex_array6[N*n_grid_lines + index]             = d.imag.imag.real;
+				complex_array6[N*n_grid_lines + index]            						 = d.imag.imag.real;
 				complex_array6[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.imag.imag.imag;
 				
 				}
+				
 			}	
 			
 			tel++;
