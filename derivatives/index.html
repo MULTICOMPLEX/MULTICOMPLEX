@@ -382,23 +382,34 @@ var layout = {
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
-	
-	
+	tickformat: '',
+	title: 'REAL AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	},
+	
 	yaxis: {range: [2*-Math.PI , 2*Math.PI],
 	showtickprefix: 'last',
     tickprefix: 'IMAG ',
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
+	tickformat: '',
+	title: 'IMAG AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	
 	},
 	
@@ -428,6 +439,7 @@ var layout = {
 	x: real,
 	y: imag,
 	name: '',
+	
 	mode: 'markers',
 	marker: {
 		color: 'rgb(17, 157, 255)',
@@ -519,64 +531,80 @@ var layout = {
 	
 	xaxis: {range: [-2.1, 2.1],
 	
-	
 	showtickprefix: 'last',
     tickprefix: 'REAL ',
 	
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
+	tickformat: '',
+	title: 'X AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	},
-	
 	
 	xaxis2: {range: [-2.1, 2.1],
 	
-	
 	showtickprefix: 'last',
     tickprefix: 'REAL ',
 	
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
+	tickformat: '',
+	title: 'X AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	},
 	
-	
 	yaxis: {range: [-2.1, 2.1],
-	
 	
 	showtickprefix: 'last',
     tickprefix: 'IMAG ',
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
-	
+	tickformat: '',
+	title: 'Y AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	},
 	
 	yaxis2: {range: [-2.1, 2.1],
 	
-	
 	showtickprefix: 'last',
     tickprefix: 'IMAG ',
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
-	
+	tickformat: '',
+	title: 'Y AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	},
 	
 	paper_bgcolor: 'rgba(0,0,0,0)',
@@ -603,17 +631,12 @@ var layout3d = {
 		
 	xaxis: {range: [2*-Math.PI , 2*Math.PI],
 	showspikes: false,
-	//backgroundcolor: "rgb(0, 0, 0)",
-	//showbackground: true,
 	
 	zerolinecolor: "rgb(255, 255, 255)",
 	zerolinewidth: 1,
 	
 	gridcolor: "rgb(255, 255, 255)",
 	gridwidth: 1,
-	
-	//linecolor: "rgb(255, 255, 255)",
-	//linewidth: 1,
 		
 	showtickprefix: 'last',
     tickprefix: 'REAL.REAL ',
@@ -621,44 +644,50 @@ var layout3d = {
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
+	tickformat: '',
+	title: 'X AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
+	
 	},
 	
 	yaxis: {range: [2*-Math.PI , 2*Math.PI],
 	
 	showspikes: false,
-	//backgroundcolor: "rgb(0, 0, 0)",
-	//showbackground: true,
 	
 	zerolinecolor: "rgb(255, 255, 255)",
 	zerolinewidth: 1,
 	
 	gridcolor: "rgb(255, 255, 255)",
 	gridwidth: 1,
-	
-	//linecolor: "rgb(255, 255, 255)",
-	//linewidth: 1,
-	
 	
 	showtickprefix: 'last',
     tickprefix: 'REAL.IMAG ',
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
+	tickformat: '',
+	
+	title: 'Y AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	
 	},
 	
 	zaxis: {range: [2*-Math.PI , 2*Math.PI],
 	 showspikes: false,
-	//backgroundcolor: "rgb(0, 0, 0)",
-	//showbackground: true,
 	
 	zerolinecolor: "rgb(255, 255, 255)",
 	zerolinewidth: 1,
@@ -666,18 +695,21 @@ var layout3d = {
 	gridcolor: "rgb(255, 255, 255)",
 	gridwidth: 1,
 	
-	//linecolor: "rgb(255, 255, 255)",
-	//linewidth: 1,
-	
 	showtickprefix: 'last',
     tickprefix: 'IMAG.REAL ',
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
+	tickformat: '',
+	title: 'Z AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	
 	},
 	
@@ -717,63 +749,69 @@ var layout3d = {
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
+	tickformat: '',
+	title: 'X AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	},
 	
 	yaxis: {range: [2*-Math.PI , 2*Math.PI],
 	showspikes: false,
-	//backgroundcolor: "rgb(0, 0, 0)",
-	//showbackground: true,
 	
 	zerolinecolor: "rgb(255, 255, 255)",
 	zerolinewidth: 1,
 	
 	gridcolor: "rgb(255, 255, 255)",
 	gridwidth: 1,
-	
-	//linecolor: "rgb(255, 255, 255)",
-	//linewidth: 1,
 	
 	showtickprefix: 'last',
     tickprefix: 'REAL.IMAG ',
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
+	tickformat: '',
+	title: 'Y AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	
 	},
 	
 	zaxis: {range: [2*-Math.PI , 2*Math.PI],
 	showspikes: false,
 	
-	//backgroundcolor: "rgb(0, 0, 0)",
-	//showbackground: true,
-	
 	zerolinecolor: "rgb(255, 255, 255)",
 	zerolinewidth: 1,
 	
 	gridcolor: "rgb(255, 255, 255)",
-	gridwidth: 1,
-	
-	//linecolor: "rgb(255, 255, 255)",
-	//linewidth: 1,
-	
+	gridwidth: 1,	
 	
 	showtickprefix: 'last',
     tickprefix: 'IMAG.IMAG ',
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
+	tickformat: '',
+	title: 'Z AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	
 	},
 		},
@@ -794,61 +832,59 @@ var layout3d = {
 	
 	showspikes: false,
 	
-	//backgroundcolor: "rgb(0, 0, 0)",
-	//showbackground: true,
-	
 	zerolinecolor: "rgb(255, 255, 255)",
 	zerolinewidth: 1,
 	
 	gridcolor: "rgb(255, 255, 255)",
 	gridwidth: 1,
-	
-	//linecolor: "rgb(255, 255, 255)",
-	//linewidth: 1,
-	
+
 	showtickprefix: 'last',
     tickprefix: 'REAL.REAL.REAL ',
 	
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
+	tickformat: '',
+	title: 'X AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	},
 	
 	yaxis: {range: [2*-Math.PI , 2*Math.PI],
 	showspikes: false,
-	//backgroundcolor: "rgb(0, 0, 0)",
-	//showbackground: true,
-	
+
 	zerolinecolor: "rgb(255, 255, 255)",
 	zerolinewidth: 1,
 	
 	gridcolor: "rgb(255, 255, 255)",
 	gridwidth: 1,
-	
-	//linecolor: "rgb(255, 255, 255)",
-	//linewidth: 1,
 	
 	showtickprefix: 'last',
     tickprefix: 'REAL.REAL.IMAG ',
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
+	tickformat: '',
+	title: 'Y AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	
 	},
 	
 	zaxis: {range: [2*-Math.PI , 2*Math.PI],
 	showspikes: false,
-	
-	//backgroundcolor: "rgb(0, 0, 0)",
-	//showbackground: true,
 	
 	zerolinecolor: "rgb(255, 255, 255)",
 	zerolinewidth: 1,
@@ -856,19 +892,21 @@ var layout3d = {
 	gridcolor: "rgb(255, 255, 255)",
 	gridwidth: 1,
 	
-	//linecolor: "rgb(255, 255, 255)",
-	//linewidth: 1,
-	
-	
 	showtickprefix: 'last',
     tickprefix: 'REAL.IMAG.REAL ',
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
+	tickformat: '',
+	title: 'Z AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	
 	},
 		},
@@ -889,17 +927,11 @@ var layout3d = {
 	
 	showspikes: false,
 	
-	//backgroundcolor: "rgb(0, 0, 0)",
-	//showbackground: true,
-	
 	zerolinecolor: "rgb(255, 255, 255)",
 	zerolinewidth: 1,
 	
 	gridcolor: "rgb(255, 255, 255)",
 	gridwidth: 1,
-	
-	//linecolor: "rgb(255, 255, 255)",
-	//linewidth: 1,
 	
 	showtickprefix: 'last',
     tickprefix: 'REAL.REAL.REAL ',
@@ -907,67 +939,72 @@ var layout3d = {
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
+	tickformat: '',
+	title: 'X AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	},
 	
 	yaxis: {range: [2*-Math.PI , 2*Math.PI],
 	showspikes: false,
-	//backgroundcolor: "rgb(0, 0, 0)",
-	//showbackground: true,
 	
 	zerolinecolor: "rgb(255, 255, 255)",
 	zerolinewidth: 1,
 	
 	gridcolor: "rgb(255, 255, 255)",
 	gridwidth: 1,
-	
-	//linecolor: "rgb(255, 255, 255)",
-	//linewidth: 1,
 	
 	showtickprefix: 'last',
     tickprefix: 'REAL.REAL.IMAG ',
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
+	tickformat: '',
+	title: 'Y AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	
 	},
 	
 	zaxis: {range: [2*-Math.PI , 2*Math.PI],
 	showspikes: false,
 	
-	//backgroundcolor: "rgb(0, 0, 0)",
-	//showbackground: true,
-	
 	zerolinecolor: "rgb(255, 255, 255)",
 	zerolinewidth: 1,
 	
 	gridcolor: "rgb(255, 255, 255)",
 	gridwidth: 1,
-	
-	//linecolor: "rgb(255, 255, 255)",
-	//linewidth: 1,
-	
-	
+
 	showtickprefix: 'last',
     tickprefix: 'REAL.IMAG.IMAG ',
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
-	
+	tickformat: '',
+	title: 'Z AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	},
 		},
-				
+		
 	scene5: 
 	{
 	
@@ -984,17 +1021,11 @@ var layout3d = {
 	
 	showspikes: false,
 	
-	//backgroundcolor: "rgb(0, 0, 0)",
-	//showbackground: true,
-	
 	zerolinecolor: "rgb(255, 255, 255)",
 	zerolinewidth: 1,
 	
 	gridcolor: "rgb(255, 255, 255)",
 	gridwidth: 1,
-	
-	//linecolor: "rgb(255, 255, 255)",
-	//linewidth: 1,
 	
 	showtickprefix: 'last',
     tickprefix: 'IMAG.REAL.REAL ',
@@ -1002,63 +1033,69 @@ var layout3d = {
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
+	tickformat: '',
+	title: 'X AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	},
 	
 	yaxis: {range: [2*-Math.PI , 2*Math.PI],
 	showspikes: false,
-	//backgroundcolor: "rgb(0, 0, 0)",
-	//showbackground: true,
 	
 	zerolinecolor: "rgb(255, 255, 255)",
 	zerolinewidth: 1,
 	
 	gridcolor: "rgb(255, 255, 255)",
 	gridwidth: 1,
-	
-	//linecolor: "rgb(255, 255, 255)",
-	//linewidth: 1,
-	
+
 	showtickprefix: 'last',
     tickprefix: 'IMAG.REAL.IMAG ',
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
+	tickformat: '',
+	title: 'Y AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	
 	},
 	
 	zaxis: {range: [2*-Math.PI , 2*Math.PI],
 	showspikes: false,
-	
-	//backgroundcolor: "rgb(0, 0, 0)",
-	//showbackground: true,
-	
+
 	zerolinecolor: "rgb(255, 255, 255)",
 	zerolinewidth: 1,
 	
 	gridcolor: "rgb(255, 255, 255)",
 	gridwidth: 1,
-	
-	//linecolor: "rgb(255, 255, 255)",
-	//linewidth: 1,
-	
-	
+
 	showtickprefix: 'last',
     tickprefix: 'IMAG.IMAG.REAL ',
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
+	tickformat: '',
+	title: 'Z AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	
 	},
 		},
@@ -1079,17 +1116,11 @@ var layout3d = {
 	
 	showspikes: false,
 	
-	//backgroundcolor: "rgb(0, 0, 0)",
-	//showbackground: true,
-	
 	zerolinecolor: "rgb(255, 255, 255)",
 	zerolinewidth: 1,
 	
 	gridcolor: "rgb(255, 255, 255)",
 	gridwidth: 1,
-	
-	//linecolor: "rgb(255, 255, 255)",
-	//linewidth: 1,
 	
 	showtickprefix: 'last',
     tickprefix: 'IMAG.REAL.REAL ',
@@ -1097,68 +1128,72 @@ var layout3d = {
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
+	tickformat: '',
+	title: 'X AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	},
 	
 	yaxis: {range: [2*-Math.PI , 2*Math.PI],
 	showspikes: false,
-	//backgroundcolor: "rgb(0, 0, 0)",
-	//showbackground: true,
-	
+
 	zerolinecolor: "rgb(255, 255, 255)",
 	zerolinewidth: 1,
 	
 	gridcolor: "rgb(255, 255, 255)",
 	gridwidth: 1,
-	
-	//linecolor: "rgb(255, 255, 255)",
-	//linewidth: 1,
-	
+
 	showtickprefix: 'last',
     tickprefix: 'IMAG.REAL.IMAG ',
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
+	tickformat: '',
+	title: 'Y AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	
 	},
 	
 	zaxis: {range: [2*-Math.PI , 2*Math.PI],
 	showspikes: false,
-	
-	//backgroundcolor: "rgb(0, 0, 0)",
-	//showbackground: true,
-	
+
 	zerolinecolor: "rgb(255, 255, 255)",
 	zerolinewidth: 1,
 	
 	gridcolor: "rgb(255, 255, 255)",
 	gridwidth: 1,
-	
-	//linecolor: "rgb(255, 255, 255)",
-	//linewidth: 1,
-	
-	
+
 	showtickprefix: 'last',
     tickprefix: 'IMAG.IMAG.IMAG ',
 	tickfont: {
       family: 'Old Standard TT, serif',
       size: 14,
-      color: 'green'
+      color: 'lightgrey'
     },
 	
-	tickformat: ''
+	tickformat: '',
+	title: 'Z AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
 	
 	},
 		},
-			
-	
 	
 	title: {
     //text:'(d^2/dz^2(gamma(log(z)))) i',
