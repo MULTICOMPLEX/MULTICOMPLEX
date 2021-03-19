@@ -38,7 +38,7 @@ Diverse
 
 https://multicomplex.github.io/MULTICOMPLEX/Tarot/
 
- (Math) GEMS:
+ (Math) GEMS "Groupings, Exponents, Multiply/Divide, Subtract/Add" :
  
  ![382](https://user-images.githubusercontent.com/75379917/111783086-1e628600-88ba-11eb-92d0-e7fc023ebb2e.jpg)
  
