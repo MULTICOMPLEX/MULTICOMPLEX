@@ -1,7 +1,5 @@
 
-#include <array>
-
-#include "include/multicomplex.hpp"
+#include "multicomplex.hpp"
 
 #include <cheerp/client.h> //Misc client side stuff
 #include <cheerp/clientlib.h> //Complete DOM/HTML5 interface
@@ -50,6 +48,7 @@ private:
 		client::requestAnimationFrame(cheerp::Callback(rafHandler));
 	}
 	
+	
 public:
 	
 	Graphics()
@@ -86,6 +85,9 @@ public:
 	}
 	
 	
+	
+	
+	
 	client::Float64Array * conformal_map(int formula, int mc_index)
     {					
 		int N = 200;
@@ -101,6 +103,7 @@ public:
 		
 		std::array<double, int(2*max*100)*n_grid_lines*4> complex_array10;//complex
 		
+		std::array<double, 94> sphere;
 		
 		std::array<double, int(2*max*100)*n_grid_lines*4> complex_array1; //bicomplex real 
 		std::array<double, int(2*max*100)*n_grid_lines*4> complex_array2; //bicomplex imag
@@ -110,7 +113,6 @@ public:
 		std::array<double, int(2*max*100)*n_grid_lines*4> complex_array4; //tricomplex real.imag 
 		std::array<double, int(2*max*100)*n_grid_lines*4> complex_array5; //tricomplex imag.real  
 		std::array<double, int(2*max*100)*n_grid_lines*4> complex_array6; //tricomplex imag.imag 
-		
 		
 		static client::Float64Array * vec10 = 
 			MakeTypedArray<TypedArrayForPointerType<double>::type>(&complex_array10, complex_array10.size() * sizeof(double));
@@ -124,8 +126,6 @@ public:
 			MakeTypedArray<TypedArrayForPointerType<double>::type>(&complex_array2, complex_array2.size() * sizeof(double));
 			
 		
-		////
-		
 		static client::Float64Array * vec3 = 
 			MakeTypedArray<TypedArrayForPointerType<double>::type>(&complex_array3, complex_array3.size() * sizeof(double));
 			
@@ -137,10 +137,76 @@ public:
 			
 		static client::Float64Array * vec6 = 
 			MakeTypedArray<TypedArrayForPointerType<double>::type>(&complex_array6, complex_array6.size() * sizeof(double));
-			
-		////
-	
 		
+		////
+		
+		std::array<double, 1242> X;
+		std::array<double, 1242> Y;
+		std::array<double, 1242> Z;
+		
+		static client::Float64Array * vec11 = 
+			MakeTypedArray<TypedArrayForPointerType<double>::type>(&X, X.size() * sizeof(double));
+		static client::Float64Array * vec12 = 
+			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Y, Y.size() * sizeof(double));
+		static client::Float64Array * vec13 = 
+			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Z, Z.size() * sizeof(double));
+		
+	
+	// draw unit sphere points (r=1 center=(0,0,0)) ... your rays directions
+	
+	if(mc_index==11)
+	{
+		int ia,na,ib,nb;
+		int i = 0;
+	
+		double x,y,z,r;
+		double a,b,da,db;
+		na=32;                                  // number of slices
+		da=pi/double(na-1);                   // latitude angle step
+		
+		MX0 d;
+		MX0 mc;
+		
+		for (a=-half_pi,ia=0;ia<na;ia++,a+=da) // slice sphere to circles in xy planes
+		{
+			r=std::cos(a);                           // radius of actual circle in xy plane
+			z=std::sin(a);                           // height of actual circle in xy plane
+			nb=std::ceil(two_pi*r/da);
+			db=two_pi/double(nb);             // longitude angle step
+			if ((ia==0)||(ia==na-1)) { nb=1; db=0.0; }  // handle edge cases
+			for (b=0.0,ib=0;ib<nb;ib++,b+=db)   // cut circle to vertexes
+			{
+				x=r*std::cos(b);                     // compute x,y of vertex
+				y=r*std::sin(b);
+
+				mc.real = x;
+				mc.imag = y;
+				
+				d = function(mc, formula);	
+				
+			// this just draw the ray direction (x,y,z) as line in OpenGL
+			// so you can ignore this
+			// instead add the ray cast of yours
+			double w=pi;
+       
+			//glColor3f(1.0,1.0,1.0); glVertex3d(x,y,z);
+			//glColor3f(0.0,0.0,0.0); glVertex3d(w*x,w*y,w*z);
+				//X[i] = x * w;
+				//Y[i] = y * w;
+				
+				X[i] = d.real * w;
+				Y[i] = d.imag * w;
+				
+				Z[i] = z * w;
+				i++;
+			}
+		}
+		 //std::cout << i << std::endl;
+	}
+
+	
+		if(mc_index==0 || mc_index==2 || mc_index==10)
+		{
 		for(double y = -max; y <= max; y+=grid_spacing)
 		{
 			for(int i = 0; i < N; i++)
@@ -273,7 +339,7 @@ public:
 			}	
 			
 			tel++;
-		}
+		}}
 		
 		
 		if(mc_index==0)
@@ -290,8 +356,15 @@ public:
 		else if(mc_index==5)
 			return vec6;
 		
-		else 
+		else if(mc_index==10)
 			return vec10;//complex
+			
+		else if(mc_index==11)
+			return vec11;//sphere x
+		else if(mc_index==12)
+			return vec12;//sphere y
+		else 
+			return vec13;//sphere z
      
     }
 	

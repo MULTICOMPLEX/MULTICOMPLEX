@@ -1231,6 +1231,10 @@ var obj = new Graphics;
 	var complex_array5 = [];
 	var complex_array6 = [];
 	
+	var X = [];
+	var Y = [];
+	var Z = [];
+	
 	let N = 200;
 	
 
@@ -1240,6 +1244,11 @@ var obj = new Graphics;
 		
 		complex_array1 = obj.conformal_map(formula, 0);
 		complex_array2 = obj.conformal_map(formula, 1);
+		
+		X = obj.conformal_map(formula, 11);
+		Y = obj.conformal_map(formula, 12);
+		Z = obj.conformal_map(formula, 13);
+		
 		}
 		
 		if(graph === 'graph4'){
@@ -1308,9 +1317,12 @@ var obj = new Graphics;
 	///////////
 	
 	var trace1_3d = {
-	x: real1,
-	y: imag1,
-	z: real2,
+	//x: real1,
+	//y: imag1,
+	//z: real2,
+	x: X,
+	y: Y,
+	z: Z,
 	scene: "scene1",
 	xaxis: 'x',
 	yaxis: 'y',
