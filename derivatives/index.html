@@ -379,7 +379,8 @@ var layout = {
     x: 0.05,
   },
 	xaxis: {range: [2*-Math.PI , 2*Math.PI],
-	
+	uirevision:'true',
+	aspectmode: 'manual',
 	showtickprefix: 'last',
     tickprefix: 'REAL ',
 	tickfont: {
@@ -398,6 +399,8 @@ var layout = {
 	},
 	
 	yaxis: {range: [2*-Math.PI , 2*Math.PI],
+	uirevision:'true',
+	aspectmode: 'manual',
 	showtickprefix: 'last',
     tickprefix: 'IMAG ',
 	tickfont: {
@@ -439,6 +442,7 @@ var layout = {
 	var imag = complex_array.slice(N*9*2,complex_array.size);
 
 	var trace1 = {
+	
 	x: real,
 	y: imag,
 	name: '',
@@ -454,7 +458,7 @@ var layout = {
 
 	var data = [trace1,{}];
 	
-	Plotly.newPlot('graph2', data, layout);
+	Plotly.react('graph2', data, layout);
 
 })}
 
@@ -533,7 +537,7 @@ var layout = {
   },
 	
 	xaxis: {range: [-2.1, 2.1],
-	
+	uirevision:'true',
 	showtickprefix: 'last',
     tickprefix: 'REAL ',
 	
@@ -553,7 +557,7 @@ var layout = {
 	},
 	
 	xaxis2: {range: [-2.1, 2.1],
-	
+	uirevision:'true',
 	showtickprefix: 'last',
     tickprefix: 'REAL ',
 	
@@ -573,7 +577,7 @@ var layout = {
 	},
 	
 	yaxis: {range: [-2.1, 2.1],
-	
+	uirevision:'true',
 	showtickprefix: 'last',
     tickprefix: 'IMAG ',
 	tickfont: {
@@ -592,7 +596,7 @@ var layout = {
 	},
 	
 	yaxis2: {range: [-2.1, 2.1],
-	
+	uirevision:'true',
 	showtickprefix: 'last',
     tickprefix: 'IMAG ',
 	tickfont: {
@@ -614,7 +618,6 @@ var layout = {
 	plot_bgcolor: 'rgba(0,0,0,0)'
 }
 
-
 function plot_conformal_map2(formula, graph)
 {
 
@@ -622,8 +625,8 @@ var layout3d = {
 
 	scene1: 
 	{
-	
-	aspectmode: "manual",
+	uirevision:'true',
+	aspectmode: 'manual',
 	aspectratio: {
      x: 1, y: 1, z: 1,
     },
@@ -726,8 +729,8 @@ var layout3d = {
 		
     scene2: 
 	{
-	
-	aspectmode: "manual",
+	uirevision:'true',
+	aspectmode: 'manual',
 	aspectratio: {
      x: 1, y: 1, z: 1,
     },
@@ -827,8 +830,8 @@ var layout3d = {
 		
 	scene3: 
 	{
-	
-	aspectmode: "manual",
+	uirevision:'true',
+	aspectmode: 'manual',
 	aspectratio: {
      x: 1, y: 1, z: 1,
     },
@@ -866,7 +869,7 @@ var layout3d = {
 	},
 	
 	yaxis: {range: [2*-Math.PI , 2*Math.PI],
-	showspikes: false,
+	showspikes: 'false',
 
 	zerolinecolor: "rgb(255, 255, 255)",
 	zerolinewidth: 1,
@@ -922,8 +925,8 @@ var layout3d = {
 		
 	scene4: 
 	{
-	
-	aspectmode: "manual",
+	uirevision:'true',
+	aspectmode: 'manual',
 	aspectratio: {
      x: 1, y: 1, z: 1,
     },
@@ -1016,8 +1019,8 @@ var layout3d = {
 		
 	scene5: 
 	{
-	
-	aspectmode: "manual",
+	uirevision:'true',
+	aspectmode: 'manual',
 	aspectratio: {
      x: 1, y: 1, z: 1,
     },
@@ -1111,8 +1114,8 @@ var layout3d = {
 	
 	scene6: 
 	{
-	
-	aspectmode: "manual",
+	uirevision:'true',
+	aspectmode: 'manual',
 	aspectratio: {
      x: 1, y: 1, z: 1,
     },
@@ -1237,13 +1240,10 @@ var obj = new Graphics;
 	
 	let N = 200;
 	
-
 	function compute_conformal_map()
 	{	
 		if(graph === 'graph3'){
-		
-		
-		
+
 		X = obj.conformal_map(formula, 11);
 		Y = obj.conformal_map(formula, 12);
 		Z = obj.conformal_map(formula, 13);
@@ -1443,11 +1443,11 @@ var obj = new Graphics;
 	
 	if(graph === 'graph3'){
 	
-	Plotly.newPlot(graph, data1, layout3d);}
+	Plotly.react(graph, data1, layout3d);}
 	
 	if(graph === 'graph4'){
 	
-	Plotly.newPlot(graph, data2, layout3d);}
+	Plotly.react(graph, data2, layout3d);}
 	
 }
 
@@ -1465,8 +1465,6 @@ function generateData(event) {
 };
 
 menu2.addEventListener("change", generateData);
-
-
 
 
 </script>
