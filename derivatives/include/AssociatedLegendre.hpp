@@ -48,13 +48,15 @@ public:
 	unsigned int m() const;
 
 	double operator()(double x) const;
-	
-
+	double rf;
+	MX0 i;
 
 	unsigned int m_l;
 	unsigned int m_m;
 
 	double calculatePolynomialValue(double x) const;
+	MX0 SphericalHarmonic(double theta /*cos theta*/, double phi) const;
+
 };
 
 inline AssociatedLegendre::AssociatedLegendre(unsigned int l, unsigned int m) : m_l(l), m_m(m)
@@ -67,6 +69,9 @@ inline AssociatedLegendre::AssociatedLegendre(unsigned int l, unsigned int m) : 
 	{
 		//throw LegendreException::InvalidIndex("Upper Index (m) must be less than Lower Index (l)");
 	}
+	
+	rf = std::sqrt((2 * m_l + 1) / (2 * two_pi)) * std::sqrt(Fac<double>(m_l - m_m) / Fac<double>(m_l + m_m));
+	i.imag = 1;
 }
 
 inline unsigned int AssociatedLegendre::l() const
@@ -134,6 +139,11 @@ inline double AssociatedLegendre::calculatePolynomialValue(double x) const
 			return pmp2m;
 		}
 	}
+}
+
+inline MX0 AssociatedLegendre::SphericalHarmonic(double theta /*cos theta*/, double phi) const
+{	
+	return rf * calculatePolynomialValue(theta) * exp(i * m_m * phi);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -194,7 +194,7 @@ public:
 		MX0 d;
 		MX0 mc;
 		
-		AssociatedLegendre al(2,1);
+		AssociatedLegendre al(2,1); //l = 2, m = 1
 		
 		for (a=-half_pi,ia=0;ia<na;ia++,a+=da) // slice sphere to circles in xy planes
 		{
@@ -208,28 +208,30 @@ public:
 				x=r*std::cos(b);                     // compute x,y of vertex
 				y=r*std::sin(b);
 
-				mc.real = x;
-				mc.imag = y;
+				//mc.real = x;
+				//mc.imag = y;
 				
-				mc.real = al.calculatePolynomialValue(x);
-				
+			
+				mc = al.SphericalHarmonic(x, y);
 				d = function(mc, formula);
+				//auto YY = std::abs(std::pow(-1,al.m_m) * mc.real);
+				auto YY = abs(d);
+
 				
-				
-			// this just draw the ray direction (x,y,z) as line in OpenGL
-			// so you can ignore this
-			// instead add the ray cast of yours
-			double w=pi;
+				// this just draw the ray direction (x,y,z) as line in OpenGL
+				// so you can ignore this
+				// instead add the ray cast of yours
+				const double w=pi*pi;
        
-			//glColor3f(1.0,1.0,1.0); glVertex3d(x,y,z);
-			//glColor3f(0.0,0.0,0.0); glVertex3d(w*x,w*y,w*z);
+				//glColor3f(1.0,1.0,1.0); glVertex3d(x,y,z);
+				//glColor3f(0.0,0.0,0.0); glVertex3d(w*x,w*y,w*z);
 				//X[i] = x * w;
 				//Y[i] = y * w;
 				
-				X[i] = d.real * w;
-				Y[i] = d.imag * w;
+				X[i] = x * w * YY;
+				Y[i] = y * w * YY;
 				
-				Z[i] = z * w;
+				Z[i] = z * w * YY;
 				i++;
 			}
 		}
@@ -531,6 +533,12 @@ void webMain()
 	
 	std::cout << std::endl;
 
+	AssociatedLegendre al(2,1);
+	auto a = al.SphericalHarmonic(std::cos(0.97), 0.34);
+	std::cout << "SphericalHarmonic(2, 1, std::cos(0.97), 0.34) = " << a << std::endl << std::endl;
+	//SphericalHarmonicY[2, 1, 0.97, 0.34] 
+	 
+	
 	sx.random(-10,10);
 
 	std::cout << "multicomplex roots, 2 x^2 - 10 x + 5 = 0" << std::endl <<  std::endl;
