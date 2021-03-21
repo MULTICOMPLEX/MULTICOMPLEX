@@ -1,8 +1,36 @@
 
 #include "multicomplex.hpp"
 
+//#include <boost/math/special_functions/spherical_harmonic.hpp>
+
 #include <cheerp/client.h> //Misc client side stuff
 #include <cheerp/clientlib.h> //Complete DOM/HTML5 interface
+
+#include "AssociatedLegendre.hpp"
+
+
+/*
+namespace sph
+{
+
+    // see the document for the definition
+	template<typename T>
+    T sph_harm(const unsigned int l, const int m, const T theta, const T phi) {
+        using namespace boost::math;
+        if (m > 0) {
+            return root_two * (m % 2 == 0? 1: -1) * spherical_harmonic_r(l, m, theta, phi);
+        }
+        else if (m < 0) {
+            return root_two * (m % 2 == 0? 1: -1) * spherical_harmonic_i(l, -m, theta, phi);
+        }
+        else {// m == 0 {
+            return spherical_harmonic_r(l, 0, theta, phi);
+        }
+    }
+
+}
+
+*/
 
 using namespace client;
 using namespace cheerp;
@@ -84,10 +112,7 @@ public:
         return (val - min) / delta;
 	}
 	
-	
-	
-	
-	
+
 	client::Float64Array * conformal_map(int formula, int mc_index)
     {					
 		int N = 200;
@@ -152,8 +177,10 @@ public:
 			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Z, Z.size() * sizeof(double));
 		
 	
-	// draw unit sphere points (r=1 center=(0,0,0)) ... your rays directions
 	
+		
+	
+	// draw unit sphere points (r=1 center=(0,0,0)) ... your rays directions
 	if(mc_index==11)
 	{
 		int ia,na,ib,nb;
@@ -166,6 +193,8 @@ public:
 		
 		MX0 d;
 		MX0 mc;
+		
+		AssociatedLegendre al(2,1);
 		
 		for (a=-half_pi,ia=0;ia<na;ia++,a+=da) // slice sphere to circles in xy planes
 		{
@@ -182,7 +211,10 @@ public:
 				mc.real = x;
 				mc.imag = y;
 				
-				d = function(mc, formula);	
+				mc.real = al.calculatePolynomialValue(x);
+				
+				d = function(mc, formula);
+				
 				
 			// this just draw the ray direction (x,y,z) as line in OpenGL
 			// so you can ignore this
@@ -497,7 +529,6 @@ void webMain()
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
 	std::cout.precision(10);
 	
-
 	std::cout << std::endl;
 
 	sx.random(-10,10);

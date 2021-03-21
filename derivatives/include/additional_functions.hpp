@@ -121,3 +121,21 @@ multicomplex<elem, order> LambertW(int k = 0, multicomplex<elem, order> z = 0)
 	} while ((abs(w - wprev) > prec) && iter < maxiter);
 	return w;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

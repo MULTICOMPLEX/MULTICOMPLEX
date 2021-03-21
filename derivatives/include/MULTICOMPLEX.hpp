@@ -1040,6 +1040,7 @@ constexpr const REAL euler = 0.5772156649015328606065120900824024310421593359399
 constexpr const REAL half = 0.5;
 constexpr const REAL quarter = 0.25;
 constexpr const REAL root_two_pi = 1.772453850905516027298167483341145182797549456122387128213;
+constexpr const REAL root_two = 1.4142135623730950488016887242096980785696718753769480731766797379;
 
 constexpr const REAL lambda = std::numeric_limits<REAL>::epsilon();
 

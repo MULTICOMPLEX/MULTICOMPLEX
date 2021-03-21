@@ -652,12 +652,29 @@ T Fac
 ) 
 { 
   T num = T(1); 
-  for (size_t i = 1; i <= number; i++) 
+  for (size_t i = 2; i <= number; i++) 
       num *= i; 
   return num; 
 }
 
 //---------------------------------------------------
+
+
+size_t Pochhammer(size_t x, size_t n)
+{
+  size_t c = 1;
+  for(size_t k = 0; k <= n-1; k++)
+  { 
+      c *= x + k;
+  }
+  return c;
+  
+  //The coefficients that appear in the expansions are Stirling numbers of the first kind. 
+  //return std::tgamma(x+n) / std::tgamma(x);
+}
+
+//---------------------------------------------------
+
 
 template<typename A, typename T>
 A Binomial_Coefficient(const T& n, const T& k)
