@@ -180,29 +180,42 @@ public:
 		{
 			MX0 Y;
 			MX0 mc;
-			double absY;
+			double realY;
 			const double w=pi;
 			int i = 0;
-			AssociatedLegendre al(5, 4); //l = 2, m = 1
-		
+			
+			unsigned int l;
+			l = 6;
+			
+			int m;
+			m = 0;
+			
+			AssociatedLegendre al(l, abs(m)); //l = 5, m = -4
+			
+			bool real_spherical_harmonics = true;
+			
 			for (double phi=0; phi < two_pi; phi += two_pi/200.)
 			{		
 				for (double theta=0; theta < pi; theta += pi/100.)   
 				{				
-					Y = al.SphericalHarmonic(std::cos(theta), phi);
+					Y = al.SphericalHarmonic(theta, phi);
 					Y = function(Y, formula);
-
-					if(al.m_m < 0){
-						Y.real = root_two * Y.imag; Y.imag = 0;}
+			
+					if(real_spherical_harmonics){
+					if(m < 0){
+						realY = abs(pow(-1,m) * root_two * Y.imag);}
+						
+					if(m == 0){
+						realY = abs(Y.real);}
 					
-					if(al.m_m > 0){
-						Y.real = root_two * Y.real; Y.imag = 0;}
-				
-					absY = abs(Y);
-				
-					Yx[i] = std::sin(theta) * std::sin(phi) * w * absY;
-					Yy[i] = std::sin(theta) * std::cos(phi) * w * absY;
-					Yz[i] = std::cos(theta) * w * absY;
+					if(m > 0){
+					realY = abs(pow(-1,m) * root_two * Y.real);}}
+					
+					else realY = abs(Y); //complex 
+						
+					Yx[i] = std::sin(theta) * std::sin(phi) * w * realY;
+					Yy[i] = std::sin(theta) * std::cos(phi) * w * realY;
+					Yz[i] = std::cos(theta) * w * realY;
 				
 					i++;
 				}
@@ -506,8 +519,8 @@ void webMain()
 	std::cout << std::endl;
 
 	AssociatedLegendre al(2,1);
-	auto a = al.SphericalHarmonic(std::cos(0.97), 0.34);
-	std::cout << "SphericalHarmonic(2, 1, std::cos(0.97), 0.34) = " << a << std::endl << std::endl;
+	auto SphericalH = al.SphericalHarmonic(0.97, 0.34);
+	std::cout << "SphericalHarmonic(2, 1, 0.97, 0.34) = " << SphericalH << std::endl << std::endl;
 	//SphericalHarmonicY[2, 1, 0.97, 0.34] 
 	 
 	

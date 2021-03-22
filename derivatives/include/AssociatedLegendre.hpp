@@ -61,14 +61,8 @@ public:
 
 inline AssociatedLegendre::AssociatedLegendre(unsigned int l, unsigned int m) : m_l(l), m_m(m)
 {
-	if (m_m < 0)
-	{
-		//throw LegendreException::InvalidIndex("Upper Index (m) cannot be negative!");
-	}
-	if (m_m > m_l)
-	{
-		//throw LegendreException::InvalidIndex("Upper Index (m) must be less than Lower Index (l)");
-	}
+	//static_assert (m_m < 0, "Upper Index (m) cannot be negative!");
+	//static_assert (m_m > m_l, "Upper Index (m) must be less than Lower Index (l)");
 	
 	rf = std::sqrt((2 * m_l + 1) / (2 * two_pi)) * std::sqrt(Fac<double>(m_l - m_m) / Fac<double>(m_l + m_m));
 	i.imag = 1;
@@ -96,10 +90,7 @@ inline double AssociatedLegendre::calculatePolynomialValue(double x) const
 	double pmp1m;
 
 	// Check Inputs
-	if (fabs(x) > 1.0)
-	{
-		//throw LegendreException::InputOutOfRange();
-	}
+	//static_assert (fabs(x) > 1.0, "Input Out Of Range");
 
 	if (m_m > 0)
 	{
@@ -143,8 +134,9 @@ inline double AssociatedLegendre::calculatePolynomialValue(double x) const
 
 inline MX0 AssociatedLegendre::SphericalHarmonic(double theta /*cos theta*/, double phi) const
 {	
-	return rf * calculatePolynomialValue(theta) * exp(i * m_m * phi);
+	return rf * calculatePolynomialValue(cos(theta)) * exp(i * m_m * phi);
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Normalised Associated Legendre Polynomials
