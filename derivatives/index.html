@@ -481,11 +481,13 @@ function generateData(event) {
 	
 				// Create anchor element. 
                 var a1 = document.createElement('a');
-				var a2 = document.createElement('a');  				
+				var a2 = document.createElement('a');
+				var a3 = document.createElement('a');  			
                 
                 // Create the text node for anchor element. 
                 var link1 = document.createTextNode("Multicomplex_number"); 
-				var link2 = document.createTextNode("Numerical differentiation"); 
+				var link2 = document.createTextNode("Numerical differentiation");
+				var link3 = document.createTextNode("Spherical harmonics"); 
 
                 // Append the text node to anchor element. 
 				a1.appendChild(link1);
@@ -496,16 +498,21 @@ function generateData(event) {
 				a2.style.fontSize = "25px"; 
 				a2.style.color = "rgb(238, 232, 213)";
 				
-                a1.href = 'https://en.wikipedia.org/wiki/Bicomplex_number'; 
-				document.body.appendChild(a1); 
+				a3.appendChild(link3);
+				a3.style.fontSize = "25px"; 
+				a3.style.color = "rgb(238, 232, 213)";
 				
+				 document.write("<br>");
+				a1.href = 'https://en.wikipedia.org/wiki/Bicomplex_number'; 				
+				document.body.appendChild(a1); 
+				 document.write("<br>");
+				a2.href = 'https://en.wikipedia.org/wiki/Numerical_differentiation';				 
+				document.body.appendChild(a2);
+				 document.write("<br>");
+				a3.href = 'https://en.wikipedia.org/wiki/Spherical_harmonics';				 
+				document.body.appendChild(a3);	
 				
 		
-	</script>
-	<br>
-	<script>
-		a2.href = 'https://en.wikipedia.org/wiki/Numerical_differentiation';				 
-		document.body.appendChild(a2);				
 	</script>
 	
 <br><br>
