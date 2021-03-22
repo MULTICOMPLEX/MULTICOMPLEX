@@ -128,8 +128,6 @@ public:
 		
 		std::array<double, int(2*max*100)*n_grid_lines*4> complex_array10;//complex
 		
-		std::array<double, 94> sphere;
-		
 		std::array<double, int(2*max*100)*n_grid_lines*4> complex_array1; //bicomplex real 
 		std::array<double, int(2*max*100)*n_grid_lines*4> complex_array2; //bicomplex imag
 		
@@ -165,77 +163,51 @@ public:
 		
 		////
 		
-		std::array<double, 1242> X;
-		std::array<double, 1242> Y;
-		std::array<double, 1242> Z;
+		std::array<double, 20301> Yx;
+		std::array<double, 20301> Yy;
+		std::array<double, 20301> Yz;
 		
 		static client::Float64Array * vec11 = 
-			MakeTypedArray<TypedArrayForPointerType<double>::type>(&X, X.size() * sizeof(double));
+			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Yx, Yx.size() * sizeof(double));
 		static client::Float64Array * vec12 = 
-			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Y, Y.size() * sizeof(double));
+			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Yy, Yy.size() * sizeof(double));
 		static client::Float64Array * vec13 = 
-			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Z, Z.size() * sizeof(double));
-		
+			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Yz, Yz.size() * sizeof(double));
+
 	
-	
-		
-	
-	// draw unit sphere points (r=1 center=(0,0,0)) ... your rays directions
-	if(mc_index==11)
-	{
-		int ia,na,ib,nb;
-		int i = 0;
-	
-		double x,y,z,r;
-		double a,b,da,db;
-		na=32;                                  // number of slices
-		da=pi/double(na-1);                   // latitude angle step
-		
-		MX0 d;
-		MX0 mc;
-		
-		AssociatedLegendre al(2,1); //l = 2, m = 1
-		
-		for (a=-half_pi,ia=0;ia<na;ia++,a+=da) // slice sphere to circles in xy planes
+		// draw unit sphere points (r=1 center=(0,0,0)) ... your rays directions
+		if(mc_index==11)
 		{
-			r=std::cos(a);                           // radius of actual circle in xy plane
-			z=std::sin(a);                           // height of actual circle in xy plane
-			nb=std::ceil(two_pi*r/da);
-			db=two_pi/double(nb);             // longitude angle step
-			if ((ia==0)||(ia==na-1)) { nb=1; db=0.0; }  // handle edge cases
-			for (b=0.0,ib=0;ib<nb;ib++,b+=db)   // cut circle to vertexes
-			{
-				x=r*std::cos(b);                     // compute x,y of vertex
-				y=r*std::sin(b);
+			MX0 Y;
+			MX0 mc;
+			double absY;
+			const double w=pi;
+			int i = 0;
+			AssociatedLegendre al(5, 4); //l = 2, m = 1
+		
+			for (double phi=0; phi < two_pi; phi += two_pi/200.)
+			{		
+				for (double theta=0; theta < pi; theta += pi/100.)   
+				{				
+					Y = al.SphericalHarmonic(std::cos(theta), phi);
+					Y = function(Y, formula);
 
-				//mc.real = x;
-				//mc.imag = y;
+					if(al.m_m < 0){
+						Y.real = root_two * Y.imag; Y.imag = 0;}
+					
+					if(al.m_m > 0){
+						Y.real = root_two * Y.real; Y.imag = 0;}
 				
-			
-				mc = al.SphericalHarmonic(x, y);
-				d = function(mc, formula);
-				//auto YY = std::abs(std::pow(-1,al.m_m) * mc.real);
-				auto YY = abs(d);
-
+					absY = abs(Y);
 				
-				// this just draw the ray direction (x,y,z) as line in OpenGL
-				// so you can ignore this
-				// instead add the ray cast of yours
-				const double w=pi*pi;
-       
-				//glColor3f(1.0,1.0,1.0); glVertex3d(x,y,z);
-				//glColor3f(0.0,0.0,0.0); glVertex3d(w*x,w*y,w*z);
-				//X[i] = x * w;
-				//Y[i] = y * w;
+					Yx[i] = std::sin(theta) * std::sin(phi) * w * absY;
+					Yy[i] = std::sin(theta) * std::cos(phi) * w * absY;
+					Yz[i] = std::cos(theta) * w * absY;
 				
-				X[i] = x * w * YY;
-				Y[i] = y * w * YY;
-				
-				Z[i] = z * w * YY;
-				i++;
+					i++;
+				}
 			}
-		}
-		 //std::cout << i << std::endl;
+		//std::cout << "i = " << i << std::endl; 
 	}
 
 	
