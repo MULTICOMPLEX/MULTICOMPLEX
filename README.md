@@ -1,5 +1,11 @@
-function sin(z)
 
+######**gallery:**
+
+Spherical harmonics :
+![newplot(1)](https://user-images.githubusercontent.com/75379917/112055866-a6b18700-8b57-11eb-8541-b77f98d7771f.png)
+
+
+function sin(z)
 Bicomplex:
 ![newplot(1)](https://user-images.githubusercontent.com/75379917/111527080-c9126180-875f-11eb-8125-f024e43a74eb.png)
 
