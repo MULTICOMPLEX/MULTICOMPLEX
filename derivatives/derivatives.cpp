@@ -9,29 +9,6 @@
 #include "AssociatedLegendre.hpp"
 
 
-/*
-namespace sph
-{
-
-    // see the document for the definition
-	template<typename T>
-    T sph_harm(const unsigned int l, const int m, const T theta, const T phi) {
-        using namespace boost::math;
-        if (m > 0) {
-            return root_two * (m % 2 == 0? 1: -1) * spherical_harmonic_r(l, m, theta, phi);
-        }
-        else if (m < 0) {
-            return root_two * (m % 2 == 0? 1: -1) * spherical_harmonic_i(l, -m, theta, phi);
-        }
-        else {// m == 0 {
-            return spherical_harmonic_r(l, 0, theta, phi);
-        }
-    }
-
-}
-
-*/
-
 using namespace client;
 using namespace cheerp;
 
@@ -142,6 +119,19 @@ public:
 		
 		////
 		
+		
+		std::array<double, 20301> Yx;
+		std::array<double, 20301> Yy;
+		std::array<double, 20301> Yz;
+		
+		static client::Float64Array * vec11 = 
+			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Yx, Yx.size() * sizeof(double));
+		static client::Float64Array * vec12 = 
+			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Yy, Yy.size() * sizeof(double));
+		static client::Float64Array * vec13 = 
+			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Yz, Yz.size() * sizeof(double));
+		
+		
 		static client::Float64Array * vec1 = 
 			MakeTypedArray<TypedArrayForPointerType<double>::type>(&complex_array1, complex_array1.size() * sizeof(double));
 			
@@ -163,17 +153,6 @@ public:
 		
 		////
 		
-		std::array<double, 20301> Yx;
-		std::array<double, 20301> Yy;
-		std::array<double, 20301> Yz;
-		
-		static client::Float64Array * vec11 = 
-			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Yx, Yx.size() * sizeof(double));
-		static client::Float64Array * vec12 = 
-			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Yy, Yy.size() * sizeof(double));
-		static client::Float64Array * vec13 = 
-			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Yz, Yz.size() * sizeof(double));
-
 	
 		// draw unit sphere points (r=1 center=(0,0,0)) ... your rays directions
 		if(mc_index==11)
@@ -223,9 +202,8 @@ public:
 		//std::cout << "i = " << i << std::endl; 
 	}
 
-	
-		if(mc_index==0 || mc_index==2 || mc_index==10)
-		{
+	if(mc_index==0 || mc_index==2 || mc_index==10)
+	{
 		for(double y = -max; y <= max; y+=grid_spacing)
 		{
 			for(int i = 0; i < N; i++)
@@ -354,7 +332,6 @@ public:
 				complex_array6[N*n_grid_lines + N*n_grid_lines + N*n_grid_lines + index] = d.imag.imag.imag;
 				
 				}
-				
 			}	
 			
 			tel++;

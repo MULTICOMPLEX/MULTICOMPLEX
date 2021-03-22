@@ -1,3 +1,4 @@
 cd /mnt/c/MULTICOMPLEX/MULTICOMPLEX/derivatives
-/opt/cheerp/bin/clang++ -target cheerp-wasm -DNDEBUG derivatives.cpp -o derivatives.js -O3 -std=c++17 -cheerp-use-bigints -fexceptions -pedantic -I./include -I../../../boost_1_75_0
+/opt/cheerp/bin/clang++ -target cheerp-wasm -DNDEBUG derivatives.cpp -o derivatives.js -O3 -std=c++17 -cheerp-use-bigints -cheerp-linear-heap-size=16 -fexceptions -pedantic -I./include -cheerp-linear-stack-size=8
+ -I../../../boost_1_75_0
 
