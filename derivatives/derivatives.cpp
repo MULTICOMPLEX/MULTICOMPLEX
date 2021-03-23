@@ -8,6 +8,27 @@
 
 #include "AssociatedLegendre.hpp"
 
+template <typename elem, int order, typename T> 
+elem get_realY
+(
+	const T m, 
+	const multicomplex<elem,order>& Y
+)
+{
+	elem realY;
+		
+	if(m < 0){
+		realY = abs(pow(-1,m) * root_two * Y.imag);}
+						
+	if(m == 0){
+		realY = abs(Y.real);}
+					
+	if(m > 0){
+		realY = abs(pow(-1,m) * root_two * Y.real);}
+		
+	return realY;
+}
+
 
 using namespace client;
 using namespace cheerp;
@@ -89,7 +110,7 @@ public:
         return (val - min) / delta;
 	}
 	
-
+	
 	client::Float64Array * conformal_map(int formula, int mc_index)
     {					
 		int N = 200;
@@ -120,9 +141,9 @@ public:
 		////
 		
 		
-		std::array<double, 20301*2> Yx;
-		std::array<double, 20301*2> Yy;
-		std::array<double, 20301*2> Yz;
+		std::array<double, 10201*2> Yx;
+		std::array<double, 10201*2> Yy;
+		std::array<double, 10201*2> Yz;
 		
 		static client::Float64Array * vec11 = 
 			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Yx, Yx.size() * sizeof(double));
@@ -157,9 +178,9 @@ public:
 		// draw unit sphere points (r=1 center=(0,0,0)) ... your rays directions
 		if(mc_index==11)
 		{
-			MX1 Y3;
+			MX1 Y;
 			
-			double realY1, realY2;
+			double realY1, realY2, realY3, realY4;
 			const double w=pi;
 			int i = 0;
 			
@@ -177,42 +198,24 @@ public:
 			
 			bool real_spherical_harmonics = true;
 			
-			for (double phi=0; phi < two_pi; phi += two_pi/200.)
+			for (double phi=0; phi < two_pi; phi += two_pi/100.)
 			{		
 				for (double theta=0; theta < pi; theta += pi/100.)   
 				{				
-					Y3.real = al1.SphericalHarmonic(theta, phi);
-					Y3.imag = al2.SphericalHarmonic(theta, phi);
+					Y.real = Y.imag = al1.SphericalHarmonic(theta, phi);
 					
-					Y3 = function(Y3, formula);
-					
-					Y3 *= Y3;
+					Y = function(Y, formula);
 					
 					if(real_spherical_harmonics) {
 						
-					if(m1 < 0){
-						realY1 = abs(pow(-1,m1) * root_two * Y3.real.imag);}
-						
-					if(m1 == 0){
-						realY1 = abs(Y3.real.real);}
-					
-					if(m1 > 0){
-					realY1 = abs(pow(-1,m1) * root_two * Y3.real.real);}
-					
-					////
-					
-					if(m2 < 0){
-						realY2 = abs(pow(-1,m2) * root_two * Y3.imag.imag);}
-						
-					if(m2 == 0){
-						realY2 = abs(Y3.imag.real);}
-					
-					if(m2 > 0){
-					realY2 = abs(pow(-1,m2) * root_two * Y3.imag.real);} }
-					
-					else {realY1 = abs(Y3.real); realY2 = abs(Y3.imag); } //complex 
+					realY1 = get_realY(m1, Y.real);	
+					realY2 = get_realY(m2, Y.imag);}
 					
 					
+					else {
+						realY1 = abs(Y.real); realY2 = abs(Y.imag); 
+					 
+					} //complex 
 					
 					double x,y,z;
 					x = std::sin(theta) * std::sin(phi);
@@ -223,9 +226,10 @@ public:
 					Yy[i] = y * w * realY1;
 					Yz[i] = z * w * realY1;
 					
-					Yx[i+20301] = x * w * realY2 + 2;
-					Yy[i+20301] = y * w * realY2;
-					Yz[i+20301] = z * w * realY2;
+					Yx[i+10201] = x * w * realY2 + 2;
+					Yy[i+10201] = y * w * realY2;
+					Yz[i+10201] = z * w * realY2;
+					
 				
 					i++;
 				}
