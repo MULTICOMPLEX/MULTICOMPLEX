@@ -152,8 +152,88 @@ public:
 			MakeTypedArray<TypedArrayForPointerType<double>::type>(&complex_array6, complex_array6.size() * sizeof(double));
 		
 		////
-		
 	
+
+		// draw unit sphere points (r=1 center=(0,0,0)) ... your rays directions
+		if(mc_index==11)
+		{
+			MX1 Y3;
+			
+			double realY1, realY2;
+			const double w=pi;
+			int i = 0;
+			
+			unsigned int l1,l2;
+			l1 = 1; //s,p,d,f,g,h,i
+					//0,1,2,3,4,5,6
+			l2 = 1; 
+			
+			int m1,m2; //6,5,4,3,2,1,0,-1,-2,-3,-4,-5,-6
+			m1 = 1;
+			m2 = 1;
+			
+			AssociatedLegendre al1(l1, abs(m1)); 
+			AssociatedLegendre al2(l2, abs(m2));
+			
+			bool real_spherical_harmonics = true;
+			
+			for (double phi=0; phi < two_pi; phi += two_pi/200.)
+			{		
+				for (double theta=0; theta < pi; theta += pi/100.)   
+				{				
+					Y3.real = al1.SphericalHarmonic(theta, phi);
+					Y3.imag = al2.SphericalHarmonic(theta, phi);
+					
+					Y3 = function(Y3, formula);
+					
+					Y3 *= Y3;
+					
+					if(real_spherical_harmonics) {
+						
+					if(m1 < 0){
+						realY1 = abs(pow(-1,m1) * root_two * Y3.real.imag);}
+						
+					if(m1 == 0){
+						realY1 = abs(Y3.real.real);}
+					
+					if(m1 > 0){
+					realY1 = abs(pow(-1,m1) * root_two * Y3.real.real);}
+					
+					////
+					
+					if(m2 < 0){
+						realY2 = abs(pow(-1,m2) * root_two * Y3.imag.imag);}
+						
+					if(m2 == 0){
+						realY2 = abs(Y3.imag.real);}
+					
+					if(m2 > 0){
+					realY2 = abs(pow(-1,m2) * root_two * Y3.imag.real);} }
+					
+					else {realY1 = abs(Y3.real); realY2 = abs(Y3.imag); } //complex 
+					
+					
+					
+					double x,y,z;
+					x = std::sin(theta) * std::sin(phi);
+					y = std::sin(theta) * std::cos(phi);
+					z = std::cos(theta);
+					
+					Yx[i] = x * w * realY1 -2;
+					Yy[i] = y * w * realY1;
+					Yz[i] = z * w * realY1;
+					
+					Yx[i+20301] = x * w * realY2 + 2;
+					Yy[i+20301] = y * w * realY2;
+					Yz[i+20301] = z * w * realY2;
+				
+					i++;
+				}
+			}
+		//std::cout << "i = " << i << std::endl; 
+	}
+
+		/*
 		// draw unit sphere points (r=1 center=(0,0,0)) ... your rays directions
 		if(mc_index==11)
 		{
@@ -164,13 +244,13 @@ public:
 			int i = 0;
 			
 			unsigned int l1,l2;
-			l1 = 4; //s,p,d,f,g,h,i
+			l1 = 1; //s,p,d,f,g,h,i
 					//0,1,2,3,4,5,6
-			l2 = 3; 
+			l2 = 1; 
 			
 			int m1,m2; //6,5,4,3,2,1,0,-1,-2,-3,-4,-5,-6
-			m1 = 0;
-			m2 = 3;
+			m1 = 1;
+			m2 = 1;
 			
 			AssociatedLegendre al1(l1, abs(m1)); 
 			AssociatedLegendre al2(l2, abs(m2));
@@ -187,6 +267,7 @@ public:
 					Y2 = al2.SphericalHarmonic(theta, phi);
 					Y2 = function(Y2, formula);
 					
+					Y1 *= Y1;
 					
 					if(real_spherical_harmonics) {
 						
@@ -232,7 +313,7 @@ public:
 			}
 		//std::cout << "i = " << i << std::endl; 
 	}
-
+*/
 	if(mc_index==0 || mc_index==2 || mc_index==10)
 	{
 		for(double y = -max; y <= max; y+=grid_spacing)
