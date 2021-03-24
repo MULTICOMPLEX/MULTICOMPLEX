@@ -266,18 +266,10 @@ public:
 		};
 	}
 
-	template <int o_order>
-	typename std::enable_if <(order > o_order), multicomplex<elem, order>>::type
-		operator*= (multicomplex<elem, o_order> const& o) 
+	template <typename  T>
+	multicomplex operator*= (const T& z)  
 	{
-		return *this = *this * o;
-	}
-
-	template <int o_order>
-	typename std::enable_if <(order == o_order), multicomplex<elem, order>>::type
-		operator*= (multicomplex<elem, o_order> const& o) 
-	{
-		return *this = *this * o;
+		return *this = *this * z;
 	}
 
 	multicomplex operator*= (elem const& o) 
@@ -301,7 +293,7 @@ public:
 	}
 
 	// division
-			template <int o_order>
+	template <int o_order>
 	typename std::enable_if <(order >= o_order), multicomplex<elem, order>>::type
 		operator/ (multicomplex<elem, o_order> const& o) const 
 	{
@@ -342,13 +334,22 @@ public:
 			imag / o 
 		};
 	}
-
-	multicomplex operator/= (multicomplex<elem, 0> const& o) 
+	
+	multicomplex operator/= (elem const& o) 
 	{
-		real /= o;
-		imag /= o;
-		return *this;
+		return 
+		{ 
+			real = real / o, 
+			imag = imag / o 
+		};
 	}
+	
+	template <typename  T>
+	multicomplex operator/= (const T& z)  
+	{
+		return *this = *this / z;
+	}
+
 
 	one_less fold() const {
 		return real * real + imag * imag;
@@ -733,8 +734,7 @@ public:
 	typename std::enable_if <(0 == o_order), multicomplex<elem, 0>>::type
 		operator/= (multicomplex<elem, o_order> const& o) 
 	{
-		*this = *this / o;
-		return *this;
+		return *this = *this / o;
 	}
 
 	template <typename T>
@@ -1041,6 +1041,7 @@ constexpr const REAL half = 0.5;
 constexpr const REAL quarter = 0.25;
 constexpr const REAL root_two_pi = 1.772453850905516027298167483341145182797549456122387128213;
 constexpr const REAL root_two = 1.4142135623730950488016887242096980785696718753769480731766797379;
+constexpr const REAL PHI = 1.6180339887498948482045868343656381177203091798057628621354486227;
 
 constexpr const REAL lambda = std::numeric_limits<REAL>::epsilon();
 

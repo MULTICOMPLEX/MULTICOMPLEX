@@ -29,6 +29,15 @@ elem get_realY
 	return realY;
 }
 
+double sps(double theta, double phi)
+{
+	MX0 I(0,phi), i(1,1);//1 + i
+	
+	double a;
+	
+	a = (half * (1 - cos(sqrt(3./(two_pi)) * exp(I) * sin(theta)) ) ).real * 2 * root_two;//(sin(SphericalHarmonicY[1, 1])^2)
+	return a;
+}
 
 using namespace client;
 using namespace cheerp;
@@ -178,39 +187,49 @@ public:
 		// draw unit sphere points (r=1 center=(0,0,0)) ... your rays directions
 		if(mc_index==11)
 		{
-			MX1 Y;
+			MX1 Y, Y2;
 			
 			double realY1, realY2, realY3, realY4;
 			const double w=pi;
 			int i = 0;
 			
 			unsigned int l1,l2;
-			l1 = 1; //s,p,d,f,g,h,i
+			l1 = 4; //s,p,d,f,g,h,i
 					//0,1,2,3,4,5,6
-			l2 = 1; 
+			l2 = 2; 
 			
 			int m1,m2; //6,5,4,3,2,1,0,-1,-2,-3,-4,-5,-6
-			m1 = 1;
-			m2 = 1;
+			m1 = 2;
+			m2 = 2;
+			
+			double v1=0,v2=0;
 			
 			AssociatedLegendre al1(l1, abs(m1)); 
 			AssociatedLegendre al2(l2, abs(m2));
 			
 			bool real_spherical_harmonics = true;
+
 			
 			for (double phi=0; phi < two_pi; phi += two_pi/100.)
 			{		
 				for (double theta=0; theta < pi; theta += pi/100.)   
 				{				
-					Y.real = Y.imag = al1.SphericalHarmonic(theta, phi);
+					Y.real = al1.SphericalHarmonic(theta, phi);
+					Y.imag = al1.SphericalHarmonic(theta, phi);
 					
+					//Y2.real = al2.SphericalHarmonic(theta, phi);
+					//Y2.imag = al2.SphericalHarmonic(theta, phi);
+	
 					Y = function(Y, formula);
+									
 					
 					if(real_spherical_harmonics) {
 						
 					realY1 = get_realY(m1, Y.real);	
-					realY2 = get_realY(m2, Y.imag);}
+					realY2 = get_realY(m1, Y.imag);
+					//realY2 = sps(theta, phi);
 					
+					}
 					
 					else {
 						realY1 = abs(Y.real); realY2 = abs(Y.imag); 
@@ -221,6 +240,9 @@ public:
 					x = std::sin(theta) * std::sin(phi);
 					y = std::sin(theta) * std::cos(phi);
 					z = std::cos(theta);
+
+					v1 += sqrt(pow(x * realY1,2) + pow(y * realY1,2) + pow(z * realY1,2));
+					v2 += sqrt(pow(x * realY2,2) + pow(y * realY2,2) + pow(z * realY2,2));
 					
 					Yx[i] = x * w * realY1 -2;
 					Yy[i] = y * w * realY1;
@@ -230,11 +252,14 @@ public:
 					Yy[i+10201] = y * w * realY2;
 					Yz[i+10201] = z * w * realY2;
 					
-				
+
 					i++;
 				}
 			}
 		//std::cout << "i = " << i << std::endl; 
+		
+		std::cout << "v1    = " << v1 << std::endl;
+		std::cout << "v2/v1 = " << v2/v1 << std::endl; 		
 	}
 
 		/*
