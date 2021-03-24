@@ -639,7 +639,109 @@ function plot_conformal_map2(formula, graph)
 {
 
 var layout3d = {
+	
+	scene7: 
+	{
+	uirevision:'true',
+	aspectmode: 'manual',
+	aspectratio: { x: 1, y: 1, z: 1 },
+    domain: {
+            x: [0.0, 0.5],
+            y: [1.0, 1.0]
+        },
+		
+	xaxis: {range: [2*-Math.PI , 2*Math.PI],
 
+	showspikes: false,
+	
+	zerolinecolor: "rgb(255, 255, 255)",
+	zerolinewidth: 1,
+	
+	gridcolor: "rgb(255, 255, 255)",
+	gridwidth: 1,
+		
+	showtickprefix: 'last',
+    //tickprefix: 'REAL.REAL ',
+	
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    },
+	
+	tickformat: '',
+	
+	
+	title: 'Y AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
+	},
+	
+	yaxis: {range: [2*-Math.PI , 2*Math.PI],
+
+	showspikes: false,
+	
+	zerolinecolor: "rgb(255, 255, 255)",
+	zerolinewidth: 1,
+	
+	gridcolor: "rgb(255, 255, 255)",
+	gridwidth: 1,
+	
+	showtickprefix: 'last',
+    //tickprefix: 'REAL.IMAG ',
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    },
+	
+	tickformat: '',
+	
+	
+	title: 'X AXIS',
+	
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
+	
+	},
+	
+	zaxis: {range: [2*-Math.PI , 2*Math.PI],
+
+	showspikes: false,
+	
+	zerolinecolor: "rgb(255, 255, 255)",
+	zerolinewidth: 1,
+	
+	gridcolor: "rgb(255, 255, 255)",
+	gridwidth: 1,
+	
+	showtickprefix: 'last',
+    //tickprefix: 'IMAG.REAL ',
+	tickfont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    },
+	
+	tickformat: '',
+	
+	
+	title: 'Z AXIS',
+	 titlefont: {
+      family: 'Old Standard TT, serif',
+      size: 14,
+      color: 'lightgrey'
+    }
+	},
+	
+	},
+	
 	scene1: 
 	{
 	uirevision:'true',
@@ -672,7 +774,7 @@ var layout3d = {
 	tickformat: '',
 	
 	
-	title: 'Y AXIS',
+	title: 'X AXIS',
 	 titlefont: {
       family: 'Old Standard TT, serif',
       size: 14,
@@ -701,7 +803,7 @@ var layout3d = {
 	tickformat: '',
 	
 	
-	title: 'X AXIS',
+	title: 'Y AXIS',
 	
 	 titlefont: {
       family: 'Old Standard TT, serif',
@@ -1330,15 +1432,14 @@ var obj = new Graphics;
 	///////////
 	
 	var trace1_3d = {
-	//x: real1,
-	//y: imag1,
-	//z: real2,
 	x: Y,
 	y: X,
 	z: Z,
-	scene: "scene1",
+	scene: "scene7",
 	
 	type: 'scatter3d',
+	hovertemplate: 'x: %{y:.5f}<br>' + 'y: %{x:.5f}<br>' + 'z: %{z:.5f}',
+	
 	name: '',
 	mode: 'markers',
 	marker: {
