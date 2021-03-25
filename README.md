@@ -3,8 +3,6 @@
 ### Spherical harmonics
 ![newplot(1)](https://user-images.githubusercontent.com/75379917/112055866-a6b18700-8b57-11eb-8541-b77f98d7771f.png)
 
-![newplot(1)](https://user-images.githubusercontent.com/75379917/112148049-b378be00-8bdd-11eb-85b4-8ccb57648451.png)
-
 ## function sin(z)
  
 ### Bicomplex:
