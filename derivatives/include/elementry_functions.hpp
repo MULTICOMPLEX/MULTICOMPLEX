@@ -139,6 +139,9 @@ multicomplex<elem, order> pow
   return pow(b, static_cast<multicomplex<elem, order>>(exp));
 }
 
+
+
+
 //---------------------------------------------------
 
 // pow ^int
@@ -189,28 +192,7 @@ inline multicomplex<elem, order> pow
 }
 
 
-template <typename elem, int order>
-inline multicomplex<elem, order> pow
-(
-  const multicomplex<elem, order>& b,
-  elem exp
-)
-{
-  if (exp == 0)
-    return 1;
 
-  multicomplex<elem, order> temp = pow(b, exp / 2);
-
-  if (exp % 2 == 0)
-    return temp * temp;
-  else
-  {
-    if (exp > 0)
-      return b * temp * temp;
-    else
-      return (temp * temp) / b; //negative exponent computation 
-  }
-}
 //---------------------------------------------------
 
 /// trigonometric functions
@@ -910,6 +892,17 @@ multicomplex<elem,order> atanh
 ) 
 {
 	return half * log(z + 1) - half * log(1 - z);//1/2 log(z + 1) - 1/2 log(1 - z)		
+}
+
+template <typename elem, int order> 
+multicomplex<elem,order> csc  //Cosecant
+(
+  const multicomplex<elem,order>& z
+) 
+{
+	const multicomplex<elem,order> i(0,1);
+	return (2 * i) / ((exp(i * z) - exp(-i * z)) + lambda); 
+	
 }
 
 template <typename elem, int order> 

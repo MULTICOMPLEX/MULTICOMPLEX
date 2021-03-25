@@ -187,20 +187,20 @@ public:
 		// draw unit sphere points (r=1 center=(0,0,0)) ... your rays directions
 		if(mc_index==11)
 		{
-			MX1 Y, Y2;
+			MX0 Y1, Y2;
 			
-			double realY1, realY2, realY3, realY4;
+			double realY1, realY2;
 			const double w=pi;
 			int i = 0;
 			
 			unsigned int l1,l2;
-			l1 = 4; //s,p,d,f,g,h,i
+			l1 = 1; //s,p,d,f,g,h,i
 					//0,1,2,3,4,5,6
 			l2 = 2; 
 			
 			int m1,m2; //6,5,4,3,2,1,0,-1,-2,-3,-4,-5,-6
-			m1 = 2;
-			m2 = 2;
+			m1 = 1;
+			m2 = 1;
 			
 			double v1=0,v2=0;
 			
@@ -214,25 +214,24 @@ public:
 			{		
 				for (double theta=0; theta < pi; theta += pi/100.)   
 				{				
-					Y.real = al1.SphericalHarmonic(theta, phi);
-					Y.imag = al1.SphericalHarmonic(theta, phi);
+					Y1 = al1.SphericalHarmonic(theta, phi);
+					Y2 = al2.SphericalHarmonic(theta, phi);
 					
-					//Y2.real = al2.SphericalHarmonic(theta, phi);
-					//Y2.imag = al2.SphericalHarmonic(theta, phi);
 	
-					Y = function(Y, formula);
-									
+					Y1 = function(Y1, formula);
+					Y2 = function(Y2, formula);
 					
+					Y1 = pow(Y1,2.5);
+
 					if(real_spherical_harmonics) {
 						
-					realY1 = get_realY(m1, Y.real);	
-					realY2 = get_realY(m1, Y.imag);
-					//realY2 = sps(theta, phi);
-					
+					realY1 = get_realY(m1, Y1);	
+					realY2 = get_realY(m2, Y2);
+
 					}
 					
 					else {
-						realY1 = abs(Y.real); realY2 = abs(Y.imag); 
+						realY1 = abs(Y1); realY2 = abs(Y2); 
 					 
 					} //complex 
 					
@@ -244,11 +243,11 @@ public:
 					v1 += sqrt(pow(x * realY1,2) + pow(y * realY1,2) + pow(z * realY1,2));
 					v2 += sqrt(pow(x * realY2,2) + pow(y * realY2,2) + pow(z * realY2,2));
 					
-					Yx[i] = x * w * realY1 -2;
+					Yx[i] = x * w * realY1+1;
 					Yy[i] = y * w * realY1;
 					Yz[i] = z * w * realY1;
 					
-					Yx[i+10201] = x * w * realY2 + 2;
+					Yx[i+10201] = x * w * realY2-1;
 					Yy[i+10201] = y * w * realY2;
 					Yz[i+10201] = z * w * realY2;
 					
@@ -262,87 +261,6 @@ public:
 		std::cout << "v2/v1 = " << v2/v1 << std::endl; 		
 	}
 
-		/*
-		// draw unit sphere points (r=1 center=(0,0,0)) ... your rays directions
-		if(mc_index==11)
-		{
-			MX0 Y1, Y2;
-			
-			double realY1, realY2;
-			const double w=pi;
-			int i = 0;
-			
-			unsigned int l1,l2;
-			l1 = 1; //s,p,d,f,g,h,i
-					//0,1,2,3,4,5,6
-			l2 = 1; 
-			
-			int m1,m2; //6,5,4,3,2,1,0,-1,-2,-3,-4,-5,-6
-			m1 = 1;
-			m2 = 1;
-			
-			AssociatedLegendre al1(l1, abs(m1)); 
-			AssociatedLegendre al2(l2, abs(m2));
-			
-			bool real_spherical_harmonics = true;
-			
-			for (double phi=0; phi < two_pi; phi += two_pi/200.)
-			{		
-				for (double theta=0; theta < pi; theta += pi/100.)   
-				{				
-					Y1 = al1.SphericalHarmonic(theta, phi);
-					Y1 = function(Y1, formula);
-					
-					Y2 = al2.SphericalHarmonic(theta, phi);
-					Y2 = function(Y2, formula);
-					
-					Y1 *= Y1;
-					
-					if(real_spherical_harmonics) {
-						
-					if(m1 < 0){
-						realY1 = abs(pow(-1,m1) * root_two * Y1.imag);}
-						
-					if(m1 == 0){
-						realY1 = abs(Y1.real);}
-					
-					if(m1 > 0){
-					realY1 = abs(pow(-1,m1) * root_two * Y1.real);}
-					
-					////
-					
-					if(m2 < 0){
-						realY2 = abs(pow(-1,m2) * root_two * Y2.imag);}
-						
-					if(m2 == 0){
-						realY2 = abs(Y2.real);}
-					
-					if(m2 > 0){
-					realY2 = abs(pow(-1,m2) * root_two * Y2.real);} }
-					
-					else {realY1 = abs(Y1); realY2 = abs(Y2); } //complex 
-					
-					//realY1 -= realY2;
-					
-					double x,y,z;
-					x = std::sin(theta) * std::sin(phi);
-					y = std::sin(theta) * std::cos(phi);
-					z = std::cos(theta);
-					
-					Yx[i] = x * w * realY1 -2;
-					Yy[i] = y * w * realY1;
-					Yz[i] = z * w * realY1;
-					
-					Yx[i+20301] = x * w * realY2 + 2;
-					Yy[i+20301] = y * w * realY2;
-					Yz[i+20301] = z * w * realY2;
-				
-					i++;
-				}
-			}
-		//std::cout << "i = " << i << std::endl; 
-	}
-*/
 	if(mc_index==0 || mc_index==2 || mc_index==10)
 	{
 		for(double y = -max; y <= max; y+=grid_spacing)
@@ -641,6 +559,10 @@ void webMain()
 	std::cout << "SphericalHarmonic(2, 1, 0.97, 0.34) = " << SphericalH << std::endl << std::endl;
 	//SphericalHarmonicY[2, 1, 0.97, 0.34] 
 	 
+	//MX0 x;
+	//x.real = 0.7;
+	//x.imag = 0.8;
+	//std::cout << "csc(0.7 + 0.8i) = " << csc(x) << std::endl;
 	
 	sx.random(-10,10);
 
