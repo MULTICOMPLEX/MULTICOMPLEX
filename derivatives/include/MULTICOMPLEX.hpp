@@ -995,7 +995,7 @@ std::ostream& operator <<
 (
 	std::ostream& o,
 	multicomplex<elem, order> const& mc
-	)
+)
 {
 	mc.view_j(o);
 	return o;

@@ -47,15 +47,18 @@ public:
 	unsigned int l() const;
 	unsigned int m() const;
 
-	double operator()(double x) const;
+	template <typename elem, int order>
+	multicomplex<elem, order> operator()(multicomplex<elem, order> x) const;
 	double rf;
 	MX0 i;
 
 	unsigned int m_l;
 	unsigned int m_m;
 
-	double calculatePolynomialValue(double x) const;
-	MX0 SphericalHarmonic(double theta /*cos theta*/, double phi) const;
+	template <typename elem, int order>
+	multicomplex<elem, order> calculatePolynomialValue(const multicomplex<elem, order>& x) const;
+	template <typename elem, int order>
+	multicomplex<elem, order> SphericalHarmonic(const multicomplex<elem, order>& theta, const multicomplex<elem, order>& phi) const;
 
 };
 
@@ -78,16 +81,17 @@ inline unsigned int AssociatedLegendre::m() const
 	return m_m;
 }
 
-inline double AssociatedLegendre::operator()(double x) const
+template <typename elem, int order>
+inline multicomplex<elem, order> AssociatedLegendre::operator()(multicomplex<elem, order> x) const
 {
 	return calculatePolynomialValue(x);
 }
 
-
-inline double AssociatedLegendre::calculatePolynomialValue(double x) const
+template <typename elem, int order>
+inline multicomplex<elem, order> AssociatedLegendre::calculatePolynomialValue(const multicomplex<elem, order>& x) const
 {
-	double pmm = 1.0;
-	double pmp1m;
+	multicomplex<elem, order> pmm = 1.0;
+	multicomplex<elem, order> pmp1m;
 
 	// Check Inputs
 	//static_assert (fabs(x) > 1.0, "Input Out Of Range");
@@ -95,8 +99,8 @@ inline double AssociatedLegendre::calculatePolynomialValue(double x) const
 	if (m_m > 0)
 	{
 		// P_m^m(x) = (-1) ^ m(2m - 1)!!(1 - x ^ 2) ^ m / 2
-		double sqrtomx2 = sqrt(1.0 - x*x);
-		double oddInt = 1.0;
+		multicomplex<elem, order> sqrtomx2 = sqrt(1.0 - x*x);
+		elem oddInt = 1.0;
 		for (int i = 1; i <= m_m; ++i)
 		{
 			pmm *= -1.0*oddInt*sqrtomx2;
@@ -117,7 +121,7 @@ inline double AssociatedLegendre::calculatePolynomialValue(double x) const
 		}
 		else
 		{
-			double pmp2m = 0.0;
+			multicomplex<elem, order> pmp2m = 0.0;
 			for (int i = m_m + 2; i <= m_l; ++i)
 			{
 				// (l - m) P_l^m (x) = x (2l - 1) P_l-1^m (x) - (l + m - 1) P_l-2^m (x)
@@ -132,9 +136,12 @@ inline double AssociatedLegendre::calculatePolynomialValue(double x) const
 	}
 }
 
-inline MX0 AssociatedLegendre::SphericalHarmonic(double theta /*cos theta*/, double phi) const
+template <typename elem, int order>
+inline multicomplex<elem, order> AssociatedLegendre::SphericalHarmonic(const multicomplex<elem, order>& theta, const multicomplex<elem, order>& phi) const
 {	
-	return rf * calculatePolynomialValue(cos(theta)) * exp(i * m_m * phi);
+	multicomplex<elem, order> r(rf);
+	
+	return r * calculatePolynomialValue(cos(theta)) * exp(i * m_m * phi);
 }
 
 
@@ -148,7 +155,9 @@ public:
 	NormalisedAssociatedLegendre(unsigned int l, unsigned int m);
 	~NormalisedAssociatedLegendre() = default;
 
-	double operator()(double x) const;
+	template <typename elem, int order>
+	multicomplex<elem, order> operator()(multicomplex<elem, order> x) const;
+	
 	std::vector<double> operator()(std::vector<double>& x) const;
 
 private:
@@ -161,7 +170,8 @@ inline NormalisedAssociatedLegendre::NormalisedAssociatedLegendre(unsigned int l
 {
 }
 
-inline double NormalisedAssociatedLegendre::operator()(double x) const
+template <typename elem, int order>
+inline multicomplex<elem, order> NormalisedAssociatedLegendre::operator()(multicomplex<elem, order> x) const
 {
 	return calculateNormalisationValue()*m_associatedLegendre(x);
 }

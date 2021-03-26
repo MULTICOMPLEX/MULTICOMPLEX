@@ -139,9 +139,6 @@ multicomplex<elem, order> pow
   return pow(b, static_cast<multicomplex<elem, order>>(exp));
 }
 
-
-
-
 //---------------------------------------------------
 
 // pow ^int
@@ -190,8 +187,6 @@ inline multicomplex<elem, order> pow
       return (temp * temp) / b; //negative exponent computation 
   }
 }
-
-
 
 //---------------------------------------------------
 
@@ -964,7 +959,7 @@ multicomplex<elem,order> function
 			else if(formula == 21) return erf(z0);
 			else if(formula == 22) return Riemann_Zeta(z0);
 			
-			else if(formula == 23) return mcdv.dv<order>((z1));
+			else if(formula == 23) return mcdv.dv<order>(z1);
 			else if(formula == 24) return mcdv.dv<order>(log(z1));
 			else if(formula == 25) return mcdv.dv<order>(sqrt(z1));
 			else if(formula == 26) return mcdv.dv<order>(sin(z1));
@@ -980,7 +975,7 @@ multicomplex<elem,order> function
 			else if(formula == 36) return mcdv.dv<order>(erf(z1));
 			else if(formula == 37) return mcdv.dv<order>(Riemann_Zeta(z1));
 			
-			else if(formula == 38) return mcdv.dv<order>((z2));
+			else if(formula == 38) return mcdv.dv<order>(z2);
 			else if(formula == 39) return mcdv.dv<order>(log(z2));
 			else if(formula == 40) return mcdv.dv<order>(sqrt(z2));
 			else if(formula == 41) return mcdv.dv<order>(sin(z2));
