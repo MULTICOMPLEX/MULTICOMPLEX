@@ -372,7 +372,12 @@ public:
 	{
 		return real.comp() + imag.comp();
 	}
-
+	
+	multicomplex clear() 
+	{
+		return *this = 0;
+	}
+	
 	// selection by position
 	private:
 
@@ -779,7 +784,12 @@ public:
 	{
 		return real * imag + real + imag;
 	}
-
+	
+	multicomplex clear() 
+	{
+		return *this = 0;
+	}
+	
 	// selection by position
 	private:
 	template <int x_order>

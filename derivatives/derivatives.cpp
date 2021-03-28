@@ -217,26 +217,27 @@ public:
 			{		
 				for (double theta=0; theta < pi; theta += pi/100.)   
 				{				
+					
 					THETA.real = theta;
-					mcdv.sh<0>(THETA2, THETA);
-
 					PHI.real = phi;
-					//PHI2.real = PHI;
+					
+					
+					mcdv.sh<0>(THETA2, THETA);
 					mcdv.sh<0>(PHI2, PHI);
+					
 					//Y1 = al1.SphericalHarmonic(THETA, PHI);
 					Y1 = mcdv.dv<0>(al1.SphericalHarmonic(THETA2, PHI2));
+					
 					Y2 = al2.SphericalHarmonic(THETA, PHI);
 					
 					Y1 = function(Y1, formula);
 					Y2 = function(Y2, formula);
 					
 					Y1 = pow(Y1,2.5);
-
+					
 					if(real_spherical_harmonics) {
-						
-					realY1 = get_realY(m1, Y1);	
-					realY2 = get_realY(m2, Y2);
-
+						realY1 = get_realY(m1, Y1);	
+						realY2 = get_realY(m1, Y2);
 					}
 					
 					else {
@@ -249,14 +250,14 @@ public:
 					y = std::sin(theta) * std::cos(phi);
 					z = std::cos(theta);
 
-					v1 += sqrt(pow(x * realY1,2) + pow(y * realY1,2) + pow(z * realY1,2));
-					v2 += sqrt(pow(x * realY2,2) + pow(y * realY2,2) + pow(z * realY2,2));
+					v1 += (pow(x * realY1,2) + pow(y * realY1,2) + pow(z * realY1,2));
+					v2 += (pow(x * realY2,2) + pow(y * realY2,2) + pow(z * realY2,2));
 					
 					Yx[i] = x * w * realY1;
 					Yy[i] = y * w * realY1;
 					Yz[i] = z * w * realY1;
 					
-					//Yx[i+10201] = x * w * realY2-1;
+					//Yx[i+10201] = x * w * realY2+1;
 					//Yy[i+10201] = y * w * realY2;
 					//Yz[i+10201] = z * w * realY2;
 					
@@ -575,17 +576,20 @@ void webMain()
 	auto SphericalH = al.SphericalHarmonic(theta, phi);
 	std::cout << "SphericalHarmonicY[2, 1, 0.97, 0.34] = " << SphericalH << std::endl;
 	
-	{MX1 THETA, PHI;
+	MX1 THETA, PHI;
 	PHI.real = phi;
 	mcdv.sh<0>(THETA, theta);			
 	SphericalH = mcdv.dv<0>(al.SphericalHarmonic(THETA, PHI));
-	std::cout << "D[SphericalHarmonicY(2, 1, theta, 0.34), theta],theta = 0.97 = " << SphericalH << std::endl;}
+	std::cout << "D[SphericalHarmonicY(2, 1, theta, 0.34), theta],theta = 0.97 = " << SphericalH << std::endl;
 	
-	{MX1 THETA, PHI;
+	THETA.clear();
 	THETA.real = theta;
 	mcdv.sh<0>(PHI, phi);		
 	SphericalH = mcdv.dv<0>(al.SphericalHarmonic(THETA, PHI));
-	std::cout << "D[SphericalHarmonicY(2, 1, 0.97, phi), phi],phi = 0.34 = " << SphericalH << std::endl << std::endl;}
+	std::cout << "D[SphericalHarmonicY(2, 1, 0.97, phi), phi],phi = 0.34 = " << SphericalH << std::endl << std::endl;
+	 
+	 //D[SphericalHarmonicY(2, 1, theta, 0.34), theta],theta = 0.97 = (+ 0.2628322396 + 0.0929734559*i1)
+	 //D[SphericalHarmonicY(2, 1, 0.97, phi), phi],phi = 0.34 = (+ 0.1201370976 - 0.3396227679*i1)
 	 
 	//MX0 x;
 	//x.real = 0.7;
