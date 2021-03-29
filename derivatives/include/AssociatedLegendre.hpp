@@ -38,20 +38,27 @@
 // Associated Legendre Polynomials
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
 class AssociatedLegendre
 {
 public:
 	AssociatedLegendre(unsigned int l, unsigned int m);
+	
 	~AssociatedLegendre() = default;
 
 	unsigned int l() const;
 	unsigned int m() const;
+	
+	template <typename elem, int order>
+	multicomplex<elem, order> lc() const;
+	template <typename elem, int order>
+	multicomplex<elem, order> mc() const;
 
 	template <typename elem, int order>
 	multicomplex<elem, order> operator()(multicomplex<elem, order> x) const;
 	double rf;
 	MX0 i;
-
+	
 	unsigned int m_l;
 	unsigned int m_m;
 
@@ -59,6 +66,14 @@ public:
 	multicomplex<elem, order> calculatePolynomialValue(const multicomplex<elem, order>& x) const;
 	template <typename elem, int order>
 	multicomplex<elem, order> SphericalHarmonic(const multicomplex<elem, order>& theta, const multicomplex<elem, order>& phi) const;
+	
+	template <typename elem, int order>
+	multicomplex<elem, order> Hypergeometric2F1(const multicomplex<elem, order>& alpha, const multicomplex<elem, order>& beta,
+	const multicomplex<elem, order>& gamma, const multicomplex<elem, order>& z) const;
+	
+	template <typename elem, int order>
+	multicomplex<elem, order> LegendreP(const multicomplex<elem, order>& lambda, const multicomplex<elem, order>& mu, 
+	const multicomplex<elem, order>& z) const;
 
 };
 
@@ -71,6 +86,7 @@ inline AssociatedLegendre::AssociatedLegendre(unsigned int l, unsigned int m) : 
 	i.imag = 1;
 }
 
+
 inline unsigned int AssociatedLegendre::l() const
 {
 	return m_l;
@@ -81,11 +97,21 @@ inline unsigned int AssociatedLegendre::m() const
 	return m_m;
 }
 
+
 template <typename elem, int order>
 inline multicomplex<elem, order> AssociatedLegendre::operator()(multicomplex<elem, order> x) const
 {
 	return calculatePolynomialValue(x);
 }
+
+//https://en.wikipedia.org/wiki/Legendre_function
+//https://en.wikipedia.org/wiki/Associated_Legendre_polynomials
+//https://en.wikipedia.org/wiki/Laplace%27s_equation
+//https://en.wikipedia.org/wiki/Laplace_operator  ∇2
+//the associated Legendre polynomials are the canonical solutions of the general Legendre equation :
+//(1-x^2) (d^2/dx^2(LegendreP[n,m,x])) - 2x (d/dx(LegendreP[n,m,x]))  + (n(n+1)-((m^2)/(1-x^2))) LegendreP[n,m,x] = 0
+//(1-x²)y" -2xy' + [λ(λ+1) - (μ²/(1-x²))] y = 0
+//l = n = λ, m = μ
 
 template <typename elem, int order>
 inline multicomplex<elem, order> AssociatedLegendre::calculatePolynomialValue(const multicomplex<elem, order>& x) const
@@ -136,12 +162,38 @@ inline multicomplex<elem, order> AssociatedLegendre::calculatePolynomialValue(co
 	}
 }
 
+//hypergeometric function
+//https://en.wikipedia.org/wiki/Hypergeometric_function
+template <typename elem, int order>
+inline multicomplex<elem, order> AssociatedLegendre::Hypergeometric2F1(const multicomplex<elem, order>& alpha, const multicomplex<elem, order>& beta,
+const multicomplex<elem, order>& Gamma, const multicomplex<elem, order>& z) const
+{	
+	auto a = gamma(Gamma) / ( gamma(alpha) * gamma(beta) );
+	
+	multicomplex<elem, order> s;
+	for(int n=0; n < 17; n++)
+		s += ((gamma(n + alpha) * gamma(n + beta)) / (gamma(n + Gamma) * Fac<elem>(n))) * pow(z,n);
+	
+	return a * s;
+}
+
+
+//hypergeometric function
+template <typename elem, int order>
+inline multicomplex<elem, order> AssociatedLegendre::LegendreP(const multicomplex<elem, order>& lambda, const multicomplex<elem, order>& mu,
+const multicomplex<elem, order>& z) const
+{	
+	auto a = (1 / (gamma(1-mu))) * pow(((1+z) / (1-z)),mu/2);
+	return a * Hypergeometric2F1(-lambda,lambda+1,1-mu,(1-z)/2);
+}
+
 template <typename elem, int order>
 inline multicomplex<elem, order> AssociatedLegendre::SphericalHarmonic(const multicomplex<elem, order>& theta, const multicomplex<elem, order>& phi) const
 {	
 	multicomplex<elem, order> r(rf);
 	
 	return r * calculatePolynomialValue(cos(theta)) * exp(i * m_m * phi);
+
 }
 
 

@@ -250,8 +250,8 @@ public:
 					y = std::sin(theta) * std::cos(phi);
 					z = std::cos(theta);
 
-					v1 += (pow(x * realY1,2) + pow(y * realY1,2) + pow(z * realY1,2));
-					v2 += (pow(x * realY2,2) + pow(y * realY2,2) + pow(z * realY2,2));
+					//v1 += (pow(x * realY1,2) + pow(y * realY1,2) + pow(z * realY1,2));
+					//v2 += (pow(x * realY2,2) + pow(y * realY2,2) + pow(z * realY2,2));
 					
 					Yx[i] = x * w * realY1;
 					Yy[i] = y * w * realY1;
@@ -267,8 +267,8 @@ public:
 			}
 		//std::cout << "i = " << i << std::endl; 
 		
-		std::cout << "v1    = " << v1 << std::endl;
-		std::cout << "v2/v1 = " << v2/v1 << std::endl; 		
+		//std::cout << "v1    = " << v1 << std::endl;
+		//std::cout << "v2/v1 = " << v2/v1 << std::endl; 		
 	}
 
 	if(mc_index==0 || mc_index==2 || mc_index==10)
@@ -566,12 +566,19 @@ void webMain()
 
 	AssociatedLegendre al(2,1);
 	MX0 theta,phi;
-	
-	
+
 	mcdv mcdv;
 	
 	theta.real = 0.97;
 	phi.real = 0.34;
+	
+	MX0 lp;
+	lp.real = 0.34;
+	lp.imag = -1.1298;
+	
+	auto ap = al.LegendreP(lp,lp,lp);
+	std::cout << "LegendreP[0.34-1.1298i,0.34-1.1298i,0.34-1.1298i] = " << ap << std::endl;
+	//LegendreP[n,m,x]
 
 	auto SphericalH = al.SphericalHarmonic(theta, phi);
 	std::cout << "SphericalHarmonicY[2, 1, 0.97, 0.34] = " << SphericalH << std::endl;
