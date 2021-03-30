@@ -150,9 +150,9 @@ public:
 		////
 		
 		
-		std::array<double, 10201*2> Yx;
-		std::array<double, 10201*2> Yy;
-		std::array<double, 10201*2> Yz;
+		std::array<double, 10201*4> Yx;
+		std::array<double, 10201*4> Yy;
+		std::array<double, 10201*4> Yz;
 		
 		static client::Float64Array * vec11 = 
 			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Yx, Yx.size() * sizeof(double));
@@ -213,12 +213,13 @@ public:
 			MX1 THETA2, PHI2;
 			mcdv mcdv;
 			
-			for (double phi=0; phi < two_pi; phi += two_pi/200.)
+			for (double phi=0; phi < two_pi; phi += two_pi/400.)
 			{		
 				for (double theta=0; theta < pi; theta += pi/100.)   
 				{				
 					
 					THETA.real = theta;
+					//THETA = function(THETA, formula);
 					PHI.real = phi;
 					
 					
@@ -231,9 +232,9 @@ public:
 					Y2 = al2.SphericalHarmonic(THETA, PHI);
 					
 					Y1 = function(Y1, formula);
-					Y2 = function(Y2, formula);
+					//Y2 = function(Y2, formula);
 					
-					Y1 = pow(Y1,2.5);
+					Y1 = pow(Y1,3.5);
 					
 					if(real_spherical_harmonics) {
 						realY1 = get_realY(m1, Y1);	

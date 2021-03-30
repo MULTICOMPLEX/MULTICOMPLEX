@@ -530,8 +530,35 @@ function generateData(event) {
 	
 <br><br>
 
+<script>
+	
+	async function saveFile() {
+		
+		var imgBlob = 33;
+		// create a new handle
+		const newHandle = await window.showSaveFilePicker();
+
+		// create a FileSystemWritableFileStream to write to
+		const writableStream = await newHandle.createWritable();
+
+		// write our file
+		await writableStream.write(imgBlob);
+
+		// close the file and write the contents to disk.
+		await writableStream.close();
+	}
+	
+	function msg() {
+  alert("Hello world!");
+}
+
+</script>
+
 <select id="change_formula2" class="dropbtn"></select>
-    
+
+
+<form> <input type="button" value="Click me" onclick="saveFile()"> </form>
+ 
 <script>
 
 $('#change_formula1 option').clone().appendTo('#change_formula2');
