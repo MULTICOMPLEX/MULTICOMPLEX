@@ -19,6 +19,11 @@ font-family: "Consolas MS";
 font-size: 26px;
 }
 
+h2 {
+font-size: 20px;
+}
+
+
 body {background-color: rgb(0, 43, 54);
 color: rgb(238, 232, 213);}
 
@@ -47,6 +52,27 @@ font-family: "Consolas MS";
   cursor: pointer;
 }
 
+.btn-primary {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 4px 4px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.form-control{
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
 
 .dropbtn {
   background-color: #4CAF50;
@@ -515,13 +541,13 @@ function generateData(event) {
 				a1.href = 'https://en.wikipedia.org/wiki/Bicomplex_number'; 				
 				document.body.appendChild(a1); 
 				 document.write("<br>");
-				a2.href = 'https://en.wikipedia.org/wiki/Numerical_differentiation';				 
+				a1.href = 'https://en.wikipedia.org/wiki/Numerical_differentiation';				 
 				document.body.appendChild(a2);
 				 document.write("<br>");
-				a3.href = 'https://en.wikipedia.org/wiki/Spherical_harmonics';
+				a1.href = 'https://en.wikipedia.org/wiki/Spherical_harmonics';
 				document.body.appendChild(a3);	
 				 document.write("<br>");		
-				a4.href = 'https://en.wikipedia.org/wiki/Residue_theorem';				 
+				a1.href = 'https://en.wikipedia.org/wiki/Residue_theorem';				 
 				document.body.appendChild(a4);	
 				
 				
@@ -530,29 +556,19 @@ function generateData(event) {
 	
 <br><br>
 
-<script>
-	
-	async function saveFile() {
-		
-		var imgBlob = 33;
-		// create a new handle
-		const newHandle = await window.showSaveFilePicker();
+<script src='FileSaver.js'></script>
 
-		// create a FileSystemWritableFileStream to write to
-		const writableStream = await newHandle.createWritable();
+<form role="form">
+  <h1>Save 3D data to file</h1>
 
-		// write our file
-		await writableStream.write(imgBlob);
+  <div class="form-group">
+  <label for="input-fileName"> <h2> File name</label>
+    <input type="text" class="form-control" id="input-fileName" value="Point cloud XYZ File" placeholder="Enter file name">
+	<button id="btn-save" type="submit" class="btn-primary">Save to file</button>
+  </div></h2>
+</form>
 
-		// close the file and write the contents to disk.
-		await writableStream.close();
-	}
-	
-	function msg() {
-  alert("Hello world!");
-}
-
-</script>
+<br>
 
 <select id="change_formula2" class="dropbtn"></select>
  
@@ -661,6 +677,11 @@ var layout = {
 	paper_bgcolor: 'rgba(0,0,0,0)',
 	plot_bgcolor: 'rgba(0,0,0,0)'
 }
+
+	var X = [];
+	var Y = [];
+	var Z = [];
+
 
 function plot_conformal_map2(formula, graph)
 {
@@ -1375,11 +1396,7 @@ var obj = new Graphics;
 	var complex_array4 = [];
 	var complex_array5 = [];
 	var complex_array6 = [];
-	
-	var X = [];
-	var Y = [];
-	var Z = [];
-	
+
 	let N = 200;
 	
 	function compute_conformal_map()
@@ -1578,9 +1595,9 @@ var obj = new Graphics;
 	
 	Plotly.react(graph, data2, layout3d);}
 	
-}
-
+	}
 )}
+
 
 plot_conformal_map2(1, 'graph3');
 
@@ -1627,7 +1644,32 @@ initplot();
 
 plot_conformal_map2(1, 'graph4');
 
+
+$("#btn-save").click( function() {
+	event.preventDefault();
+	//var text = $("#textarea").val();
+  
+	var text=[];
+	text += "#  spherical harmonic" + "\n";
+	text += "# " + "\n";
+
+	for (i = 0; i < X.length; i++) {
+		text += X[i] + " ";
+		text += Y[i] + " ";
+		text += Z[i] + "\n";
+	} 
+	
+	var filename = $("#input-fileName").val()
+	var blob = new Blob([text], {type: "text/plain;charset=utf-8"});
+	saveAs(blob, filename+".txt");
+	
+});
+
+
 </script>
+
+
+
 
 
 </html>
