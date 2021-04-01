@@ -86,6 +86,7 @@ font-family: "Consolas MS";
 </style>
 </head>
 
+<link rel="shortcut icon" href="android-chrome-512x512.png" type="image/x-icon" />
 
 <body>
 	<h1>Derivatives, using Multicomplex Numbers -> template metaprogramming, WebAssembly :</h1> 
@@ -541,13 +542,13 @@ function generateData(event) {
 				a1.href = 'https://en.wikipedia.org/wiki/Bicomplex_number'; 				
 				document.body.appendChild(a1); 
 				 document.write("<br>");
-				a1.href = 'https://en.wikipedia.org/wiki/Numerical_differentiation';				 
+				a2.href = 'https://en.wikipedia.org/wiki/Numerical_differentiation';				 
 				document.body.appendChild(a2);
 				 document.write("<br>");
-				a1.href = 'https://en.wikipedia.org/wiki/Spherical_harmonics';
+				a3.href = 'https://en.wikipedia.org/wiki/Spherical_harmonics';
 				document.body.appendChild(a3);	
 				 document.write("<br>");		
-				a1.href = 'https://en.wikipedia.org/wiki/Residue_theorem';				 
+				a4.href = 'https://en.wikipedia.org/wiki/Residue_theorem';				 
 				document.body.appendChild(a4);	
 				
 				
@@ -565,9 +566,14 @@ function generateData(event) {
   <label for="input-fileName"> <h2> File name</label>
     <input type="text" class="form-control" id="input-fileName" value="Point cloud XYZ File" placeholder="Enter file name">
 	<button id="btn-save" type="submit" class="btn-primary">Save to file</button>
+		
   </div></h2>
-</form>
-
+ </form> 
+  
+  <label for="avatar"><h1>Retrieve 3D data from file</h1></label>
+ <h1>
+<input type="file" name='file' class="btn-primary" accept=".xyz">
+</h1>
 <br>
 
 <select id="change_formula2" class="dropbtn"></select>
@@ -678,9 +684,7 @@ var layout = {
 	plot_bgcolor: 'rgba(0,0,0,0)'
 }
 
-	var X = [];
-	var Y = [];
-	var Z = [];
+	let X = [], Y = [], Z = [];
 
 
 function plot_conformal_map2(formula, graph)
@@ -1387,213 +1391,223 @@ var layout3d = {
 
 Graphics.promise.then(function() {
 
-var obj = new Graphics;
+		var obj = new Graphics;
 
-	var complex_array1 = [];
-	var complex_array2 = [];
+		var complex_array1 = [];
+		var complex_array2 = [];
 	
-	var complex_array3 = [];
-	var complex_array4 = [];
-	var complex_array5 = [];
-	var complex_array6 = [];
+		var complex_array3 = [];
+		var complex_array4 = [];
+		var complex_array5 = [];
+		var complex_array6 = [];
 
-	let N = 200;
+		let N = 200;
 	
-	function compute_conformal_map()
-	{	
-		if(graph === 'graph3'){
+		function compute_conformal_map()
+		{	
+			if(graph === 'graph3'){
 
-		X = obj.conformal_map(formula, 11);
-		Y = obj.conformal_map(formula, 12);
-		Z = obj.conformal_map(formula, 13);
-		complex_array1 = obj.conformal_map(formula, 0);
-		complex_array2 = obj.conformal_map(formula, 1);
+			X = obj.conformal_map(formula, 11);
+			Y = obj.conformal_map(formula, 12);
+			Z = obj.conformal_map(formula, 13);
+			complex_array1 = obj.conformal_map(formula, 0);
+			complex_array2 = obj.conformal_map(formula, 1);
+			}
+		
+			if(graph === 'graph4'){
+				complex_array3 = obj.conformal_map(formula, 2);
+				complex_array4 = obj.conformal_map(formula, 3);
+				complex_array5 = obj.conformal_map(formula, 4);
+				complex_array6 = obj.conformal_map(formula, 5);	
+			}
+		}
+	
+		if(graph !== 'graph_from_file')
+			compute_conformal_map();
+	
+		else {
+			complex_array1 = obj.conformal_map(formula, 0);
+			complex_array2 = obj.conformal_map(formula, 1);
 		}
 		
+		
+		var real1 = complex_array1.slice(0,  N*9*2);
+		var imag1 = complex_array1.slice(N*9*2,complex_array1.size);
+	
+		var real2 = complex_array2.slice(0,  N*9*2);
+		var imag2 = complex_array2.slice(N*9*2,complex_array2.size);
+	
+		////
+	
+		var real3 = complex_array3.slice(0,  N*9*2);
+		var imag3 = complex_array3.slice(N*9*2,complex_array3.size);
+	
+		var real4 = complex_array4.slice(0,  N*9*2);
+		var imag4 = complex_array4.slice(N*9*2,complex_array4.size);
+	
+		var real5 = complex_array5.slice(0,  N*9*2);
+		var imag5 = complex_array5.slice(N*9*2,complex_array5.size);
+	
+		var real6 = complex_array6.slice(0,  N*9*2);
+		var imag6 = complex_array6.slice(N*9*2,complex_array6.size);
+
+		var trace1_2d = {
+		x: real1,
+		y: imag1,
+		xaxis: 'x',
+		yaxis: 'y',
+		type: 'scatter',
+		name: '',
+		mode: 'markers',
+		marker: {
+			color: 'rgb(17, 157, 255)',
+			size: 6,
+			line: {
+		color: 'rgb(231, 99, 250)',
+		width: 2}}
+		};
+
+		var trace2_2d = {
+		x: real2,
+		y: imag2,
+		xaxis: 'x2',
+		yaxis: 'y2',
+		type: 'scatter',
+		name: '',
+		mode: 'markers',
+		marker: {
+			color: 'rgb(17, 157, 255)',
+			size: 6,
+			line: {
+		color: 'rgb(231, 99, 250)',
+		width: 2}}
+		};
+	
+		///////////
+	
+		var trace1_3d = {
+		x: Y,
+		y: X,
+		z: Z,
+		scene: "scene7",
+	
+		type: 'scatter3d',
+		hovertemplate: 'x: %{y:.5f}<br>' + 'y: %{x:.5f}<br>' + 'z: %{z:.5f}',
+	
+		name: '',
+		mode: 'markers',
+		marker: {
+			color: 'rgb(17, 157, 255)',
+			size: 6,
+			line: {
+		color: 'rgb(231, 99, 250)',
+		width: 2}} 
+		};
+
+		var trace2_3d = {
+		x: real1,
+		y: imag1,
+		z: imag2,
+		scene: "scene2",
+	
+		type: 'scatter3d',
+		name: '',
+		mode: 'markers',
+		marker: {
+			color: 'rgb(17, 157, 255)',
+		size: 6,
+			line: {
+		color: 'rgb(231, 99, 250)',
+		width: 2}} 
+		};
+	
+		/////
+	
+		var trace3_3d = {
+		x: real3,
+		y: imag3,
+		z: real4,
+		scene: "scene3",
+	
+		type: 'scatter3d',
+		name: '',
+		mode: 'markers',
+		marker: {
+			color: 'rgb(17, 157, 255)',
+			size: 6,
+			line: {
+		color: 'rgb(231, 99, 250)',
+		width: 2}} 
+		};
+	
+		var trace4_3d = {
+		x: real3,
+		y: imag3,
+		z: imag4,
+		scene: "scene4",
+	
+		type: 'scatter3d',
+		name: '',
+		mode: 'markers',
+		marker: {
+			color: 'rgb(17, 157, 255)',
+			size: 6,
+			line: {
+		color: 'rgb(231, 99, 250)',
+		width: 2}} 
+		};
+	
+		var trace5_3d = {
+		x: real5,
+		y: imag5,
+		z: real6,
+		scene: "scene5",
+	
+		type: 'scatter3d',
+		name: '',
+		mode: 'markers',
+		marker: {
+			color: 'rgb(17, 157, 255)',
+			size: 6,
+			line: {
+		color: 'rgb(231, 99, 250)',
+		width: 2}}
+		};
+	
+		var trace6_3d = {
+		x: real5,
+		y: imag5,
+		z: imag6,
+		scene: "scene6",
+	
+		type: 'scatter3d',
+		name: '',
+		mode: 'markers',
+		marker: {
+			color: 'rgb(17, 157, 255)',
+			size: 6,
+			line: {
+		color: 'rgb(231, 99, 250)',
+		width: 2}} 
+		};
+	
+		//var data = [trace1_2d,trace2_2d];
+		//Plotly.newPlot('graph', data, layout);
+	
+		var data1 = [trace1_3d,trace2_3d];	
+		var data2 = [trace3_3d,trace4_3d,trace5_3d,trace6_3d];
+	
+		if(graph === 'graph3'){
+	
+		Plotly.react(graph, data1, layout3d);}
+		
+		if(graph === 'graph_from_file'){
+	
+		Plotly.react('graph3', data1, layout3d);}
+	
 		if(graph === 'graph4'){
-			complex_array3 = obj.conformal_map(formula, 2);
-			complex_array4 = obj.conformal_map(formula, 3);
-			complex_array5 = obj.conformal_map(formula, 4);
-			complex_array6 = obj.conformal_map(formula, 5);	
-		}
-	}
 	
-	compute_conformal_map();
-	
-	
-	var real1 = complex_array1.slice(0,  N*9*2);
-	var imag1 = complex_array1.slice(N*9*2,complex_array1.size);
-	
-	var real2 = complex_array2.slice(0,  N*9*2);
-	var imag2 = complex_array2.slice(N*9*2,complex_array2.size);
-	
-	////
-	
-	var real3 = complex_array3.slice(0,  N*9*2);
-	var imag3 = complex_array3.slice(N*9*2,complex_array3.size);
-	
-	var real4 = complex_array4.slice(0,  N*9*2);
-	var imag4 = complex_array4.slice(N*9*2,complex_array4.size);
-	
-	var real5 = complex_array5.slice(0,  N*9*2);
-	var imag5 = complex_array5.slice(N*9*2,complex_array5.size);
-	
-	var real6 = complex_array6.slice(0,  N*9*2);
-	var imag6 = complex_array6.slice(N*9*2,complex_array6.size);
-
-	var trace1_2d = {
-	x: real1,
-	y: imag1,
-	xaxis: 'x',
-	yaxis: 'y',
-	type: 'scatter',
-	name: '',
-	mode: 'markers',
-	marker: {
-		color: 'rgb(17, 157, 255)',
-		size: 6,
-		line: {
-      color: 'rgb(231, 99, 250)',
-      width: 2}}
-	};
-
-	var trace2_2d = {
-	x: real2,
-	y: imag2,
-	xaxis: 'x2',
-	yaxis: 'y2',
-	type: 'scatter',
-	name: '',
-	mode: 'markers',
-	marker: {
-		color: 'rgb(17, 157, 255)',
-		size: 6,
-		line: {
-      color: 'rgb(231, 99, 250)',
-      width: 2}}
-	};
-	
-	///////////
-	
-	var trace1_3d = {
-	x: Y,
-	y: X,
-	z: Z,
-	scene: "scene7",
-	
-	type: 'scatter3d',
-	hovertemplate: 'x: %{y:.5f}<br>' + 'y: %{x:.5f}<br>' + 'z: %{z:.5f}',
-	
-	name: '',
-	mode: 'markers',
-	marker: {
-		color: 'rgb(17, 157, 255)',
-		size: 6,
-		line: {
-      color: 'rgb(231, 99, 250)',
-      width: 2}} 
-	};
-
-	var trace2_3d = {
-	x: real1,
-	y: imag1,
-	z: imag2,
-	scene: "scene2",
-	
-	type: 'scatter3d',
-	name: '',
-	mode: 'markers',
-	marker: {
-		color: 'rgb(17, 157, 255)',
-		size: 6,
-		line: {
-      color: 'rgb(231, 99, 250)',
-      width: 2}} 
-	};
-	
-	/////
-	
-	var trace3_3d = {
-	x: real3,
-	y: imag3,
-	z: real4,
-	scene: "scene3",
-	
-	type: 'scatter3d',
-	name: '',
-	mode: 'markers',
-	marker: {
-		color: 'rgb(17, 157, 255)',
-		size: 6,
-		line: {
-      color: 'rgb(231, 99, 250)',
-      width: 2}} 
-	};
-	
-	var trace4_3d = {
-	x: real3,
-	y: imag3,
-	z: imag4,
-	scene: "scene4",
-	
-	type: 'scatter3d',
-	name: '',
-	mode: 'markers',
-	marker: {
-		color: 'rgb(17, 157, 255)',
-		size: 6,
-		line: {
-      color: 'rgb(231, 99, 250)',
-      width: 2}} 
-	};
-	
-	var trace5_3d = {
-	x: real5,
-	y: imag5,
-	z: real6,
-	scene: "scene5",
-	
-	type: 'scatter3d',
-	name: '',
-	mode: 'markers',
-	marker: {
-		color: 'rgb(17, 157, 255)',
-		size: 6,
-		line: {
-      color: 'rgb(231, 99, 250)',
-      width: 2}}
-	};
-	
-	var trace6_3d = {
-	x: real5,
-	y: imag5,
-	z: imag6,
-	scene: "scene6",
-	
-	type: 'scatter3d',
-	name: '',
-	mode: 'markers',
-	marker: {
-		color: 'rgb(17, 157, 255)',
-		size: 6,
-		line: {
-      color: 'rgb(231, 99, 250)',
-      width: 2}} 
-	};
-	
-	//var data = [trace1_2d,trace2_2d];
-	//Plotly.newPlot('graph', data, layout);
-	
-	var data1 = [trace1_3d,trace2_3d];	
-	var data2 = [trace3_3d,trace4_3d,trace5_3d,trace6_3d];
-	
-	if(graph === 'graph3'){
-	
-	Plotly.react(graph, data1, layout3d);}
-	
-	if(graph === 'graph4'){
-	
-	Plotly.react(graph, data2, layout3d);}
+		Plotly.react(graph, data2, layout3d);}
 	
 	}
 )}
@@ -1661,16 +1675,53 @@ $("#btn-save").click( function() {
 	
 	var filename = $("#input-fileName").val()
 	var blob = new Blob([text], {type: "text/plain;charset=utf-8"});
-	saveAs(blob, filename+".txt");
+	saveAs(blob, filename+".xyz");
 	
 });
 
 
+$("input[name='file']").on("change", function(){
+
+    var files = !!this.files ? this.files : [];
+
+    if ( !files.length || !window.FileReader ) return;
+
+ 
+    var reader = new FileReader();
+    
+    reader.readAsBinaryString( files[0] );
+    
+	var regex = /[+-]?\d+(?:\.\d+)?(?:e[+-]?\d+)?/g;//[+-]?\d(\.\d+)?[Ee][+-]?\d+
+
+	reader.onload = function(event){
+	
+	X = [];
+	Y = [];
+	Z = [];
+	
+	var k;
+	
+	lineByLine = event.target.result.split("\n");	
+	
+	for (i = 0; i < lineByLine.length; i++) {
+		
+		while (match = regex.exec(lineByLine[i])) {
+
+				var t = parseFloat(match);
+				if(k==0) X.push(t); 
+				else if(k==1) Y.push(t); 
+				else Z.push(t);
+				k++;
+			}
+			
+			k=0;
+		}
+		
+		plot_conformal_map2(1,'graph_from_file');
+    }
+});
+
 </script>
-
-
-
-
 
 </html>
 
