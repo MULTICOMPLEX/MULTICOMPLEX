@@ -160,6 +160,18 @@ public:
 			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Yy, Yy.size() * sizeof(double));
 		static client::Float64Array * vec13 = 
 			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Yz, Yz.size() * sizeof(double));
+			
+		
+		std::array<double, 40200> Yx2;
+		std::array<double, 40200> Yy2;
+		std::array<double, 40200> Yz2;
+		
+		static client::Float64Array * vec14 = 
+			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Yx2, Yx2.size() * sizeof(double));
+		static client::Float64Array * vec15 = 
+			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Yy2, Yy2.size() * sizeof(double));
+		static client::Float64Array * vec16 = 
+			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Yz2, Yz2.size() * sizeof(double));
 		
 		
 		static client::Float64Array * vec1 = 
@@ -184,7 +196,7 @@ public:
 		////
 	
 
-		// draw unit sphere points (r=1 center=(0,0,0)) ... your rays directions
+		//SphericalHarmonic
 		if(mc_index==11)
 		{
 			MX0 Y1, Y2;
@@ -258,11 +270,10 @@ public:
 					Yy[i] = y * w * realY1;
 					Yz[i] = z * w * realY1;
 					
-					//Yx[i+10201] = x * w * realY2+1;
-					//Yy[i+10201] = y * w * realY2;
-					//Yz[i+10201] = z * w * realY2;
+					//Yx2[i+10201] = x * w * realY2+1;
+					//Yy2[i+10201] = y * w * realY2;
+					//Yz2[i+10201] = z * w * realY2;
 					
-
 					i++;
 				}
 			}
@@ -270,6 +281,66 @@ public:
 		
 		//std::cout << "v1    = " << v1 << std::endl;
 		//std::cout << "v2/v1 = " << v2/v1 << std::endl; 		
+	}
+	
+	
+	//Pseudosphere, tractroid, tractricoid, antisphere, or tractrisoid
+	if(mc_index==14)
+	{
+
+		const double w=half_pi;
+		int i = 0;
+		
+		for (double u=0; u < two_pi; u += two_pi/400.)
+		{		
+			for (double v=0; v < pi; v += pi/100.)   
+			{				
+
+				double x,y,z;
+				x = std::cos(u) * std::sin(v);
+				y = std::sin(u) * std::sin(v);
+				z = std::cos(v) + std::log(std::abs(std::tan(half*v)));
+					
+				Yx[i] = x * w;
+				Yy[i] = y * w;
+				Yz[i] = z * w;
+				
+				i++;
+			}
+		}
+	}
+
+	//Breather surface
+	if(mc_index==15)
+	{
+
+		const double s=half;
+		int i = 0;
+		double b = 2./5;
+		
+		
+		for (double u=-14; u < 14; u += 14/100.)
+		{		
+			for (double v=-37.4; v < 37.4; v += 37.4/100.)   
+			{				
+				
+				double x,y,z;
+				
+				auto r = 1 - b*b;
+				auto w = std::sqrt(r);
+				auto denom = b*(pow(w*std::cosh(b*u),2)+pow(b*std::sin(w*v),2));
+				x = -u + (2*r*std::cosh(b*u)*std::sinh(b*u))/denom; 
+				y = (2*w*std::cosh(b*u)*(-(w*std::cos(v)*std::cos(w*v)) - std::sin(v)*std::sin(w*v)))/denom; 
+				z = (2*w*std::cosh(b*u)*(-(w*std::sin(v)*std::cos(w*v)) + std::cos(v)*std::sin(w*v)))/denom;
+	
+				Yx2[i] = x * s;
+				Yy2[i] = y * s;
+				Yz2[i] = z * s;
+				
+				i++;
+			}
+		}
+		//std::cout << "i = " << i << std::endl; 
 	}
 
 	if(mc_index==0 || mc_index==2 || mc_index==10)
@@ -426,11 +497,20 @@ public:
 			return vec10;//complex
 			
 		else if(mc_index==11)
-			return vec11;//sphere x
+			return vec11;//SphericalHarmonic x
 		else if(mc_index==12)
-			return vec12;//sphere y
-		else 
-			return vec13;//sphere z
+			return vec12;//SphericalHarmonic y, Pseudosphere y
+		else if(mc_index==13)
+			return vec13;//SphericalHarmonic z, Pseudosphere z
+		else if(mc_index==14)
+			return vec11;//Pseudosphere x
+			
+		else if(mc_index==15) 
+			return vec14;//Breather surface x
+		else if(mc_index==16) 
+			return vec15;//Breather surface y
+		else  
+			return vec16;//Breather surface z
      
     }
 	
