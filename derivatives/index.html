@@ -1664,8 +1664,8 @@ $("#btn-save").click( function() {
 	//var text = $("#textarea").val();
   
 	var text=[];
-	text += "#  spherical harmonic" + "\n";
-	text += "# " + "\n";
+	text += X.length.toString() + "\n";
+	text += "# spherical harmonic" + "\n";
 
 	for (i = 0; i < X.length; i++) {
 		text += X[i] + " ";
@@ -1705,7 +1705,7 @@ $("input[name='file']").on("change", function(){
 	
 	lineByLine = event.target.result.split("\n");	
 	
-	for (i = 0; i < lineByLine.length; i++) {
+	for (i = 2; i < lineByLine.length; i++) {
 		
 		while (match = regex.exec(lineByLine[i])) {
 
