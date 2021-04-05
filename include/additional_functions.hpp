@@ -3,8 +3,27 @@
 template <typename elem, int order>
 class multicomplex;
 
-
 // Gamma function, Spouge's approximation
+
+const int A = 35;
+
+template <typename elem>
+constexpr std::vector<elem> init_spouge() {
+
+	std::vector<elem> Spouge_coeff(A);
+	
+	elem k1_factrl = 1; /* (k - 1)!*(-1)^k with 0!==1*/
+
+	Spouge_coeff[0] = root_two_pi;
+
+	for (int k = 1; k < A; k++)
+	{
+		Spouge_coeff[k] = exp(elem(A) - k) * pow(elem(A) - k, k - 0.5) / k1_factrl;
+		k1_factrl *= -k;
+	}
+	return Spouge_coeff;
+}
+
 
 template <typename elem, int order>
 multicomplex<elem, order> gamma
@@ -12,19 +31,9 @@ multicomplex<elem, order> gamma
 	const multicomplex<elem, order>& z
 )
 {
-	int64_t A = 35;
+	auto Spouge_coeff = init_spouge<elem>();
+	
 	elem a = elem(A);
-	std::vector<elem> Spouge_coeff(A);
-
-	elem k1_factrl = 1; /* (k - 1)!*(-1)^k with 0!==1*/
-
-	Spouge_coeff[0] = root_two_pi;
-
-	for (int64_t k = 1; k < A; k++)
-	{
-		Spouge_coeff[k] = expl(a - k) * powl(a - k, k - 0.5) / k1_factrl;
-		k1_factrl *= -k;
-	}
 
 	multicomplex<elem, order> accm{ elem(Spouge_coeff[0]) };
 
@@ -112,3 +121,21 @@ multicomplex<elem, order> LambertW(int k = 0, multicomplex<elem, order> z = 0)
 	} while ((abs(w - wprev) > prec) && iter < maxiter);
 	return w;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

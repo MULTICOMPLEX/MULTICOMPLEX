@@ -637,7 +637,7 @@ T Fac
 //---------------------------------------------------
 
 
-size_t Pochhammer(size_t x, size_t n)
+inline size_t Pochhammer(size_t x, size_t n)
 {
   size_t c = 1;
   for(size_t k = 0; k <= n-1; k++)
