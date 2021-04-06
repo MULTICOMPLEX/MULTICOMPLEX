@@ -602,7 +602,7 @@ public:
 		return
 		{
 			real += o,
-			imag += o
+			imag
 		};
 	}
 
@@ -838,10 +838,22 @@ public:
 		return false;
 	}
 
+	bool operator== (elem& o) const
+	{
+		if (comp() == multicomplex<elem, 0>(static_cast<elem>(o)).comp()) return true;
+		return false;
+	}
+
 	template <int x_order>
 	bool operator!= (multicomplex<elem, x_order>& b) const
 	{
 		if (comp() == b.comp()) return false;
+		return true;
+	}
+
+	bool operator!= (elem& o) const
+	{
+		if (comp() == multicomplex<elem, 0>(static_cast<elem>(o)).comp()) return false;
 		return true;
 	}
 
@@ -852,10 +864,22 @@ public:
 		return false;
 	}
 
+	bool operator> (elem& o) const
+	{
+		if (comp() > multicomplex<elem, 0>(static_cast<elem>(o)).comp()) return true;
+		return false;
+	}
+
 	template <int x_order>
 	bool operator< (multicomplex<elem, x_order>& b) const
 	{
 		if (comp() < b.comp()) return true;
+		return false;
+	}
+
+	bool operator< (elem& o) const
+	{
+		if (comp() < multicomplex<elem, 0>(static_cast<elem>(o)).comp()) return true;
 		return false;
 	}
 
@@ -866,10 +890,22 @@ public:
 		return false;
 	}
 
+	bool operator>= (elem& o) const
+	{
+		if (comp() >= multicomplex<elem, 0>(static_cast<elem>(o)).comp()) return true;
+		return false;
+	}
+
 	template <int x_order>
 	bool operator<= (multicomplex<elem, x_order>& b) const
 	{
 		if (comp() <= b.comp()) return true;
+		return false;
+	}
+
+	bool operator<= (elem& o) const
+	{
+		if (comp() <= multicomplex<elem, 0>(static_cast<elem>(o)).comp()) return true;
 		return false;
 	}
 
