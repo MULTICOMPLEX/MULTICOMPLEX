@@ -14,6 +14,9 @@
 ### Tricomplex:
 ![newplot](https://user-images.githubusercontent.com/75379917/111524794-2953d400-875d-11eb-82e6-5c6b8eb863b6.png)
 
+## function exp(z):
+![exp](https://user-images.githubusercontent.com/75379917/113945668-120d8100-9807-11eb-9347-19e51fe5d5d1.png)
+
 ### Topics included
 
 Multicomplex number
