@@ -413,23 +413,23 @@ public:
 				
 				}
 
-				
+				REAL scale = half_pi;
 				//tricomplex
 				if(mc_index==2){
 				
 				MX2 mc;
-				mc.real.real.real = t*half_pi;
-				mc.real.real.imag = y*half_pi;
+				mc.real.real.real = t*scale;
+				mc.real.real.imag = y*scale;
 				
-				mc.real.imag.real = t*half_pi;
-				mc.real.imag.imag = y*half_pi;
+				mc.real.imag.real = t*scale;
+				mc.real.imag.imag = y*scale;
 				
 				
-				mc.imag.real.real = t*half_pi;
-				mc.imag.real.imag = y*half_pi;
+				mc.imag.real.real = t*scale;
+				mc.imag.real.imag = y*scale;
 				
-				mc.imag.imag.real = t*half_pi;
-				mc.imag.imag.imag = y*half_pi;
+				mc.imag.imag.real = t*scale;
+				mc.imag.imag.imag = y*scale;
 				
 				MX2 d;
 				d = function(mc, formula);
@@ -446,17 +446,17 @@ public:
 				complex_array6[index]             						= d.imag.imag.real;
 				complex_array6[N*n_grid_lines + N*n_grid_lines + index] = d.imag.imag.imag;
 				
-				mc.real.real.real = y*half_pi;
-				mc.real.real.imag = t*half_pi;
+				mc.real.real.real = y*scale;
+				mc.real.real.imag = t*scale;
 				
-				mc.real.imag.real = y*half_pi;
-				mc.real.imag.imag = t*half_pi;
+				mc.real.imag.real = y*scale;
+				mc.real.imag.imag = t*scale;
 				
-				mc.imag.real.real = y*half_pi;
-				mc.imag.real.imag = t*half_pi;
+				mc.imag.real.real = y*scale;
+				mc.imag.real.imag = t*scale;
 				
-				mc.imag.imag.real = y*half_pi;
-				mc.imag.imag.imag = t*half_pi;
+				mc.imag.imag.real = y*scale;
+				mc.imag.imag.imag = t*scale;
 				
 				d = function(mc, formula);
 				
