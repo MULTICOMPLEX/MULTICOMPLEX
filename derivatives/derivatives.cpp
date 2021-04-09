@@ -172,6 +172,17 @@ public:
 			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Yy2, Yy2.size() * sizeof(double));
 		static client::Float64Array * vec16 = 
 			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Yz2, Yz2.size() * sizeof(double));
+			
+		std::array<double, 40000> Yx3;
+		std::array<double, 40000> Yy3;
+		std::array<double, 40000> Yz3;
+		
+		static client::Float64Array * vec17 = 
+			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Yx3, Yx3.size() * sizeof(double));
+		static client::Float64Array * vec18 = 
+			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Yy3, Yy3.size() * sizeof(double));
+		static client::Float64Array * vec19 = 
+			MakeTypedArray<TypedArrayForPointerType<double>::type>(&Yz3, Yz3.size() * sizeof(double));
 		
 		
 		static client::Float64Array * vec1 = 
@@ -342,6 +353,37 @@ public:
 		}
 		//std::cout << "i = " << i << std::endl; 
 	}
+	
+	//Rosenbrock function
+	if(mc_index==18)
+	{
+		int i = 0;
+		
+		double s = 1;
+		
+		for (double Y=-1; Y < 3; Y += 4/100.)
+		{		
+			for (double X=-2; X < 2; X += 2/200.)   
+			{				
+				
+				double x,y,z;
+				
+				double b = 10;
+				double a = 1;
+				x = X; 
+				y = Y; 
+				z = pow(a-x, 2) + b * pow(y - x * x,2);
+	
+				Yx3[i] = x * s;
+				Yy3[i] = y * s;
+				Yz3[i] = z * 0.01;
+				
+				i++;
+			}
+		}
+		std::cout << "i = " << i << std::endl; 
+	}
+	
 
 	if(mc_index==0 || mc_index==2 || mc_index==10)
 	{
@@ -509,8 +551,15 @@ public:
 			return vec14;//Breather surface x
 		else if(mc_index==16) 
 			return vec15;//Breather surface y
-		else  
+		else if(mc_index==17)  
 			return vec16;//Breather surface z
+		
+		else if(mc_index==18) 
+			return vec17;//Rosenbrock x
+		else if(mc_index==19) 
+			return vec18;//Rosenbrock y
+		else  
+			return vec19;//Rosenbrock z
      
     }
 	

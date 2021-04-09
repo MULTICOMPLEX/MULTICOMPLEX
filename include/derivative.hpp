@@ -133,6 +133,19 @@ multicomplex<elem, order> multicomplex<elem, order>::random(elem lower, elem upp
   return *this;
 }
 
+template <typename elem>
+multicomplex<elem, 0> multicomplex<elem, 0>::random(elem lower, elem upper)
+{
+  class mxws_64 rng;
+  flat a = *this;
+
+  for (int j = 0; j < a.size(); j++)
+    a.at(j) = rng(lower, upper);
+
+  *this = a;
+  return *this;
+}
+
 /// get first 
 
 template <typename elem, int order>
