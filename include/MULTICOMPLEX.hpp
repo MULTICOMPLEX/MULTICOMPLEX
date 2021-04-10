@@ -1059,7 +1059,7 @@ std::ostream& operator <<
 }
 
 //typedefs
-	typedef long double REAL;
+	typedef double REAL;
 typedef multicomplex<REAL, 0 > MX0;
 typedef multicomplex<REAL, 1 > MX1;
 typedef multicomplex<REAL, 2 > MX2;

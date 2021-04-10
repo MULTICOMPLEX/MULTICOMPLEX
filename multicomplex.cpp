@@ -32,7 +32,24 @@ int main(int argc, char** argv)
 	//rankOfMatrix_driver();
 	
 	//fast_hadamard_transform_driver<MX0>();
+	{
+		Matrix<REAL> a(2,2);
+		Matrix<REAL> b(2,2);
 
+		a.matrix[0][0] = 6;
+		a.matrix[0][1] = -7;
+		a.matrix[1][0] = 0;
+		a.matrix[1][1] = 3;
+
+		b.matrix[0][0] = 1;
+		b.matrix[0][1] = 2;
+		b.matrix[1][0] = 3;
+		b.matrix[1][1] = 5;
+
+		Matrix<REAL>  c = a / b;
+		
+		std::cout << c;
+	}
 	std::cout << std::endl;
 	
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
@@ -42,7 +59,7 @@ int main(int argc, char** argv)
 		MX0 x(0.5,1);
 		//x = -0.5;
 		std::cout << "Riemann Zeta(x) = " << Riemann_Zeta(x) << std::endl << std::endl;
-		std::cout << 1/x << std::endl << std::endl;
+		//std::cout << 1/x << std::endl << std::endl;
 
 	}
 
@@ -69,14 +86,14 @@ int main(int argc, char** argv)
 	}
 
 	MX2 aa = { {{3,0},{4,0}},{{6,0},{8,0}} };
-	std::cout << 1 / aa << std::endl << std::endl;
+	//std::cout << 1 / aa << std::endl << std::endl;
 
 
-	Matrix<MX0> qg(2, 2);
-	qg.array = { {1,1},{1,-1} };
-	MX0 qg_in{ 0,1 };
+	//Matrix<MX0> qg(2, 2);
+	//qg.matrix = { {1,1},{1,-1} };
+	//MX0 qg_in{ 0,1 };
 
-	std::cout << qg_in * (1 / sqrt(2)) * qg << std::endl;
+	//std::cout << qg_in * (1 / sqrt(2)) * qg << std::endl;
 
 	//hep_driver(x_min,x_max);//vegas integrator
 
@@ -145,13 +162,26 @@ int main(int argc, char** argv)
 			std::cout << "ps::Hermite(3,2) " << dv(ps::Hermite(3, x)) << std::endl << std::endl;
 		}
 
-		int n = 3;
+		const int n = 3;
+		
+	
 		Matrix<REAL> A(n, n), I(n, n), t1(n, n), t2(n, n);
 		I.identity();
 
-		A.array = { {2,lambda,lambda},
-								{lambda,4,5},
-								{-1,4,-3.353422543} };
+		A.matrix[0][0] = 2;
+		A.matrix[0][1] = lambda;
+		A.matrix[0][2] = lambda;
+		A.matrix[1][0] = lambda;
+		A.matrix[1][1] = 4;
+		A.matrix[1][2] = 5;
+		A.matrix[2][0] = -1; 
+		A.matrix[2][1] = 4;
+		A.matrix[2][2] = -3.353422543;
+		//A.matrix = {
+		//	{2,lambda,lambda},
+		//	{lambda,4,5 },
+		//	{-1,4,-3.353422543}
+		//};
 
 		auto a = A.tr();
 		auto b = a * a - (A * A).tr();
@@ -162,16 +192,16 @@ int main(int argc, char** argv)
 
 		//2.646577457000 32.120535258000 -66.827380344000 = coefficients
 		//=-λ^3+2.646577457λ^2+32.12053\dots λ-66.82738
-
+		
 		std::cout << std::endl;
 
 		//eigen vector
 		Vec bk{ 1,1,1 };
 		auto r = A - (2 * I);
 		determinant = det(r, n);
-		r.inverse(r, t1, n, determinant);
+		r.inverse(t1, n, determinant);
 		// std::cout << t1;
-
+	
 		MX0 sx{ -5.882346754565423L,0 };
 		auto fx1 = [](const auto& x) { return pow(-x, 3) + 2.646577457 * pow(x, 2) + 32.120535258000 * x - 66.827380344000; };
 
@@ -191,6 +221,7 @@ int main(int argc, char** argv)
 		// 2.00000 -5.46620 6.11277
 
 		std::cout << "Eigen value 2 " << "Eigen vector " << bk;
+	
 	}
 
 	std::cout << std::endl;
@@ -267,10 +298,10 @@ int main(int argc, char** argv)
 	MX0 xc3 = { 0, 2 };
 
 	std::cout << "Sine integral " << std::endl;
-	std::cout << (1 / xc3) * (ps::E1(xc1) - ps::E1(xc2)) + half_pi << std::endl << std::endl;
+	//std::cout << (1 / xc3) * (ps::E1(xc1) - ps::E1(xc2)) + half_pi << std::endl << std::endl;
 
 	std::cout << "Cosine integral " << std::endl;
-	std::cout << half * (ps::Ei(xc1) + ps::Ei(xc2)) << std::endl << std::endl;
+	//std::cout << half * (ps::Ei(xc1) + ps::Ei(xc2)) << std::endl << std::endl;
 
 	std::cout << "Sinh integral " << std::endl;
 	std::cout << ps::Shi(xcin) << std::endl << std::endl;

@@ -1,7 +1,4 @@
-
-#include <assert.h>
-#include <numeric>
-#include <chrono>
+#include "matrix.hpp"
 
 typedef std::chrono::high_resolution_clock Clock;
 
@@ -327,7 +324,8 @@ namespace VX
 		sh(dx2, x);
 		sh(dy2, y);
 
-		std::vector<std::vector<MX0>> matrix(2, std::vector<MX0>(2));
+		Matrix<MX0> matrix(2,2), matrix2(2, 2), matrix3(2, 2);
+		//std::vector<std::vector<MX0>> matrix(2, std::vector<MX0>(2));
 
 		auto pd = [&](const auto& x, const auto& y) { return dv(f(x, y)); };//lambdify
 
@@ -338,13 +336,67 @@ namespace VX
 
 		matrix[1][1] = dv(f(x, dy2));
 
-		auto d = determinant(matrix, 2);
+		//auto d = determinant(matrix, 2);
+		auto determinant = det(matrix, 2);
 
-		print_matrix(matrix);
+		//print_matrix(matrix);
+		std::cout << "determinant " << determinant << std::endl;
+		
+		std::cout << matrix << std::endl; 
 
-		std::cout << "determinant\n" << d << std::endl;
+		matrix.inverse(matrix2, 2, determinant);
 
-		return d;
+		std::cout << matrix2 << std::endl;
+
+		//std::cout << std::endl << "determinant\n" << d << std::endl;
+
+		return determinant;
+	}
+
+	template<typename F>
+	Matrix<MX0> inverse_Hessian2x2
+	(
+		F f,
+		const MX0& x,
+		const MX0& y
+	)
+	{
+		MX1 dx1, dy1;
+		MX2 dx2, dy2;
+
+		sh(dx1, x);
+		sh(dy1, y);
+
+		sh(dx2, x);
+		sh(dy2, y);
+
+		Matrix<MX0> matrix(2, 2), matrix2(2, 2), matrix3(2, 2);
+		//std::vector<std::vector<MX0>> matrix(2, std::vector<MX0>(2));
+
+		auto pd = [&](const auto& x, const auto& y) { return dv(f(x, y)); };//lambdify
+
+		matrix[0][0] = dv(f(dx2, y));
+
+		matrix[0][1] = pd(dx2, dy1) - pd(dx2, y);
+		matrix[1][0] = matrix[0][1];//= symmetric
+
+		matrix[1][1] = dv(f(x, dy2));
+
+		//auto d = determinant(matrix, 2);
+		auto determinant = det(matrix, 2);
+
+		//print_matrix(matrix);
+		//std::cout << "determinant " << determinant << std::endl;
+
+		//std::cout << matrix << std::endl;
+
+		matrix.inverse(matrix2, 2, determinant);
+
+		//std::cout << matrix2 << std::endl;
+
+		//std::cout << std::endl << "determinant\n" << d << std::endl;
+
+		return matrix2;
 	}
 
 	template<typename F>
@@ -770,6 +822,34 @@ namespace VX
 		std::cout << ddv << std::endl << std::endl;
 		std::cout.precision(p);
 
+	}
+
+	template <typename F1, typename elem, int order>
+	std::vector<MX0> Critical_point_2
+	(
+		F1 f,
+		const multicomplex<elem, order>& x,
+		const multicomplex<elem, order>& y,
+		int n
+	)
+	{
+		int tel = 0;
+
+		std::vector<MX0> h(2), v = { x,y };
+
+		while (tel < n)
+		{
+			h = gradient(f, v[0], f, v[1]) * inverse_Hessian2x2(f, v[0], v[1]);
+
+			// x(i+1) = x(i) - f'(x) / f''(x)   
+			v -= h;
+
+			printf("%02d ", tel);
+			std::cout << v << std::endl;
+			tel++;
+		}
+
+		return v;
 	}
 
 }

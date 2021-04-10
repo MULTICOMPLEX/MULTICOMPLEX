@@ -6,18 +6,20 @@
 template <typename elem, int order>
 class multicomplex;
 
-
 template <class T>
 class Matrix
 {
 public:
-	std::vector<std::vector<T> > array;
+	
+	enum { Rows = 4, Cols = 4 };
+	T matrix[Rows][Cols];
+
 	size_t height;
 	size_t width;
 
 	Matrix(size_t height, size_t width);
-	Matrix(std::vector<std::vector<T> > const& array);
 	Matrix();
+	
 	virtual ~Matrix() = default;
 
 	size_t getHeight() const;
@@ -25,13 +27,15 @@ public:
 
 	Matrix identity();
 
-	Matrix add(const Matrix& m) const;
-	Matrix subtract(const Matrix& m) const;
+	Matrix add(Matrix& m) const;
+	Matrix subtract(Matrix& m) const;
 
-	Matrix dot(const Matrix<T>& m) const;
+	Matrix dot(const Matrix& m) const;
 	Matrix transpose() const;
 	Matrix multiply(const T& value) const;
 	Matrix divide(const T& value) const;
+
+	Matrix divide(Matrix& m) const;
 
 	Matrix applyFunction(T(*function)(T)) const;
 	Matrix subMat(size_t startH, size_t startW, size_t h, size_t w) const;
@@ -40,7 +44,11 @@ public:
 	void put(size_t h, size_t w, const T& value);
 	T get(size_t h, size_t w) const;
 
-	void print(std::ostream&) const;
+	void Print
+	(
+		std::ostream& flux,
+		Matrix<T> m
+	) const;
 
 	bool operator==(const Matrix& m);
 	bool operator!=(const Matrix& m);
@@ -48,41 +56,32 @@ public:
 	Matrix operator-=(const Matrix& m);
 	Matrix operator*=(const Matrix& m);
 	Matrix operator*=(const T& m);
+	
+	inline T(&operator [](size_t i))[Cols]
+	{
+		return matrix[i];
+	}
 
 	Matrix operator/=(const T& m);
-	Matrix operator/(const T& m);
+
 
 	T& operator()(int y, int x);
 
-	Matrix operator* (const Matrix& b);
+	Matrix operator* (Matrix& b);
 
 	void transpose(Matrix& c, Matrix& d, int n, T determinant);
 	void cofactor(Matrix& a, Matrix& d, int n, T determinant);
-	void inverse(Matrix& a, Matrix& d, int n, T determinant);
+	void inverse(Matrix& d, int n, T determinant);
 
 	void minor(Matrix& b, Matrix& a, int i, int n);
-
-	class row
-	{
-		Matrix& _a;
-		int _i;
-	public:
-		row(Matrix& a, int i) : _a(a), _i(i) {}
-		T operator[](int j) { return _a.array[_i][j]; }
-	};
-
-	row operator[](int i)
-	{
-		return row(*this, i);
-	}
 
 	T tr();
 };
 
-
 //	calculate minor of matrix OR build new matrix : k-had = minor
+
 template <class T>
-void Matrix<T>::minor
+inline void Matrix<T>::minor
 (
 	Matrix& b,
 	Matrix& a,
@@ -95,7 +94,7 @@ void Matrix<T>::minor
 		for (j = 0; j < n; j++) {
 			if (j == i)
 				continue;
-			b.array[h][k] = a[l][j];
+			b[h][k] = a[l][j];
 			k++;
 			if (k == (n - 1)) {
 				h++;
@@ -108,7 +107,7 @@ void Matrix<T>::minor
 
 //	calculate determinant of matrix
 template <class T>
-T det
+inline T det
 (
 	Matrix<T>& a,
 	int n
@@ -121,7 +120,7 @@ T det
 	if (n == 1)
 		return a[0][0];
 	else if (n == 2)
-		return (a[0][0] * a[1][1] - a[0][1] * a[1][0]);
+		return (a[0][0] * a[1][1] - (a[0][1] * a[1][0]));
 	else
 		for (i = 0; i < n; i++) {
 			a.minor(b, a, i, n);	// read function
@@ -134,7 +133,7 @@ T det
 
 //	calculate transpose of matrix
 template <class T>
-void Matrix<T>::transpose
+inline void Matrix<T>::transpose
 (
 	Matrix& c,
 	Matrix& d,
@@ -144,20 +143,21 @@ void Matrix<T>::transpose
 {
 	int i, j;
 	auto s = c.height;
+	
 	Matrix b(s, s);
 	for (i = 0; i < n; i++)
 		for (j = 0; j < n; j++)
-			b.array[i][j] = c[j][i];
+			b[i][j] = c[j][i];
 	for (i = 0; i < n; i++)
 		for (j = 0; j < n; j++)
-			d.array[i][j] = b[i][j] / determinant;	// array d[][] = inverse matrix
+			d[i][j] = b[i][j] / determinant;	// array d[][] = inverse matrix
 }// end function
 
 //---------------------------------------------------
 
 //	calculate cofactor of matrix
 template <class T>
-void Matrix<T>::cofactor
+inline void Matrix<T>::cofactor
 (
 	Matrix& a,
 	Matrix& d,
@@ -175,7 +175,7 @@ void Matrix<T>::cofactor
 			for (i = 0; i < n; i++)
 				for (j = 0; j < n; j++)
 					if (i != h && j != l) {
-						b.array[m][k] = a[i][j];
+						b[m][k] = a[i][j];
 						if (k < (n - 2))
 							k++;
 						else {
@@ -183,7 +183,7 @@ void Matrix<T>::cofactor
 							m++;
 						}
 					}
-			c.array[h][l] = (T)std::pow(-1, (h + l)) * det(b, (n - 1));	// c = cofactor Matrix
+			c[h][l] = (T)std::pow(-1, (h + l)) * det(b, (n - 1));	// c = cofactor Matrix
 		}
 	transpose(c, d, n, determinant);	// read function
 }// end function
@@ -192,9 +192,8 @@ void Matrix<T>::cofactor
 
 //	calculate inverse of matrix
 template <class T>
-void Matrix<T>::inverse
+inline void Matrix<T>::inverse
 (
-	Matrix& a,
 	Matrix& d,
 	int n,
 	T determinant
@@ -206,55 +205,36 @@ void Matrix<T>::inverse
 		exit(1);
 	}
 	else if (n == 1)
-		d.array[0][0] = 1;
+		d[0][0] = 1;
 	else
-		cofactor(a, d, n, determinant); // read function
+		cofactor(*this, d, n, determinant); // read function
 }// end function
 
 //---------------------------------------------------
 
 template <class T>
-Matrix<T>::Matrix
+inline Matrix<T>::Matrix
 (
-	size_t height,
-	size_t width
-)
+	size_t h,
+	size_t w
+) : height(w), width(w)
 {
-	this->height = height;
-	this->width = width;
-	this->array = std::vector<std::vector<T> >(height, std::vector<T>(width));
 }
 
 //---------------------------------------------------
 
 template <class T>
-Matrix<T>::Matrix
-(
-	std::vector<std::vector<T> > const& array
-)
-{
-	if (array.size() == 0)
-		throw std::invalid_argument("Size of array must be greater than 0.");
-
-	this->height = array.size();
-	this->width = array[0].size();
-	this->array = array;
-}
-
-//---------------------------------------------------
-
-template <class T>
-Matrix<T>::Matrix
+inline Matrix<T>::Matrix
 (
 )
 {
-	height = 0;
-	width = 0;
+	height = 2;
+	width = 2;
 }
 //---------------------------------------------------
 
 template <class T>
-size_t Matrix<T>::getHeight
+inline size_t Matrix<T>::getHeight
 (
 ) const
 {
@@ -264,7 +244,7 @@ size_t Matrix<T>::getHeight
 //---------------------------------------------------
 
 template <class T>
-size_t Matrix<T>::getWidth
+inline size_t Matrix<T>::getWidth
 (
 ) const
 {
@@ -274,14 +254,14 @@ size_t Matrix<T>::getWidth
 //---------------------------------------------------
 
 template <class T>
-void Matrix<T>::fill
+inline void Matrix<T>::fill
 (
 	const T& value
 )
 {
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
-			array[i][j] = value;
+			matrix[i][j] = value;
 		}
 	}
 }
@@ -289,14 +269,14 @@ void Matrix<T>::fill
 //---------------------------------------------------
 
 template <class T>
-T Matrix<T>::tr
+inline T Matrix<T>::tr
 (
 )
 {
 	T sum = 0;
 	for (size_t i = 0; i < height; i++) {
 		for (size_t j = 0; j < width; j++) {
-			if (i == j)sum += this->array[i][j];
+			if (i == j)sum += matrix[i][j];
 		}
 	}
 	return sum;
@@ -305,7 +285,7 @@ T Matrix<T>::tr
 //---------------------------------------------------
 
 template <class T>
-void Matrix<T>::put
+inline void Matrix<T>::put
 (
 	size_t h,
 	size_t w,
@@ -315,13 +295,13 @@ void Matrix<T>::put
 	if (!(h >= 0 && h < height && w >= 0 && w < width))
 		throw std::invalid_argument("Index out of bounds.");
 
-	array[h][w] = value;
+	matrix[h][w] = value;
 }
 
 //---------------------------------------------------
 
 template <class T>
-T Matrix<T>::get
+inline T Matrix<T>::get
 (
 	size_t h,
 	size_t w
@@ -330,21 +310,21 @@ T Matrix<T>::get
 	if (!(h >= 0 && h < height && w >= 0 && w < width))
 		throw std::invalid_argument("Index out of bounds.");
 
-	return array[h][w];
+	return matrix[h][w];
 }
 
 //---------------------------------------------------
 
 template <class T>
-Matrix<T> Matrix<T>::multiply
+inline Matrix<T> Matrix<T>::multiply
 (
 	const T& value
 ) const
 {
-	Matrix result(array);
+	Matrix result(*this.matrix);
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
-			result.array[i][j] *= value;
+			result[i][j] *= value;
 		}
 	}
 
@@ -354,15 +334,15 @@ Matrix<T> Matrix<T>::multiply
 //---------------------------------------------------
 
 template <class T>
-Matrix<T> Matrix<T>::divide
+inline Matrix<T> Matrix<T>::divide
 (
 	const T& value
 ) const
 {
-	Matrix result(array);
+	Matrix result = *this;
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
-			result.array[i][j] /= value;
+			result[i][j] /= value;
 		}
 	}
 
@@ -372,39 +352,36 @@ Matrix<T> Matrix<T>::divide
 //---------------------------------------------------
 
 template <class T>
-Matrix<T> Matrix<T>::add
+inline Matrix<T> Matrix<T>::divide
 (
-	const Matrix& m
+	Matrix<T>& m
+) const
+{
+	Matrix<T> result(height, width);
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
+			result[i][j] = matrix[i][j] / m[i][j];
+		}
+	}
+
+	return result;
+}
+
+//---------------------------------------------------
+
+template <class T>
+inline Matrix<T> Matrix<T>::add
+(
+	Matrix<T>& m
 ) const
 {
 	if (!(height == m.height && width == m.width))
 		throw std::invalid_argument("Matrix dimension must be the same.");
 
-	Matrix result(height, width);
-	for (int i = 0; i < height; i++) {
-		for (int j = 0; j < width; j++) {
-			result.array[i][j] = array[i][j] + m.array[i][j];
-		}
-	}
-
-	return result;
-}
-
-//---------------------------------------------------
-
-template <class T>
-Matrix<T> Matrix<T>::subtract
-(
-	const Matrix& m
-) const
-{
-	if (!(height == m.height && width == m.width))
-		throw std::invalid_argument("Matrix dimension must be the same.");
-
-	Matrix result(height, width);
+	Matrix<T> result(height, width);
 	for (size_t i = 0; i < height; i++) {
 		for (size_t j = 0; j < width; j++) {
-			result.array[i][j] = array[i][j] - m.array[i][j];
+			result[i][j] = matrix[i][j] + m[i][j];
 		}
 	}
 	return result;
@@ -413,7 +390,27 @@ Matrix<T> Matrix<T>::subtract
 //---------------------------------------------------
 
 template <class T>
-Matrix<T> Matrix<T>::dot
+inline Matrix<T> Matrix<T>::subtract
+(
+	Matrix<T>& m
+) const
+{
+	if (!(height == m.height && width == m.width))
+		throw std::invalid_argument("Matrix dimension must be the same.");
+
+	Matrix<T> result(height, width);
+	for (size_t i = 0; i < height; i++) {
+		for (size_t j = 0; j < width; j++) {
+			result[i][j] = matrix[i][j] - m[i][j];
+		}
+	}
+	return result;
+}
+
+//---------------------------------------------------
+
+template <class T>
+inline Matrix<T> Matrix<T>::dot
 (
 	const Matrix& m
 ) const
@@ -428,9 +425,9 @@ Matrix<T> Matrix<T>::dot
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < mwidth; j++) {
 			for (int h = 0; h < width; h++) {
-				w += array[i][h] * m.array[h][j];
+				w += matrix[i][h] * m[h][j];
 			}
-			result.array[i][j] = w;
+			result[i][j] = w;
 			w = 0;
 		}
 	}
@@ -440,7 +437,7 @@ Matrix<T> Matrix<T>::dot
 //---------------------------------------------------
 
 template <class T>
-Matrix<T> Matrix<T>::transpose
+inline Matrix<T> Matrix<T>::transpose
 (
 ) const
 {
@@ -448,7 +445,7 @@ Matrix<T> Matrix<T>::transpose
 
 	for (int i = 0; i < width; i++) {
 		for (int j = 0; j < height; j++) {
-			result.array[i][j] = array[j][i];
+			result[i][j] = matrix[j][i];
 		}
 	}
 	return result;
@@ -457,7 +454,7 @@ Matrix<T> Matrix<T>::transpose
 //---------------------------------------------------
 
 template <class T>
-Matrix<T> Matrix<T>::applyFunction
+inline Matrix<T> Matrix<T>::applyFunction
 (
 	T(*function)(T)
 ) const
@@ -466,7 +463,7 @@ Matrix<T> Matrix<T>::applyFunction
 
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
-			result.array[i][j] = (*function)(array[i][j]);
+			result[i][j] = (*function)(matrix[i][j]);
 		}
 	}
 	return result;
@@ -475,7 +472,7 @@ Matrix<T> Matrix<T>::applyFunction
 //---------------------------------------------------
 
 template <class T>
-Matrix<T> Matrix<T>::identity
+inline Matrix<T> Matrix<T>::identity
 (
 )
 {
@@ -483,7 +480,7 @@ Matrix<T> Matrix<T>::identity
 	{
 		for (size_t j = 0; j < width; j++)
 		{
-			if (i == j)array[i][j] = T(1);
+			if (i == j)matrix[i][j] = T(1);
 		}
 	}
 	return *this;
@@ -492,7 +489,7 @@ Matrix<T> Matrix<T>::identity
 //---------------------------------------------------
 
 template <class T>
-Matrix<T> Matrix<T>::subMat
+inline Matrix<T> Matrix<T>::subMat
 (
 	size_t startH,
 	size_t startW,
@@ -508,7 +505,7 @@ Matrix<T> Matrix<T>::subMat
 	{
 		for (int j = startW; j < startW + w; j++)
 		{
-			result.array[i - startH][j - startW] = array[i][j];
+			result[i - startH][j - startW] = matrix[i][j];
 		}
 	}
 	return result;
@@ -517,7 +514,7 @@ Matrix<T> Matrix<T>::subMat
 //---------------------------------------------------
 
 template <class T>
-bool Matrix<T>::operator==
+inline bool Matrix<T>::operator==
 (
 	const Matrix& m
 	)
@@ -528,7 +525,7 @@ bool Matrix<T>::operator==
 		{
 			for (int j = 0; j < width; j++)
 			{
-				if (array[i][j] != m.array[i][j])
+				if (matrix[i][j] != m[i][j])
 				{
 					return false;
 				}
@@ -542,7 +539,7 @@ bool Matrix<T>::operator==
 //---------------------------------------------------
 
 template <class T>
-bool Matrix<T>::operator!=
+inline bool Matrix<T>::operator!=
 (
 	const Matrix& m
 	)
@@ -553,78 +550,67 @@ bool Matrix<T>::operator!=
 //---------------------------------------------------
 
 template <class T>
-Matrix<T> Matrix<T>::operator+=
+inline Matrix<T> Matrix<T>::operator+=
 (
 	const Matrix& m
 	)
 {
-	this->array = add(m).array;
+	*this = add(m);
 	return *this;
 }
 
 //---------------------------------------------------
 
 template <class T>
-Matrix<T> Matrix<T>::operator-=
+inline Matrix<T> Matrix<T>::operator-=
 (
 	const Matrix& m
 	)
 {
-	this->array = subtract(m).array;
+	*this = subtract(m);
 	return *this;
 }
 
 //---------------------------------------------------
 
 template <class T>
-Matrix<T> Matrix<T>::operator*=
+inline Matrix<T> Matrix<T>::operator*=
 (
 	const Matrix& m
 	)
 {
-	this->array = multiply(m).array;
+	*this = multiply(m);
 	return *this;
 }
 
 //---------------------------------------------------
 
 template <class T>
-Matrix<T> Matrix<T>::operator*=
+inline Matrix<T> Matrix<T>::operator*=
 (
 	const T& m
 	)
 {
-	*this = this->multiply(m);
+	*this = multiply(m);
 	return *this;
 }
 
 //---------------------------------------------------
 
 template <class T>
-Matrix<T> Matrix<T>::operator/=
+inline Matrix<T> Matrix<T>::operator/=
 (
 	const T& m
 	)
 {
-	*this = this->divide(m);
+	*this = divide(m);
 	return *this;
 }
 
 //---------------------------------------------------
 
 template <class T>
-Matrix<T> Matrix<T>::operator/
-(
-	const T& m
-	)
-{
-	return *this->divide(m);
-}
-
-//---------------------------------------------------
-
-template <class T>
-T& Matrix<T>::operator()
+inline T& Matrix<T>::operator()
 (
 	int y,
 	int x
@@ -632,17 +618,29 @@ T& Matrix<T>::operator()
 {
 	if (!(y >= 0 && y < height && x >= 0 && x < width))
 		throw std::invalid_argument("Index out of bounds.");
-	return array[y][x];
+	return matrix[y][x];
 }
 
 //---------------------------------------------------
 
 template <class T>
-Matrix<T> operator+
+Matrix<T> operator/
 (
 	const Matrix<T>& a,
-	const Matrix<T>& b
+	Matrix<T> b
 	)
+{
+	return a.divide(b);
+}
+
+//---------------------------------------------------
+
+template <class T>
+inline Matrix<T> operator+
+(
+	const Matrix<T>& a,
+	Matrix<T> b
+)
 {
 	return a.add(b);
 }
@@ -653,8 +651,8 @@ template <class T>
 Matrix<T> operator-
 (
 	const Matrix<T>& a,
-	const Matrix<T>& b
-	)
+	Matrix<T> b
+	) 
 {
 	return a.subtract(b);
 }
@@ -687,25 +685,24 @@ inline const Matrix<elem> operator -
 
 //---------------------------------------------------
 
-template <class elem>
-Matrix<elem> Matrix<elem>::operator*
+template <class T>
+inline Matrix<T> Matrix<T>::operator*
 (
-	const Matrix<elem>& b
-	)
+	Matrix<T>& b
+)
 {
 	size_t h = height;
 	size_t w = width;
 
-	Matrix<elem> result(h, w);
+	Matrix<T> result(h, w);
 
 	for (size_t i = 0; i < h; i++)
 	{
 		for (size_t j = 0; j < w; j++)
 		{
-			result.array[i][j] = 0;
+			result[i][j] = 0;
 			for (size_t k = 0; k < w; k++)
-				result.array[i][j] += this->array[i][k] *
-				b.array[k][j];
+				result[i][j] += matrix[i][k] * b[k][j];
 		}
 	}
 
@@ -724,13 +721,13 @@ inline const Matrix<elem> operator*
 	auto h = b.height;
 	auto w = b.width;
 
-	Matrix<elem> result(b.array);
+	Matrix<elem> result(b);
 
 	for (size_t i = 0; i < h; i++)
 	{
 		for (size_t j = 0; j < w; j++)
 		{
-			result.array[i][j] *= elem(a);
+			result[i][j] *= elem(a);
 		}
 	}
 
@@ -749,13 +746,13 @@ inline const Matrix<multicomplex<elem, order>> operator*
 	auto h = b.height;
 	auto w = b.width;
 
-	Matrix<multicomplex<elem, order>> result(b.array);
+	Matrix<multicomplex<elem, order>> result(b);
 
 	for (int i = 0; i < h; i++)
 	{
 		for (int j = 0; j < w; j++)
 		{
-			result.array[i][j] *= a;
+			result[i][j] *= a;
 		}
 	}
 
@@ -773,13 +770,13 @@ inline const Matrix<multicomplex<elem, 0>> operator*
 	auto h = b.height;
 	auto w = b.width;
 
-	Matrix<multicomplex<elem, 0>> result(b.array);
+	Matrix<multicomplex<elem, 0>> result(b);
 
 	for (size_t i = 0; i < h; i++)
 	{
 		for (size_t j = 0; j < w; j++)
 		{
-			result.array[i][j] *= a;
+			result[i][j] *= a;
 		}
 	}
 
@@ -798,13 +795,13 @@ inline const Matrix<elem> operator*
 	auto h = b.height;
 	auto w = b.width;
 
-	Matrix<elem> result(b.array);
+	Matrix<elem> result(b);
 
 	for (int i = 0; i < h; i++)
 	{
 		for (int j = 0; j < w; j++)
 		{
-			result.array[i][j] *= elem(a);
+			result[i][j] *= elem(a);
 		}
 	}
 
@@ -821,7 +818,7 @@ inline const std::vector<elem> operator*
 	)
 {
 	std::size_t i, j;
-	std::size_t m = a.array.size();
+	std::size_t m = a.width;
 	std::size_t n = b.size();
 
 	std::vector<elem> prod(m);
@@ -829,104 +826,253 @@ inline const std::vector<elem> operator*
 	for (i = 0; i < m; i++) {
 		prod[i] = 0.;
 		for (j = 0; j < n; j++)
-			prod[i] += a.array[i][j] * b[j];
+			prod[i] += a[i][j] * b[j];
 	}
-	return prod;
-}
-
-//---------------------------------------------------
-
-template <class elem>
-inline const std::vector<elem> operator*
-(
-	const std::vector<elem>& a,
-	const Matrix<elem>& b
-	)
-{
-	std::size_t i, j;
-	std::size_t m = b.array.size();
-	std::size_t n = a.size();
-
-	std::vector<elem> prod(m);
-
-	for (i = 0; i < m; i++) {
-		prod[i] = 0.;
-		for (j = 0; j < n; j++)
-			prod[i] += b.array[i][j] * a[j];
-	}
-	return prod;
-}
-
-//---------------------------------------------------
-
-template <typename T, typename elem>
-inline const std::vector<elem> operator*
-(
-	const std::vector<elem>& a,
-	const T& b
-	)
-{
-	std::size_t i;
-
-	std::vector<elem> res = a;
-
-	for (i = 0; i < a.size(); i++)
-		res[i] *= elem(b);
-
-	return res;
-}
-
-//---------------------------------------------------
-
-template <typename T, typename elem>
-inline const std::vector<elem> operator*
-(
-	const T& a,
-	const std::vector<elem>& b
-	)
-{
-	std::size_t i;
-
-	std::vector<elem> res = b;
-
-	for (i = 0; i < b.size(); i++)
-		res[i] *= elem(a);
-
-	return res;
-}
-
-//---------------------------------------------------
-
-template <class elem>
-inline const std::vector<elem> operator/
-(
-	const std::vector<elem>& a,
-	const std::vector<elem>& b
-	)
-{
-	std::size_t j;
-
-	std::vector<elem> prod = a;
-
-	for (j = 0; j < a.size(); j++)
-		prod[j] /= elem(b[j]);
-
 	return prod;
 }
 
 //---------------------------------------------------
 
 template <class T>
-void Matrix<T>::print
+inline const std::vector<T> operator*
 (
-	std::ostream& flux
-) const
+	const std::vector<T>& a,
+	const Matrix<T>& b
+	)
 {
-	for (size_t i = 0; i < height; i++)
+	std::size_t i, j;
+	std::size_t m = b.width;
+	std::size_t n = a.size();
+
+	std::vector<T> prod(m);
+
+	for (i = 0; i < m; i++) {
+		prod[i] = 0.;
+		for (j = 0; j < n; j++)
+			prod[i] += b.matrix[i][j] * a[j];
+	}
+	return prod;
+}
+
+//---------------------------------------------------
+
+template <typename T>
+inline const std::vector<T> operator+
+(
+	const std::vector<T>& a,
+	const std::vector<T>& b
+	)
+{
+	std::size_t i;
+
+	std::vector<T> res = b;
+
+	for (i = 0; i < b.size(); i++)
+		res[i] += b[i];
+
+	return res;
+}
+
+template <typename T>
+inline const std::vector<T> operator+=
+(
+	std::vector<T>& a,
+	const std::vector<T>& b
+	)
+{
+	a = a + b;
+	return a;
+}
+
+template <typename T>
+inline const std::vector<T> operator+
+(
+	const std::vector<T>& a,
+	const MX0& b
+	)
+{
+	std::size_t i;
+
+	std::vector<T> res = a;
+
+	for (i = 0; i < a.size(); i++)
+		res[i] += b;
+
+	return res;
+}
+
+template <typename T>
+inline const std::vector<T> operator+=
+(
+	std::vector<T>& a,
+	const MX0& b
+	)
+{
+	a = a + b;
+	return a;
+}
+
+template <typename T>
+inline const std::vector<T> operator-
+(
+	const std::vector<T>& a,
+	const std::vector<T>& b
+	)
+{
+	std::size_t i;
+
+	std::vector<T> res = a;
+
+	for (i = 0; i < b.size(); i++)
+		res[i] -= b[i];
+
+	return res;
+}
+
+template <typename T>
+inline const std::vector<T> operator-=
+(
+	std::vector<T>& a,
+	const std::vector<T>& b
+	)
+{
+	a = a - b;
+	return a;
+}
+
+
+template <typename T>
+inline const std::vector<T> operator-
+(
+	const std::vector<T>& a,
+	const MX0& b
+	)
+{
+	std::size_t i;
+
+	std::vector<T> res = a;
+
+	for (i = 0; i < a.size(); i++)
+		res[i] -= b;
+
+	return res;
+}
+
+template <typename T>
+inline const std::vector<T> operator-=
+(
+	std::vector<T>& a,
+	const MX0& b
+	)
+{
+	a = a - b;
+	return a;
+}
+
+//---------------------------------------------------
+
+template <typename T>
+inline const std::vector<T> operator*
+(
+	const std::vector<T>& a,
+	const std::vector<T>& b
+	)
+{
+	std::size_t i;
+
+	std::vector<T> res = a;
+
+	for (i = 0; i < b.size(); i++)
+		res[i] *= b[i];
+
+	return res;
+}
+
+template <typename T>
+inline const std::vector<T> operator*=
+(
+	std::vector<T>& a,
+	const std::vector<T>& b
+	)
+{
+	a = a * b;
+	return a;
+}
+
+
+template <typename T>
+inline const std::vector<T> operator*
+(
+	const std::vector<T>& a,
+	const MX0& b
+	)
+{
+	std::size_t i;
+
+	std::vector<T> res = a;
+
+	for (i = 0; i < a.size(); i++)
+		res[i] *= b;
+
+	return res;
+}
+
+template <typename T>
+inline const std::vector<T> operator*=
+(
+	std::vector<T>& a,
+	const MX0& b
+	)
+{
+	a = a * b;
+	return a;
+}
+
+
+//---------------------------------------------------
+
+template <typename T>
+inline const std::vector<T> operator/
+(
+	const std::vector<T>& a,
+	const std::vector<T>& b
+	)
+{
+	std::size_t i;
+
+	std::vector<T> res = a;
+
+	for (i = 0; i < b.size(); i++)
+		res[i] /= b[i];
+
+	return res;
+}
+
+template <typename T>
+inline const std::vector<T> operator/=
+(
+	std::vector<T>& a,
+	const std::vector<T>& b
+	)
+{
+	a = a / b;
+	return a;
+}
+
+//---------------------------------------------------
+
+template <class T>
+inline void Matrix<T>::Print
+(
+	std::ostream& flux,
+	Matrix<T> m
+) const
+{	
+	for (size_t i = 0; i < m.height; i++)
 	{
-		for (size_t j = 0; j < width; j++)
+		for (size_t j = 0; j < m.width; j++)
 		{
-			flux << array[i][j] << " ";
+			flux << m[i][j] << " ";
 		}
 		flux << std::endl;
 	}
@@ -935,39 +1081,39 @@ void Matrix<T>::print
 //---------------------------------------------------
 
 template <class elem>
-std::ostream& operator <<
+inline std::ostream& operator <<
 (
 	std::ostream& flux,
-	const std::vector<elem>& a
-	)
+	std::vector<elem>& a
+)
 {
-	flux << "\nvector ";
+	//flux << "\nvector ";
 
 	for (auto& i : a)
 		flux << " " << i;
 
-	flux << std::endl;
+	//flux << std::endl;
 
 	return flux;
 }
 
 //---------------------------------------------------
 
-template <typename T>
-std::ostream& operator <<
+template <class T>
+inline std::ostream& operator <<
 (
 	std::ostream& flux,
-	const Matrix<T>& m
-	)
+	Matrix<T>& m
+)
 {
-	m.print(flux);
+	m.Print(flux,m);
 	return flux;
 }
 
 //---------------------------------------------------
 
 template <class elem>
-std::vector<elem> normalize
+inline std::vector<elem> normalize
 (
 	const std::vector<elem>& arr
 )
@@ -994,14 +1140,5 @@ std::vector<elem> normalize
 
 //---------------------------------------------------
 
-template <class T>
-Matrix<T> operator/
-(
-	const Matrix<T>& a,
-	const T& b
-	)
-{
-	return a.divide(b);
-}
 
-//---------------------------------------------------
+
