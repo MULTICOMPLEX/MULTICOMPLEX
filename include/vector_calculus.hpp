@@ -6,42 +6,43 @@ typedef std::chrono::high_resolution_clock Clock;
 //3D
 namespace VX
 {
-	template<typename FX, typename FY, typename FZ>
-	std::vector<MX0> gradient
+	template<typename FX, typename FY, typename FZ, typename elem, int order>
+	std::vector<multicomplex<elem, order>> gradient
 	(
 		FX fx,
-		const MX0& x,
+		const multicomplex<elem, order>& x,
 		FY fy,
-		const MX0& y,
+		const multicomplex<elem, order>& y,
 		FZ fz,
-		const MX0& z
+		const multicomplex<elem, order>& z
 	)//∇f 
 	{
-		std::vector<MX0> v(3);
-		MX1 dx, dy, dz;
+		std::vector<multicomplex<elem, order>> v(3);
+		multicomplex<elem, order + 1> dx, dy, dz;
 
-		sh(dx, x);  v[0] = dv(fx(dx, y, z));
-		sh(dy, y);  v[1] = dv(fy(x, dy, z));
-		sh(dz, z);  v[2] = dv(fz(x, y, dz));
+		sh(dx, x);  v[0] = mcdv.dv<order>(fx(dx, y, z));
+		sh(dy, y);  v[1] = mcdv.dv<order>(fy(x, dy, z));
+		sh(dz, z);  v[2] = mcdv.dv<order>(fz(x, y, dz));
 
 		return v;
 	}
 
 	//2D
-	template<typename FX, typename FY>
-	std::vector<MX0> gradient
+	template<typename FX, typename FY, typename elem, int order>
+	std::vector<multicomplex<elem, order>> gradient
 	(
 		FX fx,
-		const MX0& x,
+		const multicomplex<elem, order>& x,
 		FY fy,
-		const MX0& y
+		const multicomplex<elem, order>& y
 	)//∇f 
 	{
-		std::vector<MX0> v(2);
-		MX1 dx, dy;
+		std::vector<multicomplex<elem, order>> v(2);
+		multicomplex<elem, order + 1> dx, dy;
+		mcdv mcdv;
 
-		sh(dx, x); v[0] = dv(fx(dx, y));//x^2 + xy +y^2
-		sh(dy, y); v[1] = dv(fy(x, dy));
+		mcdv.sh<order>(dx, x); v[0] = mcdv.dv<order>(fx(dx, y));//x^2 + xy +y^2
+		mcdv.sh<order>(dy, y); v[1] = mcdv.dv<order>(fy(x, dy));
 
 		return v;
 	}
@@ -353,34 +354,36 @@ namespace VX
 		return determinant;
 	}
 
-	template<typename F>
-	Matrix<MX0> inverse_Hessian2x2
+	template<typename F, typename elem, int order>
+	Matrix<multicomplex<elem, order>> inverse_Hessian2x2
 	(
 		F f,
-		const MX0& x,
-		const MX0& y
+		const multicomplex<elem, order>& x,
+		const multicomplex<elem, order>& y
 	)
 	{
-		MX1 dx1, dy1;
-		MX2 dx2, dy2;
+		multicomplex<elem, order + 1> dx1, dy1;
+		multicomplex<elem, order + 2> dx2, dy2;
+		mcdv mcdv;
+		const int dv = order;//multicomplex order
 
-		sh(dx1, x);
-		sh(dy1, y);
+		mcdv.sh<dv>(dx1, x);
+		mcdv.sh<dv>(dy1, y);
 
-		sh(dx2, x);
-		sh(dy2, y);
+		mcdv.sh<dv>(dx2, x);
+		mcdv.sh<dv>(dy2, y);
 
-		Matrix<MX0> matrix(2, 2), matrix2(2, 2), matrix3(2, 2);
+		Matrix<multicomplex<elem, order>> matrix(2, 2), matrix2(2, 2), matrix3(2, 2);
 		//std::vector<std::vector<MX0>> matrix(2, std::vector<MX0>(2));
 
-		auto pd = [&](const auto& x, const auto& y) { return dv(f(x, y)); };//lambdify
+		auto pd = [&](const auto& x, const auto& y) { return mcdv.dv<order>(f(x, y)); };//lambdify
 
-		matrix[0][0] = dv(f(dx2, y));
+		matrix[0][0] = mcdv.dv<dv>(f(dx2, y));
 
 		matrix[0][1] = pd(dx2, dy1) - pd(dx2, y);
 		matrix[1][0] = matrix[0][1];//= symmetric
 
-		matrix[1][1] = dv(f(x, dy2));
+		matrix[1][1] = mcdv.dv<dv>(f(x, dy2));
 
 		//auto d = determinant(matrix, 2);
 		auto determinant = det(matrix, 2);
@@ -399,17 +402,17 @@ namespace VX
 		return matrix2;
 	}
 
-	template<typename F>
-	MX0 Hessian3x3
+	template<typename F, typename elem, int order>
+	multicomplex<elem, order> Hessian3x3
 	(
 		F f,
-		const MX0& x,
-		const MX0& y,
-		const MX0& z
+		const multicomplex<elem, order>& x,
+		const multicomplex<elem, order>& y,
+		const multicomplex<elem, order>& z
 	)
 	{
-		MX1 dx1, dy1, dz1;
-		MX2 dx2, dy2, dz2;
+		multicomplex<elem, order + 1> dx1, dy1, dz1;
+		multicomplex<elem, order + 2> dx2, dy2, dz2;
 
 		sh(dx1, x);
 		sh(dy1, y);
@@ -422,7 +425,7 @@ namespace VX
 		//util::StartCounter();
 		auto t1 = Clock::now();
 
-		std::vector<std::vector<MX0>> matrix(3, std::vector<MX0>(3));
+		std::vector<std::vector<multicomplex<elem, order>>> matrix(3, std::vector<multicomplex<elem, order>>(3));
 
 		auto pd = [&](const auto& x, const auto& y, const auto& z) { return dv(f(x, y, z)); };//lambdify
 
@@ -757,7 +760,7 @@ namespace VX
 		auto fx1 = [](const auto& x, const auto& y) { return x * x + x * sin(y); };//∇f, grad x^2 + xy +y^2
 		auto fy1 = [](const auto& x, const auto& y) { return y * y + sin(y) * x; };//The Del, or ‘Nabla’ operator 
 		//it may denote the gradient of a scalar field, the divergence of a vector field, or the curl of a vector field.
-		auto v2 = gradient(fx1, /*x*/{ .7,0 }, fy1, /*y*/{ 1,0 });
+		auto v2 = gradient(fx1, /*x*/MX0{ .7,0 }, fy1, /*y*/MX0{ 1,0 });
 		std::cout << "\nGradient ∇ F(x*x+x*sin(y)), F(y*y+sin(y)*x), x=.7+0i, y=1.0+0i" << std::endl;
 		for (auto& i : v2)
 			std::cout << i << std::endl;//∇f 
@@ -808,7 +811,7 @@ namespace VX
 
 		auto f2 = [](const auto& x, const auto& y, const auto& z) { return x * z / x + sqrt(x * z * y * x + y * z) * pow(y, 6) * x * z; };
 		std::cout << "\nHessian3x3  F(x*z*x+sqrt(x*z*y*x+y*z)*pow(y,6)*x*z), x=.7+0i, y=.9+0i, z=.2+0i" << std::endl;
-		Hessian3x3(f2, /*x*/{ .7,0 }, /*y*/{ .9,0 }, /*z*/{ .2,0 });
+		Hessian3x3(f2, /*x*/MX0{ .7,0 }, /*y*/MX0{ .9,0 }, /*z*/MX0{ .2,0 });
 
 		//Directional Derivative
 		auto f3 = [](const auto& x, const auto& y) { return 3 * (x * x) * y; };
@@ -825,7 +828,7 @@ namespace VX
 	}
 
 	template <typename F1, typename elem, int order>
-	std::vector<MX0> Critical_point_2
+	std::vector<multicomplex<elem, order>> Critical_point_2
 	(
 		F1 f,
 		const multicomplex<elem, order>& x,
@@ -835,9 +838,9 @@ namespace VX
 	{
 		int tel = 0;
 
-		std::vector<MX0> h(2), v = { x,y };
+		std::vector<multicomplex<elem, order>> h(2), v = { x,y };
 
-		while (tel < n)
+		while (tel <= n)
 		{
 			h = gradient(f, v[0], f, v[1]) * inverse_Hessian2x2(f, v[0], v[1]);
 

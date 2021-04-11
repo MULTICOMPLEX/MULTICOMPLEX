@@ -11,14 +11,15 @@ class Matrix
 {
 public:
 	
-	enum { Rows = 4, Cols = 4 };
-	T matrix[Rows][Cols];
-
-	size_t height;
-	size_t width;
+	enum { Rows = 32, Cols = 32 };
+	T matrix[Rows][Cols] = {};
+	//T** matrix;
+	size_t height = 2;
+	size_t width = 2;
 
 	Matrix(size_t height, size_t width);
 	Matrix();
+	Matrix(std::initializer_list<std::initializer_list<T>> listlist);
 	
 	virtual ~Matrix() = default;
 
@@ -217,8 +218,10 @@ inline Matrix<T>::Matrix
 (
 	size_t h,
 	size_t w
-) : height(w), width(w)
+) : height(h), width(w)
 {
+	if (height > 32) height = 32;
+	if (width > 32) width = 32;
 }
 
 //---------------------------------------------------
@@ -230,6 +233,30 @@ inline Matrix<T>::Matrix
 {
 	height = 2;
 	width = 2;
+}
+//---------------------------------------------------
+
+template <typename T>
+inline Matrix<T>::Matrix(std::initializer_list<std::initializer_list<T>> listlist) : 
+	height(listlist.begin()->size()), width(listlist.size()) {
+	
+	auto rows = height;
+	auto cols = width;
+
+	auto m = new T * [rows];
+
+	for (size_t i = 0; i < rows; i++) {
+		m[i] = new T[cols];
+		for (size_t j = 0; j < cols; j++) {
+			m[i][j] = ((listlist.begin() + i)->begin())[j];
+		}
+	}
+
+	for (size_t i = 0; i < rows; i++) {
+		for (size_t j = 0; j < cols; j++) {
+			matrix[i][j] = m[i][j];
+		}
+	}
 }
 //---------------------------------------------------
 

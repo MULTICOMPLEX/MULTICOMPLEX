@@ -37,8 +37,9 @@ template <typename F1, typename elem, int order>
 multicomplex<elem, order> derivFunc2(F1 f1, multicomplex<elem, order>& z)
 {
   multicomplex<elem, order + 2> x;
-  sh(x, z);
-  return dv(f1(x));
+  mcdv mcdv;
+  mcdv.sh<order>(x, z);
+  return mcdv.dv<order>(f1(x));
 }
 
 template <typename F1, typename elem, int order>

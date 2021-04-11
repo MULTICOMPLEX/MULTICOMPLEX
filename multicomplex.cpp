@@ -86,12 +86,12 @@ int main(int argc, char** argv)
 	}
 
 	MX2 aa = { {{3,0},{4,0}},{{6,0},{8,0}} };
-	//std::cout << 1 / aa << std::endl << std::endl;
+	std::cout << 1 / aa << std::endl << std::endl;
 
 
-	//Matrix<MX0> qg(2, 2);
-	//qg.matrix = { {1,1},{1,-1} };
-	//MX0 qg_in{ 0,1 };
+	Matrix<MX0> qg(2, 2);
+	qg = { {1,1},{1,-1} };
+	MX0 qg_in{ 0,1 };
 
 	//std::cout << qg_in * (1 / sqrt(2)) * qg << std::endl;
 
@@ -164,24 +164,14 @@ int main(int argc, char** argv)
 
 		const int n = 3;
 		
-	
 		Matrix<REAL> A(n, n), I(n, n), t1(n, n), t2(n, n);
 		I.identity();
 
-		A.matrix[0][0] = 2;
-		A.matrix[0][1] = lambda;
-		A.matrix[0][2] = lambda;
-		A.matrix[1][0] = lambda;
-		A.matrix[1][1] = 4;
-		A.matrix[1][2] = 5;
-		A.matrix[2][0] = -1; 
-		A.matrix[2][1] = 4;
-		A.matrix[2][2] = -3.353422543;
-		//A.matrix = {
-		//	{2,lambda,lambda},
-		//	{lambda,4,5 },
-		//	{-1,4,-3.353422543}
-		//};
+		A = {
+			{2,lambda,lambda},
+			{lambda,4,5 },
+			{-1,4,-3.353422543}
+		};
 
 		auto a = A.tr();
 		auto b = a * a - (A * A).tr();
