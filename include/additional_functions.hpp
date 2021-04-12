@@ -74,7 +74,7 @@ multicomplex<elem, order> zexpz_dd(const multicomplex<elem, order>& z)
 template <typename elem, int order>
 multicomplex<elem, order> InitPoint(int k, multicomplex<elem, order> z)
 {
-	const elem pi{ 3.14159265358979323846 };
+
 	const elem e{ 2.71828182845904523536 };
 	multicomplex<elem, order> I{ 0, 1 };
 	multicomplex<elem, order> two_pi_k_I{ 0., 2. * pi * k };

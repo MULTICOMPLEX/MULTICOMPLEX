@@ -248,11 +248,11 @@ inline vegas_pdf<T> vegas_refine_pdf(vegas_pdf<T> const& pdf, T alpha, std::vect
                 this_bin += tmp[bin];
             }
 
-            T const previous = pdf.bin_left(i, bin - 1);
-            T const current  = pdf.bin_left(i, bin);
+            auto prev = pdf.bin_left(i, bin - 1);
+            auto cur  = pdf.bin_left(i, bin);
             this_bin -= average_per_bin;
-            T const delta = (current - previous) * this_bin;
-            T const new_left = current - delta / tmp[bin - 1];
+            auto delta = (cur - prev) * this_bin;
+            auto new_left = cur - delta / tmp[bin - 1];
 
             new_pdf.set_bin_left(i, new_bin, new_left);
         }

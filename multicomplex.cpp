@@ -59,7 +59,7 @@ int main(int argc, char** argv)
 		MX0 x(0.5,1);
 		//x = -0.5;
 		std::cout << "Riemann Zeta(x) = " << Riemann_Zeta(x) << std::endl << std::endl;
-		//std::cout << 1/x << std::endl << std::endl;
+		std::cout << 1/x << std::endl << std::endl;
 
 	}
 
@@ -88,14 +88,14 @@ int main(int argc, char** argv)
 	MX2 aa = { {{3,0},{4,0}},{{6,0},{8,0}} };
 	std::cout << 1 / aa << std::endl << std::endl;
 
-
 	Matrix<MX0> qg(2, 2);
 	qg = { {1,1},{1,-1} };
 	MX0 qg_in{ 0,1 };
 
-	//std::cout << qg_in * (1 / sqrt(2)) * qg << std::endl;
+	Matrix<REAL> qg2(2, 2);
+	std::cout << qg_in * (1 / sqrt(2)) * qg << std::endl;
 
-	//hep_driver(x_min,x_max);//vegas integrator
+	hep_driver(x_min,x_max);//vegas integrator
 
 	//auto fx = [](const auto& x) {auto d = di(x); auto k = d-sin(d); auto k2 = 1-cos(d);
 	auto fx = [](const auto& x)
@@ -164,19 +164,19 @@ int main(int argc, char** argv)
 
 		const int n = 3;
 		
-		Matrix<REAL> A(n, n), I(n, n), t1(n, n), t2(n, n);
+		Matrix<REAL> M(n, n), I(n, n), t1(n, n), t2(n, n);
 		I.identity();
 
-		A = {
+		M = {
 			{2,lambda,lambda},
 			{lambda,4,5 },
 			{-1,4,-3.353422543}
 		};
 
-		auto a = A.tr();
-		auto b = a * a - (A * A).tr();
+		auto a = M.tr();
+		auto b = a * a - (M * M).tr();
 
-		auto determinant = det(A, n);
+		auto determinant = det(M, n);
 
 		std::cout << "Characteristic polynomial\n" << a << " " << -0.5 * b << " " << determinant << std::endl;
 
@@ -184,10 +184,10 @@ int main(int argc, char** argv)
 		//=-λ^3+2.646577457λ^2+32.12053\dots λ-66.82738
 		
 		std::cout << std::endl;
-
+ 
 		//eigen vector
 		Vec bk{ 1,1,1 };
-		auto r = A - (2 * I);
+		auto r = M - (2 * I);
 		determinant = det(r, n);
 		r.inverse(t1, n, determinant);
 		// std::cout << t1;

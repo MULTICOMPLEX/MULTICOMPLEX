@@ -451,7 +451,6 @@ T factorial
 
 //---------------------------------------------------
 
-const int N = 15;
 
 template <typename elem, int order> 
 inline multicomplex<elem,order> Sin 
@@ -462,7 +461,7 @@ inline multicomplex<elem,order> Sin
   multicomplex<elem,order> result;
   elem j;
 
-  unroll<N>([&](size_t n){
+  unroll<15>([&](size_t n){
  // for(int n = 0; n < N; n++)
  // { 
     j = (1.0/factorial<elem>(2*n+1)) * std::pow(-1, n);
@@ -486,7 +485,7 @@ multicomplex<elem,order> Cos
   multicomplex<elem,order> result;
   elem j;
   
-  for(int n = 0; n < N; n++)
+  for(int n = 0; n < 15; n++)
   {
     j = (1.0/factorial<elem>(2*n)) * pow(-1, n);
     result += pow(x, 2*n) * j;
@@ -506,7 +505,7 @@ multicomplex<elem,order> Cosh
   multicomplex<elem,order> result;
   elem j;
   
-  for(int n = 0; n < N; n++)
+  for(int n = 0; n < 15; n++)
   {
     j = 1.0/factorial<elem>(2*n);
     result += pow(x, 2*n) * j;
@@ -526,7 +525,7 @@ multicomplex<elem,order> Sinh
   multicomplex<elem,order> result;
   elem j;
   
-  for(int n = 0; n < N; n++)
+  for(int n = 0; n < 15; n++)
   {
     j = 1.0/factorial<elem>(2*n+1);
     result += pow(x, 2*n+1) * j;
@@ -546,7 +545,7 @@ multicomplex<elem,order> Exp
   multicomplex<elem,order> result;
   elem j;  
   elem k=1;
-  for(int n = 0; n < 2*N; n++)
+  for(int n = 0; n < 2*15; n++)
   {
     if(n>1) k *= n;
     j = 1.0/k;

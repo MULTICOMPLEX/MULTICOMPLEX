@@ -290,20 +290,20 @@ namespace VX
 	)//∇xf 
 	{
 		std::vector<MX0> v(3);
-		MX0 A, B;
+		MX0 a, b;
 		MX1 dx, dy, dz;
 
-		sh(dy, y); A = dv(fz(x, dy, z));
-		sh(dz, z); B = dv(fy(x, y, dz));
-		v[0] = A - B;
+		sh(dy, y); a = dv(fz(x, dy, z));
+		sh(dz, z); b = dv(fy(x, y, dz));
+		v[0] = a - b;
 
-		sh(dz, z); A = dv(fx(x, y, dz));
-		sh(dx, x); B = dv(fz(dx, y, z));
-		v[1] = A - B;
+		sh(dz, z); a = dv(fx(x, y, dz));
+		sh(dx, x); b = dv(fz(dx, y, z));
+		v[1] = a - b;
 
-		sh(dx, x); A = dv(fy(dx, y, z));
-		sh(dy, y); B = dv(fx(x, dy, z));
-		v[2] = A - B;
+		sh(dx, x); a = dv(fy(dx, y, z));
+		sh(dy, y); b = dv(fx(x, dy, z));
+		v[2] = a - b;
 
 		return v;
 	}
@@ -800,9 +800,9 @@ namespace VX
 			//(x z ((5 x - 2 y) z sin(y) - 2 y z cos(y) (5 x + z sin(z)) + 5 x (2 y + z sin(z)))), x = (.7+0i), y = (1.0+0i), z = (1.0+0.8i)
 			auto fx = [](const auto& x, const auto& y, const auto& z) { return x * x * y * z * z; };
 			auto fy = [](const auto& x, const auto& y, const auto& z) { return 5 * x + sin(y) * z; };
-			auto fz = [](const auto& x, const auto& y, const auto& z) { return 5 * x + cos(z) + y; };
+			auto f3 = [](const auto& x, const auto& y, const auto& z) { return 5 * x + cos(z) + y; };
 			std::cout << "\nJacobian3x3  F1(x*x*y), F2(5*x+sin(y)), F3(5*x+cos(z)) x=.7+0i, y=1.0+0i, z=1.0+0.8i\n";
-			Jacobian3x3(fx, /*x*/{ .7,0 }, fy, /*y*/{ 1,0 }, fz, /*z*/{ 1,0.8 });
+			Jacobian3x3(fx, /*x*/{ .7,0 }, fy, /*y*/{ 1,0 }, f3, /*z*/{ 1,0.8 });
 		}
 
 		auto f1 = [](const auto& x, const auto& y) { return x * x + x * x + 3 * y * y * y - x; };

@@ -1130,7 +1130,7 @@ template <class T>
 inline std::ostream& operator <<
 (
 	std::ostream& flux,
-	Matrix<T>& m
+	const Matrix<T>& m
 )
 {
 	m.Print(flux,m);

@@ -307,7 +307,7 @@ const multicomplex<elem, order> midpoint //Generalized midpoint rule formula
 	const multicomplex<elem, order>& b
 )
 {
-	int64_t M = 40000, N = 0;
+	int64_t M = 40000, tel = 0;
 
 	// mcdv mcdv;
 
@@ -323,7 +323,7 @@ const multicomplex<elem, order> midpoint //Generalized midpoint rule formula
 
 		mr = (b - a) * mr + a;
 
-		for (int64_t n = 0; n <= N; n += 2)
+		for (int64_t n = 0; n <= tel; n += 2)
 		{
 			if (n == 0) { r = func(mr); }
 			//if(n == 2){mcdv.sh<order>(d2, mr); r = mcdv.dv<order>(func(d2));}
@@ -382,10 +382,10 @@ T square(hep::mc_point<T> const& x)
 }
 
 template<typename T>
-void hep_driver(T x_min, T x_max)
+void hep_driver(T min, T max)
 {
 	// print reference result
-	std::cout << ">> computing integral of exp(1-x*x) from " + std::to_string(x_min) + " to " + std::to_string(x_max) + " \n\n";
+	std::cout << ">> computing integral of exp(1-x*x) from " + std::to_string(min) + " to " + std::to_string(max) + " \n\n";
 
 	// perform 5 iteration with 1000 calls each; this function will also call
 	// vegas_verbose_callback after each iteration which in turn prints the
@@ -409,7 +409,7 @@ void hep_driver(T x_min, T x_max)
 
 	// print the cumulative result
 	std::cout << ">> cumulative result (excluding first iteration):\n>> N="
-		<< result.calls() << " I=" << (x_max - x_min) * result.value() << " +- " << result.error()
+		<< result.calls() << " I=" << (max - min) * result.value() << " +- " << result.error()
 		<< " chi^2/dof=" << chi_square_dof << "\n\n";
 }
 
