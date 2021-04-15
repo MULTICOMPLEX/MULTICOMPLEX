@@ -1167,5 +1167,64 @@ inline std::vector<elem> normalize
 
 //---------------------------------------------------
 
+template<typename T, size_t num_in>
+std::array<T, num_in> linspace(const T start_in, const T end_in)
+{
+	std::array<T, num_in> linspaced;
+
+	T start = start_in;
+	T end = end_in;
+	T num = num_in;
+
+	if (num == 0) { return linspaced; }
+	if (num == 1)
+	{
+		linspaced[0] = (start);
+		return linspaced;
+	}
+
+	T delta = (end - start) / (num - 1);
+
+	for (size_t i = 0; i < num - 1; ++i)
+	{
+		linspaced[i] = (start + delta * i);
+	}
+	linspaced[num_in - 1] = end; // I want to ensure that start and end
+														// are exactly the same as the input
+	return linspaced;
+}
+
+//---------------------------------------------------
+
+template <typename T, size_t N>
+void print_array(std::array<T, N>& vec)
+{
+	for (auto& d : vec)
+		std::cout << d << " ";
+	std::cout << std::endl;
+}
 
 
+//---------------------------------------------------
+
+template <typename T, size_t N>
+std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr)
+{
+	os.setf(std::ios::fixed, std::ios::floatfield);
+	os.precision(10);
+	
+	int i = 0;
+	os << "[";
+	for (auto d = arr.begin(); d != arr.end(); ++d)
+	{
+		os << std::setw(14) << *d;
+		if (d != arr.end()-1) {
+			os << " ";
+			if (i++ == 4) { i = 0; os << std::endl << " "; }
+			
+		}
+		else { os << "]"; }
+	}
+	
+	return os;
+}
