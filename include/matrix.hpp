@@ -1167,6 +1167,35 @@ inline std::vector<elem> normalize
 
 //---------------------------------------------------
 
+template<typename elem, int order,size_t num_in>
+std::array<multicomplex<elem,order>, num_in> linspace(const elem start_in, const elem end_in)
+{
+	std::array<multicomplex<elem,order>, num_in> linspaced;
+
+	elem start = start_in;
+	elem end = end_in;
+	elem num = num_in;
+
+	if (num == 0) { return linspaced; }
+	if (num == 1)
+	{
+		linspaced[0] = (start);
+		return linspaced;
+	}
+
+	elem delta = (end - start) / (num - 1);
+
+	for (size_t i = 0; i < num - 1; ++i)
+	{
+		linspaced[i] = (start + delta * i);
+	}
+	linspaced[num_in - 1] = end; // I want to ensure that start and end
+														// are exactly the same as the input
+	return linspaced;
+}
+
+//---------------------------------------------------
+
 template<typename T, size_t num_in>
 std::array<T, num_in> linspace(const T start_in, const T end_in)
 {
@@ -1193,6 +1222,7 @@ std::array<T, num_in> linspace(const T start_in, const T end_in)
 														// are exactly the same as the input
 	return linspaced;
 }
+
 
 //---------------------------------------------------
 
