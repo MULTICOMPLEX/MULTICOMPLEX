@@ -1111,19 +1111,28 @@ template <class elem>
 inline std::ostream& operator <<
 (
 	std::ostream& flux,
-	std::vector<elem>& a
+	const std::vector<elem>& a
 )
 {
-	//flux << "\nvector ";
 
 	for (auto& i : a)
-		flux << " " << i;
-
-	//flux << std::endl;
+		flux << " " << i << std::endl;
 
 	return flux;
 }
 
+template <typename elem, int order>
+inline std::ostream& operator <<
+(
+	std::ostream& flux,
+	const std::vector<multicomplex<elem, order>>& a
+	)
+{
+	for (auto& i : a)
+		flux << " " << i;
+	
+	return flux;
+}
 //---------------------------------------------------
 
 template <class T>

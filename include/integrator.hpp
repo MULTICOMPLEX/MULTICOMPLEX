@@ -423,3 +423,53 @@ T Wilkinsons_polynomial(const T& x, int n)
 		r *= x - m;
 	return r;
 }
+
+template <typename F, typename elem, int order>
+multicomplex<elem, order> Generalized_midpoint
+(
+	F func,
+	const multicomplex<elem, order>& A,
+	const multicomplex<elem, order>& B,
+	const size_t M,
+	const size_t N
+)
+{
+	multicomplex<elem, order + 2> d1;
+	multicomplex<elem, order + 4> d2;
+	multicomplex<elem, order + 6> d3;
+	multicomplex<elem, order + 8> d4;
+	multicomplex<elem, order + 10> d5;
+
+	multicomplex<elem, order> sum = 0;
+
+	for (size_t m = 1; m <= M; m++) {
+
+		MX0 x = (elem(m) - 0.5) / elem(M);
+		for (size_t n = 0; n <= N; n++) {
+
+			elem a = pow(2 * M, 2 * n + 1) * Fac<elem>(2 * n + 1);
+
+			if (n == 0) { sum += func((B - A) * x + A, (B - A) * x + A) / a; }
+			else if (n == 1) {
+				sh(d1, x); sum += dv(func((B - A) * d1 + A, (B - A) * x + A)) / a;
+			}
+			else if (n == 2) {
+				sh(d2, x); sum += dv(func((B - A) * d2 + A, (B - A) * x + A)) / a;
+			}
+
+			else if (n == 3) {
+				sh(d3, x); sum += dv(func((B - A) * d3 + A, (B - A) * x + A)) / a;
+			}
+
+			else if (n == 4) {
+				sh(d4, x); sum += dv(func((B - A) * d4 + A, (B - A) * x + A)) / a;
+			}
+
+			else {
+				sh(d5, x); sum += dv(func((B - A) * d5 + A, (B - A) * x + A)) / a;
+			}
+
+		}
+	}
+	return (B - A) * 2 * sum;
+}
