@@ -473,3 +473,55 @@ multicomplex<elem, order> Generalized_midpoint
 	}
 	return (B - A) * 2 * sum;
 }
+
+template <typename F, typename elem>
+elem Generalized_midpoint
+(
+	F func,
+	const elem& A,
+	const elem& B,
+	const elem& A2,
+	const elem& B2,
+	const size_t M,
+	const size_t N
+)
+{
+	MX2 d1;
+	MX4 d2;
+	MX6 d3;
+	MX8 d4;
+	MX10 d5;
+
+	elem sum = 0;
+
+	for (size_t m = 1; m <= M; m++) {
+
+		MX0 x = (elem(m) - 0.5) / elem(M);
+		for (size_t n = 0; n <= N; n++) {
+
+			elem a = pow(2 * M, 2 * n + 1) * Fac<elem>(2 * n + 1);
+
+			if (n == 0) { sum +=   func((B - A) *  x + A, (B2 - A2) * x + A2).real / a; }
+			else if (n == 1) {
+				sh(d1, x); sum += dv(func((B - A) * d1 + A, (B2 - A2) * x + A2)).real / a;
+			}
+			else if (n == 2) {
+				sh(d2, x); sum += dv(func((B - A) * d2 + A, (B2 - A2) * x + A2)).real / a;
+			}
+
+			else if (n == 3) {
+				sh(d3, x); sum += dv(func((B - A) * d3 + A, (B2 - A2) * x + A2)).real / a;
+			}
+
+			else if (n == 4) {
+				sh(d4, x); sum += dv(func((B - A) * d4 + A, (B2 - A2) * x + A2)).real / a;
+			}
+
+			else {
+				sh(d5, x); sum += dv(func((B - A) * d5 + A, (B2 - A) * x + A)).real / a;
+			}
+
+		}
+	}
+	return (B - A) * 2 * sum;
+}
