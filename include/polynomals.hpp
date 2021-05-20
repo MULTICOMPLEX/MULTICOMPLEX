@@ -5,7 +5,6 @@
 namespace ps
 {
 
-
 	template <typename T>
 	T L0
 	(
@@ -27,12 +26,12 @@ namespace ps
 	{
 		return x;
 	}
-	//The following is a general functoin that returns the value of the Legendre Polynomial for any given x and n=0,1,2,3,...
+	//The following is a general function that returns the value of the Legendre Polynomial for any given x and n=0,1,2,3,...
 
 	template <typename T>
 	T Legendre
 	(
-		unsigned int n,
+		const size_t& n,
 		const T& x
 	)
 	{
@@ -43,7 +42,7 @@ namespace ps
 			return L1(x);
 		}
 		else {
-			return (double(2 * n - 1) * x * Legendre(n - 1, x) - double(n - 1) * Legendre(n - 2, x)) / double(n);
+			return (T(2 * n - 1) * x * Legendre(n - 1, x) - T(n - 1) * Legendre(n - 2, x)) / T(n);
 		}
 	}
 	////////
@@ -62,7 +61,12 @@ namespace ps
 
 	//The following is a general function that returns the value of the Hermite Polynomial for any given x and n=0,1,2,3,...
 	template<typename T>
-	T Hermite(int n, T x) {
+	T Hermite
+	(
+		const size_t& n, 
+		const T& x
+	) 
+	{
 		if (n == 0) {
 			return H0(x);
 		}
@@ -96,7 +100,7 @@ namespace ps
 	template<typename T>
 	T Laguerre
 	(
-		unsigned int n,
+		const size_t& n,
 		const T& x
 	)
 	{
@@ -135,8 +139,8 @@ namespace ps
 	template<typename T>
 	T assoc_Laguerre
 	(
-		unsigned int n,
-		unsigned int m,
+		const size_t& n,
+		const size_t& m,
 		const T& x
 	)
 	{
@@ -172,7 +176,7 @@ namespace ps
 	template<typename T>
 	T Chebyshev
 	(
-		unsigned int n,
+		const size_t& n,
 		const T& x
 	)
 	{

@@ -1118,3 +1118,4 @@ typedef std::vector<REAL> Vec;
 //////////////////
 #include <linked_list.hpp>
 //////////////////
+#include <polynomals.hpp>

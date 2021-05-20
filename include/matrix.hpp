@@ -1059,6 +1059,23 @@ inline const std::vector<T> operator*
 template <typename T>
 inline const std::vector<T> operator*
 (
+	const MX0& a,
+	const std::vector<T>& b
+	)
+{
+	std::size_t i;
+
+	std::vector<T> res = b;
+
+	for (i = 0; i < b.size(); i++)
+		res[i] *= a;
+
+	return res;
+}
+
+template <typename T>
+inline const std::vector<T> operator*
+(
 	const std::vector<T>& a,
 	const T& b
 	)
