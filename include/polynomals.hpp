@@ -49,16 +49,6 @@ namespace ps
 
 	////////
 
-	template<typename T>
-	T H0(T x) {
-		return 1;
-	}
-
-	template<typename T>
-	T H1(T x) {
-		return 2 * x;
-	}
-
 	//The following is a general function that returns the value of the Hermite Polynomial for any given x and n=0,1,2,3,...
 	template<typename T>
 	T Hermite
@@ -67,15 +57,14 @@ namespace ps
 		const T& x
 	) 
 	{
-		if (n == 0) {
-			return H0(x);
-		}
-		else if (n == 1) {
-			return H1(x);
-		}
-		else {
+		if (n == 0) 
+			return 1;
+
+		else if (n == 1) 
+			return 2 * x;
+		
+		else 
 			return 2 * x * Hermite(n - 1, x) - 2 * (n - 1) * Hermite(n - 2, x);
-		}
 	}
 
 	template<typename T>
