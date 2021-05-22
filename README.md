@@ -45,4 +45,9 @@ Diverse
 
 https://multicomplex.github.io/MULTICOMPLEX/Tarot/
 
- 
+Hermite polynomials
+
+https://en.wikipedia.org/wiki/Hermite_polynomials
+
+ ![Figure_1](https://user-images.githubusercontent.com/75379917/119225021-9f7c0a80-bb01-11eb-9ce0-366be0fb0b6d.png)
+
