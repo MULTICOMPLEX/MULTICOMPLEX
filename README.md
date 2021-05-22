@@ -49,5 +49,7 @@ Hermite polynomials
 
 https://en.wikipedia.org/wiki/Hermite_polynomials
 
+https://www.numbercrunch.de/blog/2014/08/calculating-the-hermite-functions/
+
  ![Figure_1](https://user-images.githubusercontent.com/75379917/119225021-9f7c0a80-bb01-11eb-9ce0-366be0fb0b6d.png)
 
