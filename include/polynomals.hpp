@@ -46,7 +46,45 @@ namespace ps
 		}
 	}
 	////////
+	//Calculating the Hermite functions
+	template<typename T>
+	T Hermite_function
+	(
+		const size_t& n,
+		T x
+	)
+	{
+		T h_i_2 = pow(pi, -0.25);
 
+		if (n == 0)return h_i_2 * exp(-(x * x / 2.0));
+		if (n == 1)return sqrt(2.) * x * h_i_2 * exp(-(x * x / 2.0));
+
+		if (x == 0)x = std::numeric_limits<T>::min();
+
+		T h_i_1 = sqrt(2.) * x * h_i_2;
+		T sum_log_scale = 0;
+
+		T h_i = 0;
+		T log_scale;
+		T scale;
+
+		for (int i = 2; i < n + 1; i++)
+		{
+			h_i = sqrt(2. / i) * x * h_i_1 - sqrt((i - 1.) / i) * h_i_2;
+
+			h_i_2 = h_i_1;
+			h_i_1 = h_i;
+
+			log_scale = round(log(abs(h_i)));
+			scale = exp(-log_scale);
+			h_i *= scale;
+			h_i_1 *= scale;
+			h_i_2 *= scale;
+			sum_log_scale += log_scale;
+		}
+
+		return h_i * exp((-x * x / 2.0) + sum_log_scale);
+	}
 	////////
 
 	//The following is a general function that returns the value of the Hermite Polynomial for any given x and n=0,1,2,3,...
