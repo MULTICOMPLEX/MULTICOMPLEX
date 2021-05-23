@@ -52,3 +52,6 @@ https://en.wikipedia.org/wiki/Hermite_polynomials
 
 ![Figure_1](https://user-images.githubusercontent.com/75379917/119238875-a462ad80-bb45-11eb-94ad-69db86182dec.png)
 
+![Figure_2](https://user-images.githubusercontent.com/75379917/119276146-7e0e4200-bc19-11eb-93bf-40851fc8061e.png)
+
+
