@@ -49,6 +49,7 @@ Hermite polynomials
 
 https://en.wikipedia.org/wiki/Hermite_polynomials
 
+Ordinary differential equation:
 
 ![Figure_1](https://user-images.githubusercontent.com/75379917/119238875-a462ad80-bb45-11eb-94ad-69db86182dec.png)
 
