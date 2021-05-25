@@ -28,10 +28,14 @@ size_t ODE_Van_der_Pol_oscillator();
 size_t ODE_quantum_harmonic_oscillator();
 size_t ODE_Predator_Prey();
 
+void trapezoidal();
+
 plot_matplotlib plot;
 
 int main(int argc, char* argv[]) {
 
+	//trapezoidal();
+	
 	//ODE_test_nl(0);
 	//ODE_harmonic_oscillator();
 
@@ -44,8 +48,6 @@ int main(int argc, char* argv[]) {
 	//ODE_Van_der_Pol_oscillator();
 
 	//Leapfrog_integration();
-	//test_boost();
-	//contour_integral();
 
 	return 0;
 }
@@ -105,8 +107,8 @@ size_t ODE_harmonic_oscillator()
 
 	std::vector<double> y(2);
 
-	y[0] = 1.0;
-	y[1] = 1.0;
+	y[0] = 0.5*sqrt(2);
+	y[1] = 0.5*sqrt(2);
 
 	std::vector<double> dydx(y.size());
 
@@ -115,14 +117,16 @@ size_t ODE_harmonic_oscillator()
 	// y' = z
 	// z' = -y
 
-	mxws mxws;
+	//mxws mxws;
 	auto func = [&](const auto& x, const auto& y) {
 		const double w0 = 2 * pi * 0.25;
-		const double zeta = 0.3;
+		const double zeta = 0.3;//0.3
+		int n = 5;
 
-		dydx[0] = 4 * y[1];
-		//dydt[1] = -2. * zeta * w0 * y[1] - pow(w0, 2) * y[0];
-		dydx[1] = -4 * y[0];
+		dydx[0] =   n * y[1];
+		//dydx[1] = -2. * zeta * w0 * y[1] - pow(w0, 2) * y[0];
+		dydx[1] = - n * y[0];
+
 		return dydx; };
 
 	std::vector<double> X = { x }, Y0 = { y[0] }, Y1 = { y[1] };
@@ -370,6 +374,8 @@ size_t quantum_harmonic_oscillator()
 
 	int n = 115;
 
+	//auto p1 = (1.0 / sqrt(sqrt(pi) * pow(2, n) * factorial<double>(n)));
+
 	while (x <= tmax)
 	{
 
@@ -379,7 +385,7 @@ size_t quantum_harmonic_oscillator()
 		Y0.push_back(p1 * p1);
 
 		//	auto p2 = 
-		//	(1.0 / sqrt(sqrt(pi) * pow(2, n) * factorial<double>(n))) * ps::Hermite(n, x) * exp(-(x * x / 2.0));
+		//	p1 * ps::Hermite(n, x) * exp(-(x * x / 2.0));
 
 		//Y1.push_back(p2 * p2);
 
@@ -452,3 +458,48 @@ size_t ODE_Lorenz_System()
 	return steps;
 }
 
+
+template<typename F, typename T>
+T Trapezoidal_Quadrature
+(
+	F y, 
+	const T& a, 
+	const T& b, 
+	const T& n
+)
+{
+	// Grid spacing
+	T h = (b - a) / n;
+
+	// Computing sum of first and last terms
+	// in above formula
+	T s = y(a) + y(b);
+
+	// Adding middle terms in above formula
+	for (int i = 1; i < n; i++)
+		s += 2 * y(a + i * h);
+
+	// h/2 indicates (b-a)/2n. Multiplying h/2
+	// with s.
+	return (h / 2) * s;
+}
+
+//https://www.geeksforgeeks.org/trapezoidal-rule-for-approximate-value-of-definite-integral/
+void trapezoidal()
+{
+	// Range of definite integral
+	double x0 = 0;
+	double xn = 1;
+
+	// Number of grids. Higher value means
+	// more accuracy
+	double  n = 6;
+
+	auto func = [](const auto& x) {
+		// Declaring the function f(x) = 1/(1+x*x)
+		return 1 / (1 + x * x);
+	};
+	//Value of integral is 0.7842
+	std::cout << "Value of integral is" << std::endl 
+		<< Trapezoidal_Quadrature(func, x0, xn, n) << std::endl;
+}
