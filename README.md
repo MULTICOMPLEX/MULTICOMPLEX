@@ -45,4 +45,16 @@ Diverse
 
 https://multicomplex.github.io/MULTICOMPLEX/Tarot/
 
- 
+Hermite polynomials
+
+https://en.wikipedia.org/wiki/Hermite_polynomials
+
+Ordinary differential equation:
+
+![Figure_1](https://user-images.githubusercontent.com/75379917/119238875-a462ad80-bb45-11eb-94ad-69db86182dec.png)
+
+![Figure_2](https://user-images.githubusercontent.com/75379917/119276146-7e0e4200-bc19-11eb-93bf-40851fc8061e.png)
+
+![Figure_3](https://user-images.githubusercontent.com/75379917/119406139-a44be480-bce2-11eb-8bd2-beaf09931073.png)
+
+
