@@ -26,5 +26,8 @@
     <ClInclude Include="..\..\include\integrator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="solver.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

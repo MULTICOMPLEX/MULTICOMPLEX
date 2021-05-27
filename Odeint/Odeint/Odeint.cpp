@@ -31,6 +31,8 @@ size_t ODE_Finite_potential_well();
 size_t ODE_quantum_harmonic_oscillator_complex();
 
 void trapezoidal();
+template <class F, class T>
+inline std::pair<T, T> brent_find_minima(F f, T min, T max, int digits);
 
 plot_matplotlib plot;
 
@@ -41,9 +43,9 @@ int main(int argc, char* argv[]) {
 	//ODE_test_nl(0);
 	//ODE_harmonic_oscillator();
 
-	ODE_quantum_harmonic_oscillator();
+	//ODE_quantum_harmonic_oscillator();
 	//ODE_quantum_harmonic_oscillator_complex();
-	//ODE_Finite_potential_well();
+	ODE_Finite_potential_well();
 	
 	//ODE_Predator_Prey();
 	//quantum_harmonic_oscillator();
@@ -181,7 +183,7 @@ size_t ODE_Finite_potential_well()
 	y[1] = 1;
 
 	std::vector<double> state(y.size());
-	double Vo = 20, E = 8.09;
+	double Vo = 20, E = 19.082127;
 
 	auto V = [&](const auto& x)
 	{
@@ -194,9 +196,9 @@ size_t ODE_Finite_potential_well()
 
 	auto func = [&](const auto& x, const auto& psi) {
 
-		state[0] = -psi[1];
+		state[0] = psi[1];
 
-		state[1] = 2.0 * (V(x) - E) * psi[0];
+		state[1] = -2.0 * (V(x) - E) * psi[0];
 
 		return state; };
 
@@ -225,7 +227,7 @@ size_t ODE_Finite_potential_well()
 	}
 
 	plot.plot_somedata(X, Y0, "k", "Y[0]", "red");
-	plot.plot_somedata(X, Y1, "k", "Y[1]", "blue");
+	//plot.plot_somedata(X, Y1, "k", "Y[1]", "blue");
 
 	std::u32string title = U"Hermite functions Ψn̈(x) + (2n + 1 - x²) Ψn(x) = 0";
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
@@ -665,3 +667,126 @@ void trapezoidal()
 	std::cout << "Value of integral is" << std::endl 
 		<< Trapezoidal_Quadrature(func, x0, xn, n) << std::endl;
 }
+
+template <class F, class T>
+std::pair<T, T> brent_find_minima(F f, T min, T max, int bits, size_t& max_iter)
+{
+	T tolerance = static_cast<T>(ldexp(1.0, 1 - bits));
+	T x;  // minima so far
+	T w;  // second best point
+	T v;  // previous value of w
+	T u;  // most recent evaluation point
+	T delta;  // The distance moved in the last step
+	T delta2; // The distance moved in the step before last
+	T fu, fv, fw, fx;  // function evaluations at u, v, w, x
+	T mid; // midpoint of min and max
+	T fract1, fract2;  // minimal relative movement in x
+
+	static const T golden = 0.3819660f;  // golden ratio, don't need too much precision here!
+
+	x = w = v = max;
+	fw = fv = fx = f(x);
+	delta2 = delta = 0;
+
+	uintmax_t count = max_iter;
+
+	do {
+		// get midpoint
+		mid = (min + max) / 2;
+		// work out if we're done already:
+		fract1 = tolerance * fabs(x) + tolerance / 4;
+		fract2 = 2 * fract1;
+		if (fabs(x - mid) <= (fract2 - (max - min) / 2))
+			break;
+
+		if (fabs(delta2) > fract1)
+		{
+			// try and construct a parabolic fit:
+			T r = (x - w) * (fx - fv);
+			T q = (x - v) * (fx - fw);
+			T p = (x - v) * q - (x - w) * r;
+			q = 2 * (q - r);
+			if (q > 0)
+				p = -p;
+			q = fabs(q);
+			T td = delta2;
+			delta2 = delta;
+			// determine whether a parabolic step is acceptable or not:
+			if ((fabs(p) >= fabs(q * td / 2)) || (p <= q * (min - x)) || (p >= q * (max - x)))
+			{
+				// nope, try golden section instead
+				delta2 = (x >= mid) ? min - x : max - x;
+				delta = golden * delta2;
+			}
+			else
+			{
+				// whew, parabolic fit:
+				delta = p / q;
+				u = x + delta;
+				if (((u - min) < fract2) || ((max - u) < fract2))
+					delta = (mid - x) < 0 ? (T)-fabs(fract1) : (T)fabs(fract1);
+			}
+		}
+		else
+		{
+			// golden section:
+			delta2 = (x >= mid) ? min - x : max - x;
+			delta = golden * delta2;
+		}
+		// update current position:
+		u = (fabs(delta) >= fract1) ? T(x + delta) : (delta > 0 ? T(x + fabs(fract1)) : T(x - fabs(fract1)));
+		fu = f(u);
+		if (fu <= fx)
+		{
+			// good new point is an improvement!
+			// update brackets:
+			if (u >= x)
+				min = x;
+			else
+				max = x;
+			// update control points:
+			v = w;
+			w = x;
+			x = u;
+			fv = fw;
+			fw = fx;
+			fx = fu;
+		}
+		else
+		{
+			// Oh dear, point u is worse than what we have already,
+			// even so it *must* be better than one of our endpoints:
+			if (u < x)
+				min = u;
+			else
+				max = u;
+			if ((fu <= fw) || (w == x))
+			{
+				// however it is at least second best:
+				v = w;
+				w = u;
+				fv = fw;
+				fw = fu;
+			}
+			else if ((fu <= fv) || (v == x) || (v == w))
+			{
+				// third best:
+				v = u;
+				fv = fu;
+			}
+		}
+
+	} while (--count);
+
+	max_iter -= count;
+
+	return std::make_pair(x, fx);
+}
+
+template <class F, class T>
+inline std::pair<T, T> brent_find_minima(F f, T min, T max, int digits)
+{
+	auto m = (std::numeric_limits<size_t>::max)();
+	return brent_find_minima(f, min, max, digits, m);
+}
+
