@@ -1068,7 +1068,7 @@ inline const std::vector<T> operator*
 	std::vector<T> res = b;
 
 	for (i = 0; i < b.size(); i++)
-		res[i] *= a;
+		res[i] *= a.real;
 
 	return res;
 }

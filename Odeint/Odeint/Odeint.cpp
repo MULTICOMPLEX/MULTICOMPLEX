@@ -27,6 +27,8 @@ size_t quantum_harmonic_oscillator();
 size_t ODE_Van_der_Pol_oscillator();
 size_t ODE_quantum_harmonic_oscillator();
 size_t ODE_Predator_Prey();
+size_t ODE_Finite_potential_well();
+size_t ODE_quantum_harmonic_oscillator_complex();
 
 void trapezoidal();
 
@@ -40,6 +42,9 @@ int main(int argc, char* argv[]) {
 	//ODE_harmonic_oscillator();
 
 	ODE_quantum_harmonic_oscillator();
+	//ODE_quantum_harmonic_oscillator_complex();
+	//ODE_Finite_potential_well();
+	
 	//ODE_Predator_Prey();
 	//quantum_harmonic_oscillator();
 
@@ -160,6 +165,87 @@ size_t ODE_harmonic_oscillator()
 	return steps;
 }
 
+
+size_t ODE_Finite_potential_well()
+{
+
+	double tmin = -2;
+	double tmax = 2;
+	double h = 0.004;
+
+	auto x = tmin;
+
+	std::vector<double> y(2);
+
+	y[0] = 0; 
+	y[1] = 1;
+
+	std::vector<double> state(y.size());
+	double Vo = 20, E = 8.09;
+
+	auto V = [&](const auto& x)
+	{
+		double L = 1;
+		if (abs(x) > L)
+			return 0.;
+		else
+			return Vo;
+	};
+
+	auto func = [&](const auto& x, const auto& psi) {
+
+		state[0] = -psi[1];
+
+		state[1] = 2.0 * (V(x) - E) * psi[0];
+
+		return state; };
+
+	std::vector<double> X = { x }, Y0 = { y[0] }, Y1 = { y[1] };
+
+	size_t steps = 0;
+
+
+	while (x <= tmax)
+	{
+		//Embedded_Verner_8_9(func, x, y, h);
+		Embedded_Fehlberg_7_8(func, x, y, h);
+		//fehlberg_4_5(func, x, y, h);
+
+		//Embedded_Fehlberg_3_4(func, x, y, h);
+		//Embedded_Fehlberg_5_6(func, x, y, h);
+
+		//Midpoint_method_explicit(func, x, y, h);
+
+		x += h;
+		X.push_back(x);
+
+		Y0.push_back(y[0]);
+		Y1.push_back(y[1]);
+		steps++;
+	}
+
+	plot.plot_somedata(X, Y0, "k", "Y[0]", "red");
+	plot.plot_somedata(X, Y1, "k", "Y[1]", "blue");
+
+	std::u32string title = U"Hermite functions Ψn̈(x) + (2n + 1 - x²) Ψn(x) = 0";
+	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
+	plot.set_title(cv.to_bytes(title));
+	plot.grid_on();
+	plot.show();
+
+	plot.plot_somedata(Y0, Y1, "k", "Y[0] vs Y[1]", "green");
+	plot.show();
+
+	std::cout.setf(std::ios::fixed, std::ios::floatfield);
+	std::cout.precision(15);
+	auto p = std::minmax_element(begin(Y0), end(Y0));
+	std::cout << "minY0 = " << *p.first << ", maxY0 = " << *p.second << '\n';
+	p = std::minmax_element(begin(Y1), end(Y1));
+	std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
+
+	return steps;
+}
+
 size_t ODE_quantum_harmonic_oscillator()
 {
 
@@ -196,9 +282,9 @@ y[1] = 0;
 
 	auto func = [&](const auto& x, const auto& y) {
 
-		dydx[0] = -y[1];
+		dydx[0] = y[1];
 
-		dydx[1] = (2 * n + 1 - x * x) * y[0];
+		dydx[1] = - (2 * n + 1 - x * x) * y[0];
 
 		return dydx; };
 
@@ -221,7 +307,7 @@ y[1] = 0;
 		X.push_back(x);
 
 		Y0.push_back(y[0]);
-		Y1.push_back(y[1]);
+		Y1.push_back(-y[1]);
 		steps++;
 	}
 
@@ -243,6 +329,82 @@ y[1] = 0;
 	std::cout << "minY0 = " << *p.first << ", maxY0 = " << *p.second << '\n';
 	p = std::minmax_element(begin(Y1), end(Y1));
 	std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
+
+	return steps;
+}
+
+size_t ODE_quantum_harmonic_oscillator_complex()
+{
+
+	double tmin = -5.5 * pi;
+	double tmax = 5.5 * pi;
+	double h = 0.001;
+
+	auto x = tmin;
+
+	size_t n = 115;
+
+	std::vector<MX0> y(2);
+
+	y[0] = pow(-1, n) / (2 * n * pi) / 378.5; //???
+	y[1] = 0;
+
+	std::vector<MX0> dydx(y.size());
+
+	MX0 i{ 0,-1 };
+	auto func = [&](const auto& x, const auto& y) {
+
+		dydx[0] = i * y[1];
+
+		dydx[1] = i * (2 * n + 1 - x * x) * y[0];
+
+		return dydx; };
+
+	std::vector<double> X = { x }, Y0 = { y[0].real }, Y1 = { y[1].real }, Y2 = { y[0].real }, Y3 = { y[1].real };
+
+	size_t steps = 0;
+
+	while (x <= tmax)
+	{
+		//Embedded_Verner_8_9(func, x, y, h);
+		Embedded_Fehlberg_7_8(func, x, y, h);
+		//fehlberg_4_5(func, x, y, h);
+
+		//Embedded_Fehlberg_3_4(func, x, y, h);
+		//Embedded_Fehlberg_5_6(func, x, y, h);
+
+		//Midpoint_method_explicit(func, x, y, h);
+
+		x += h;
+		X.push_back(x);
+
+		Y0.push_back(y[0].real);
+		Y1.push_back(y[0].imag);
+		Y2.push_back(y[1].real);
+		Y3.push_back(y[1].imag);
+		steps++;
+	}
+
+	plot.plot_somedata(X, Y0, "k", "y[0].real, n = " + std::to_string(n) + "", "red");
+	//plot.plot_somedata(X, Y1, "k", "y[0].imag", "blue");
+	//plot.plot_somedata(X, Y2, "k", "y[1].real, n = " + std::to_string(n) + "", "red");
+	plot.plot_somedata(X, Y3, "k", "y[1].imag", "blue");
+
+	std::u32string title = U"Hermite functions Ψn̈(x) + (2n + 1 - x²) Ψn(x) = 0";
+	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
+	plot.set_title(cv.to_bytes(title));
+	plot.grid_on();
+	plot.show();
+
+	plot.plot_somedata(Y0, Y3, "k", "y[0].real vs y[1].imag", "green");
+	plot.show();
+
+	std::cout.setf(std::ios::fixed, std::ios::floatfield);
+	std::cout.precision(15);
+	auto p = std::minmax_element(begin(Y0), end(Y0));
+	std::cout << "minY0 = " << *p.first << ", maxY0 = " << *p.second << '\n';
+	p = std::minmax_element(begin(Y3), end(Y3));
+	std::cout << "minY3 = " << *p.first << ", maxY3 = " << *p.second << '\n';
 
 	return steps;
 }

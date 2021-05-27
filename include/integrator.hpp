@@ -307,13 +307,13 @@ const multicomplex<elem, order> midpoint //Generalized midpoint rule formula
 	const multicomplex<elem, order>& b
 )
 {
-	int64_t M = 40000, tel = 0;
+	int64_t M = 40, tel = 0;
 
-	// mcdv mcdv;
+	 mcdv mcdv;
 
-	// multicomplex<elem,order+2> d2;
-	// multicomplex<elem,order+4> d4;
-	// multicomplex<elem,order+6> d6;
+	 multicomplex<elem,order+2> d2;
+	 multicomplex<elem,order+4> d4;
+	 multicomplex<elem,order+6> d6;
 
 	multicomplex<elem, order> r, c;
 
@@ -326,9 +326,9 @@ const multicomplex<elem, order> midpoint //Generalized midpoint rule formula
 		for (int64_t n = 0; n <= tel; n += 2)
 		{
 			if (n == 0) { r = func(mr); }
-			//if(n == 2){mcdv.sh<order>(d2, mr); r = mcdv.dv<order>(func(d2));}
-			//if(n == 4){mcdv.sh<order>(d4, mr); r = mcdv.dv<order>(func(d4));}
-			//if(n == 6){mcdv.sh<order>(d6, mr); r = mcdv.dv<order>(func(d6));}
+			if(n == 2){mcdv.sh<order>(d2, mr); r = mcdv.dv<order>(func(d2));}
+			if(n == 4){mcdv.sh<order>(d4, mr); r = mcdv.dv<order>(func(d4));}
+			if(n == 6){mcdv.sh<order>(d6, mr); r = mcdv.dv<order>(func(d6));}
 
 			c += (elem(std::pow(-1, n) + 1) / elem(std::pow(2 * M, n + 1) * ps::factorial<elem>(n + 1))) * r;
 		}
