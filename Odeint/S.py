@@ -34,7 +34,7 @@ energies computed by the program are printed and compared with those gained by t
 """
 import numpy as np
 from scipy.integrate import odeint
-from scipy.optimize import brentq
+from scipy import optimize
 import matplotlib.pyplot as plt
  
 def V(x):
@@ -65,6 +65,7 @@ def Wave_function(energy):
     global psi
     global E
     E = energy
+    
     psi = odeint(SE, psi0, x)
     return psi[-1,0]
  
@@ -74,9 +75,11 @@ def find_all_zeroes(x,y):
     """
     all_zeroes = []
     s = np.sign(y)
+   
     for i in range(len(y)-1):
         if s[i]+s[i+1] == 0:
-            zero = brentq(Wave_function, x[i], x[i+1])
+            zero = optimize.brentq(Wave_function, x[i], x[i+1])
+            print(x[i], x[i+1], zero)
             all_zeroes.append(zero)
     return all_zeroes
     
@@ -91,14 +94,14 @@ x = np.linspace(-b, b, N)    # x-axis
 
 # main program        
 
-
-en = np.linspace(0, Vo, 100)   # vector of energies where we look for the stable states
+en = np.linspace(0, Vo, 20)   # vector of energies where we look for the stable states
  
 psi_b = []      # vector of wave function at x = b for all of the energies in en
 for e1 in en:
     psi_b.append(Wave_function(e1))     # for each energy e1 find the the psi(x) at x = b
     E_zeroes = find_all_zeroes(en, psi_b)   # now find the energies where psi(b) = 0 
 
+print("\n")
 
 for E in E_zeroes:
         print("%.2f" %E)

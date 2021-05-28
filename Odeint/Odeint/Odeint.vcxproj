@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\MULTICOMPLEX\MULTICOMPLEX\Odeint\Odeint;C:\MULTICOMPLEX\MULTICOMPLEX\include;C:\Users\User\AppData\Local\Programs\Python\Python39\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\MULTICOMPLEX\MULTICOMPLEX\Odeint\Odeint;C:\MULTICOMPLEX\MULTICOMPLEX\include;C:\boost_1_75_0;C:\Users\User\AppData\Local\Programs\Python\Python39\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -133,7 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\MULTICOMPLEX\MULTICOMPLEX\Odeint\Odeint;C:\MULTICOMPLEX\MULTICOMPLEX\include;C:\Users\User\AppData\Local\Programs\Python\Python39\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\MULTICOMPLEX\MULTICOMPLEX\Odeint\Odeint;C:\MULTICOMPLEX\MULTICOMPLEX\include;C:\boost_1_75_0;C:\Users\User\AppData\Local\Programs\Python\Python39\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -150,6 +150,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\integrator.hpp" />
+    <ClInclude Include="..\..\include\matrix.hpp" />
+    <ClInclude Include="matplotlib.hpp" />
     <ClInclude Include="solver.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

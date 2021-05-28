@@ -319,7 +319,7 @@ namespace ps
 	)
 	{
 		T c = 0;
-		const T pi = 3.141592653589793238462643383279502884197169399375105820974;
+		//const T pi = 3.141592653589793238462643383279502884197169399375105820974;
 
 		for (unsigned k = 0; k < 20; k++) {
 			c += (T(pow(-1, k)) * pow(x / 2., T(2 * k + v))) /
@@ -362,8 +362,8 @@ namespace ps
 		return c;
 	}
 
-	template<typename T>
-	const T pi = 3.141592653589793238462643383279502884197169399375105820974;
+	//template<typename T>
+	//const T pi = 3.141592653589793238462643383279502884197169399375105820974;
 
 	template<typename T>
 	T cyl_bessel_k
@@ -372,7 +372,7 @@ namespace ps
 		const T& x
 	)
 	{
-		return (pi<T> / 2) * ((cyl_bessel_i(-v, x) - cyl_bessel_i(v, x)) / sin(v * pi<T>));
+		return (pi / 2) * ((cyl_bessel_i(-v, x) - cyl_bessel_i(v, x)) / sin(v * pi));
 	}
 
 	template<typename T>
@@ -382,7 +382,7 @@ namespace ps
 		const T& x
 	)
 	{
-		return (cyl_bessel_j(v, x) * cos(v * pi<T>) - cyl_bessel_j(-v, x)) / sin(v * pi<T>);
+		return (cyl_bessel_j(v, x) * cos(v * pi) - cyl_bessel_j(-v, x)) / sin(v * pi);
 	}
 
 	//////////////////
