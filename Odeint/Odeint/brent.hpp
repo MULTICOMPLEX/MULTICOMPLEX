@@ -16,7 +16,7 @@ public:
        
         checkAndFixAlgorithmCriteria(a, b, fa, fb);
       
-        incrementNumberOfIterations();
+        //incrementNumberOfIterations();
         T lastB = a; // b_{k-1}
         T lastFb = fa;
       

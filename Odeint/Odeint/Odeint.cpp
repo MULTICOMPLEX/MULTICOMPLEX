@@ -16,6 +16,8 @@
 #include "Midpoint_method.hpp"
 #include "Leapfrog_integration.hpp"
 #include "brent.hpp"
+#include "dekker.hpp"
+#include "secant.hpp"
 
 #include <codecvt>
 
@@ -239,8 +241,8 @@ size_t ODE_Finite_potential_well()
 
 	const double epsilon = 1e-10;
 
-	//Brent<double> brent1(epsilon, Wave_function);
-	auto brent1 = new Brent(epsilon, Wave_function);
+	auto brent = new Brent(epsilon, Wave_function);
+	auto dekker = new Dekker(epsilon, Wave_function);
 
 	auto find_all_zeroes = [&](const auto& x, const auto & y) {
 
@@ -255,7 +257,7 @@ size_t ODE_Finite_potential_well()
 		{
 			if ((s[i] + s[i + 1]) == 0)
 			{
-				auto zero = brent1->solve(x[i], x[i + 1]);
+				auto zero = dekker->solve(x[i], x[i + 1]);
 
 				//std::cout << x[i] << " " << x[i + 1] << " " << zero << " " << E << std::endl;
 				all_zeroes.push_back(zero);
@@ -294,6 +296,11 @@ size_t ODE_Finite_potential_well()
 	plot.show();
 
 	//plot.plot_somedata(Y0, Y1, "k", "Y[0] vs Y[1]", "green");
+	t = 0;
+	for (auto& i : E_zeroes) {
+		Wave_function(i);
+		plot.plot_somedata(Y1, Y0, "k", "E = " + to_string(i) + " ", colour[t++]);
+	}
 	plot.show();
 
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
