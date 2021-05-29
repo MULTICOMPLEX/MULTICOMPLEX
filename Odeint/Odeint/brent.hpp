@@ -1,23 +1,22 @@
 
-template <typename T>
+template<typename T, typename F>
 class Brent {
 
 public:
 
-    Brent(const T& epsilon, const std::function<T (T)> &f) : mEpsilon(epsilon), mf(f) {}
+    Brent(const T epsilon, const F& f) : mEpsilon(epsilon), mf(f) {}
 
     Brent() = default;
     virtual ~Brent() = default;
    
     T solve(T a, T b) {
-        resetNumberOfIterations();
         
         T fa = mf(a);
         T fb = mf(b);
        
         checkAndFixAlgorithmCriteria(a, b, fa, fb);
       
-        //incrementNumberOfIterations();
+        incrementNumberOfIterations();
         T lastB = a; // b_{k-1}
         T lastFb = fa;
       
@@ -58,23 +57,23 @@ public:
             fb = mf(b);
             checkAndFixAlgorithmCriteria(a, b, fa, fb);
 
-            //incrementNumberOfIterations();
+            incrementNumberOfIterations();
         }
 
         return fb < fs ? b : s;
     }
 
 private:
-  inline T calculateBisection(T a, T b) {
+  T calculateBisection(T a, T b) {
         return 0.5*(a+b);
     }
 
-  inline T calculateSecant(T a, T b, T fa, T fb) {
+  T calculateSecant(T a, T b, T fa, T fb) {
         //No need to check division by 0, in this case the method returns NAN which is taken care by useSecantMethod method
         return b-fb*(b-a)/(fb-fa);
     }
 
-  inline T calculateInverseQuadraticInterpolation(T a, T b, T lastB, T fa, T fb, T lastFb) {
+  T calculateInverseQuadraticInterpolation(T a, T b, T lastB, T fa, T fb, T lastFb) {
         return a*fb*lastFb/((fa-fb)*(fa-lastFb)) +
                b*fa*lastFb/((fb-fa)*(fb-lastFb)) +
                lastB*fa*fb/((lastFb-fa)*(lastFb-fb));
@@ -84,7 +83,7 @@ private:
         return fa != lastFb && fb != lastFb;
     }
 
-    inline void checkAndFixAlgorithmCriteria(T &a, T &b, T &fa, T &fb) {
+    void checkAndFixAlgorithmCriteria(T &a, T &b, T &fa, T &fb) {
         //Algorithm works in range [a,b] if criteria f(a)*f(b) < 0 and f(a) > f(b) is fulfilled
         //assert(fa*fb < 0);
         if (abs(fa) < abs(fb)) {
@@ -93,7 +92,7 @@ private:
         }
     }
 
-    inline bool useBisection(bool bisection, T a, T b, T lastB, T penultimateB, T s) const {
+    bool useBisection(bool bisection, T a, T b, T lastB, T penultimateB, T s) const {
         T DELTA = epsilon() + (std::numeric_limits<T>::min)();
 
         return (bisection && abs(s-b) >= 0.5*fabs(b-lastB)) ||                 //Bisection was used in last step but |s-b|>=|b-lastB|/2 <- Interpolation step would be to rough, so still use bisection
@@ -102,15 +101,17 @@ private:
                (!bisection && abs(lastB-penultimateB) < DELTA);                //If last iteration was using interpolation but difference between lastB ond penultimateB is < delta use biscetion for next iteration
     }
 
-  const std::function<T (T)>& mf;
+  const F& mf;
 
   int numberOfIterations() const { return mNumberOfIterations; }
 
-  inline void resetNumberOfIterations() { mNumberOfIterations = 0; }
-  inline int incrementNumberOfIterations() { return mNumberOfIterations++; }
+  void resetNumberOfIterations() { mNumberOfIterations = 0; }
+  int incrementNumberOfIterations() { return mNumberOfIterations++; }
   T epsilon() const { return mEpsilon; }
 
   const T mEpsilon;
-  int mNumberOfIterations;
+
+  int mNumberOfIterations = 0;
+
 };
 

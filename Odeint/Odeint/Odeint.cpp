@@ -242,7 +242,7 @@ size_t ODE_Finite_potential_well()
 	const double epsilon = 1e-10;
 
 	//Brent<double> brent1(epsilon, Wave_function);
-	auto brent1 = new Brent<double>(epsilon, Wave_function);
+	auto brent1 = new Brent(epsilon, Wave_function);
 
 	auto find_all_zeroes = [&](const auto& x, const auto & y) {
 
