@@ -171,10 +171,9 @@ size_t ODE_harmonic_oscillator()
 
 size_t ODE_Finite_potential_well()
 {
-
 	double tmin = -2;
 	double tmax = 2;
-	double h = 0.004;
+	double h = 0.01;
 
 	auto x = tmin;
 
@@ -207,12 +206,11 @@ size_t ODE_Finite_potential_well()
 
 	size_t steps = 0;
 
-	x = tmin;
-
+	X.push_back(x);
 	while (x <= tmax)
 	{
-		X.push_back(x);
 		x += h;
+		X.push_back(x);
 	}
 	
 	auto Wave_function = [&](const auto& energy) {
@@ -257,7 +255,7 @@ size_t ODE_Finite_potential_well()
 		{
 			if ((s[i] + s[i + 1]) == 0)
 			{
-				const double zero = brent1->solve(x[i], x[i + 1]);
+				auto zero = brent1->solve(x[i], x[i + 1]);
 
 				//std::cout << x[i] << " " << x[i + 1] << " " << zero << " " << E << std::endl;
 				all_zeroes.push_back(zero);
@@ -269,7 +267,7 @@ size_t ODE_Finite_potential_well()
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
 	std::cout.precision(8);
 
-	auto en = linspace(0., Vo, 20);
+	auto en = linspace(0., Vo, 8);
 	std::vector<double> psi_b, E_zeroes;
 	//std::cout << en << std::endl;
 
