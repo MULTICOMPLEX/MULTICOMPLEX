@@ -1,33 +1,28 @@
 
-#include "iteration.h"
-
 template <typename T>
-class Brent : public Iteration {
+class Brent {
+
 public:
-    Brent(T epsilon, const std::function<T (T)> &f) : Iteration(epsilon), mf(f) {}
+
+    Brent(const T& epsilon, const std::function<T (T)> &f) : mEpsilon(epsilon), mf(f) {}
 
     Brent() = default;
     virtual ~Brent() = default;
    
-    T solve(T a, T b) override {
+    T solve(T a, T b) {
         resetNumberOfIterations();
         
-        auto fa = mf(a);
-        auto fb = mf(b);
+        T fa = mf(a);
+        T fb = mf(b);
        
         checkAndFixAlgorithmCriteria(a, b, fa, fb);
       
-        //fmt::print("Brent -> [{:}, {:}]\n", a, b);
-        //fmt::print("{:<5}|{:<20}|{:<20}|{:<20}|{:<20}|{:<20}\n", "K", "a", "b", "f(a)", "f(b)", "f(s)");
-        //fmt::print("---------------------------------------------------------------------------------------------------------- \n");
-        //fmt::print("{:<5}|{:<20.15f}|{:<20.15f}|{:<20.15f}|{:<20.15f}\n", incrementNumberOfIterations(), a, b, fa, fb, "");
-        incrementNumberOfIterations();
+        //incrementNumberOfIterations();
         T lastB = a; // b_{k-1}
         T lastFb = fa;
       
-
-        T s = (std::numeric_limits<double>::max)();
-        T fs = (std::numeric_limits<double>::max)();
+        T s = (std::numeric_limits<T>::max)();
+        T fs = (std::numeric_limits<T>::max)();
         T penultimateB = a; // b_{k-2}
 
         bool bisection = true;
@@ -63,11 +58,8 @@ public:
             fb = mf(b);
             checkAndFixAlgorithmCriteria(a, b, fa, fb);
 
-            //fmt::print("{:<5}|{:<20.15f}|{:<20.15f}|{:<20.15f}|{:<20.15f}|{:<20.15f}\n", incrementNumberOfIterations(), a, b, fa, fb, fs);
-            incrementNumberOfIterations();
+            //incrementNumberOfIterations();
         }
-
-        //fmt::print("\n");
 
         return fb < fs ? b : s;
     }
@@ -102,7 +94,7 @@ private:
     }
 
     inline bool useBisection(bool bisection, T a, T b, T lastB, T penultimateB, T s) const {
-        auto DELTA = epsilon() + (std::numeric_limits<T>::min)();
+        T DELTA = epsilon() + (std::numeric_limits<T>::min)();
 
         return (bisection && abs(s-b) >= 0.5*fabs(b-lastB)) ||                 //Bisection was used in last step but |s-b|>=|b-lastB|/2 <- Interpolation step would be to rough, so still use bisection
                (!bisection && abs(s-b) >= 0.5*fabs(lastB-penultimateB)) ||     //Interpolation was used in last step but |s-b|>=|lastB-penultimateB|/2 <- Interpolation step would be to small
@@ -110,6 +102,15 @@ private:
                (!bisection && abs(lastB-penultimateB) < DELTA);                //If last iteration was using interpolation but difference between lastB ond penultimateB is < delta use biscetion for next iteration
     }
 
-    const std::function<T (T)> mf;
+  const std::function<T (T)>& mf;
+
+  int numberOfIterations() const { return mNumberOfIterations; }
+
+  inline void resetNumberOfIterations() { mNumberOfIterations = 0; }
+  inline int incrementNumberOfIterations() { return mNumberOfIterations++; }
+  T epsilon() const { return mEpsilon; }
+
+  const T mEpsilon;
+  int mNumberOfIterations;
 };
 

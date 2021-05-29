@@ -1,27 +1,24 @@
 ﻿
 
-//#include "dekker.h"
-
 #include "MULTICOMPLEX.hpp"
 
 #include "rkf78.hpp"
 #include "vector_calculus.hpp"
-#include <matplotlib.hpp>
-#include <Embedded_Verner_6_7.hpp>
-#include <Embedded_Verner_7_8.hpp>
-#include <Embedded_Verner_8_9.hpp>
-#include <Embedded_Fehlberg_7_8.hpp>
-#include <Embedded_Fehlberg_3_4.hpp>
-#include <fehlberg_4_5.hpp>
-#include <embedded_fehlberg_5_6.hpp>
-#include <Euler_method.hpp>
-#include <Midpoint_method.hpp>
+#include "matplotlib.hpp"
+#include "Embedded_Verner_6_7.hpp"
+#include "Embedded_Verner_7_8.hpp"
+#include "Embedded_Verner_8_9.hpp"
+#include "Embedded_Fehlberg_7_8.hpp"
+#include "Embedded_Fehlberg_3_4.hpp"
+#include "fehlberg_4_5.hpp"
+#include "embedded_fehlberg_5_6.hpp"
+#include "Euler_method.hpp"
+#include "Midpoint_method.hpp"
+#include "Leapfrog_integration.hpp"
+#include "brent.hpp"
 
-#include <Leapfrog_integration.hpp>
-#include <locale>
 #include <codecvt>
 
-#include "brent.h"
 void Leapfrog_integration();
 
 size_t ODE_test_nl(bool e_plot);
@@ -33,13 +30,12 @@ size_t ODE_quantum_harmonic_oscillator();
 size_t ODE_Predator_Prey();
 size_t ODE_Finite_potential_well();
 size_t ODE_quantum_harmonic_oscillator_complex();
+
 template <typename T>
 int sign(const T& x);
 template<typename T>
 std::vector<T> linspace(const T start_in, const T end_in, std::size_t num_in);
-
 void trapezoidal();
-
 
 plot_matplotlib plot;
 
@@ -112,7 +108,6 @@ size_t ODE_test_nl(bool e_plot)
 	return steps;
 }
 
-
 size_t ODE_harmonic_oscillator()
 {
 	double x = 0;
@@ -174,7 +169,6 @@ size_t ODE_harmonic_oscillator()
 	return steps;
 }
 
-
 size_t ODE_Finite_potential_well()
 {
 
@@ -213,16 +207,21 @@ size_t ODE_Finite_potential_well()
 
 	size_t steps = 0;
 
+	x = tmin;
+
+	while (x <= tmax)
+	{
+		X.push_back(x);
+		x += h;
+	}
+	
 	auto Wave_function = [&](const auto& energy) {
 	E = energy;
 
-	X.clear();
 	Y0.clear();
 	Y1.clear();
-	
-	x = tmin;
-	X.push_back(x);
-	
+
+	x = tmin;	
 	y[0] = 0;
 	y[1] = 1;
 	Y0.push_back(y[0]);
@@ -232,7 +231,7 @@ size_t ODE_Finite_potential_well()
 		{
 			Embedded_Fehlberg_3_4(SE, x, y, h);
 			x += h;
-			X.push_back(x);
+			
 			Y0.push_back(y[0]);
 			Y1.push_back(y[1]);
 			steps++;
@@ -240,11 +239,10 @@ size_t ODE_Finite_potential_well()
 		return Y0.back();
 	};
 
-	
 	const double epsilon = 1e-10;
 
 	//Brent<double> brent1(epsilon, Wave_function);
-	Iteration* brent1 = new Brent<double>(epsilon, Wave_function);
+	auto brent1 = new Brent<double>(epsilon, Wave_function);
 
 	auto find_all_zeroes = [&](const auto& x, const auto & y) {
 
@@ -267,10 +265,6 @@ size_t ODE_Finite_potential_well()
 		}
 		return all_zeroes;
 	};
-
-	//double energy = 19.082127;
-	//std::cout << Wave_function(energy);
-
 
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
 	std::cout.precision(8);
@@ -301,7 +295,7 @@ size_t ODE_Finite_potential_well()
 	plot.grid_on();
 	plot.show();
 
-	plot.plot_somedata(Y0, Y1, "k", "Y[0] vs Y[1]", "green");
+	//plot.plot_somedata(Y0, Y1, "k", "Y[0] vs Y[1]", "green");
 	plot.show();
 
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
