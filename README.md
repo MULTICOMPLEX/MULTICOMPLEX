@@ -57,4 +57,8 @@ Ordinary differential equation:
 
 ![Figure_3](https://user-images.githubusercontent.com/75379917/119406139-a44be480-bce2-11eb-8bd2-beaf09931073.png)
 
+https://en.wikipedia.org/wiki/Finite_potential_well
+
+![Figure_4](https://user-images.githubusercontent.com/75379917/120050704-25c2b000-c01e-11eb-8557-42fd0e69889c.png)
+
 
