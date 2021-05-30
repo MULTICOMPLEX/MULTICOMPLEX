@@ -111,9 +111,9 @@ def find_all_zeroes(x,y):
    
     for i in range(len(y)-1):
         if s[i]+s[i+1] == 0:
-             #zero = secant(Wave_function, x[i], x[i+1], 0.0001)
+             #zero = secant(Wave_function, x[i], x[i+1], 1e-10)
             zero = optimize.brentq(Wave_function, x[i], x[i+1])
-            print(x[i], x[i+1], zero)
+             #print(x[i], x[i+1], zero)
             all_zeroes.append(zero)
     return all_zeroes
     
@@ -128,7 +128,7 @@ x = np.linspace(-b, b, N)    # x-axis
 
 # main program        
 
-en = np.linspace(0, Vo, 20)   # vector of energies where we look for the stable states
+en = np.linspace(0, Vo, 10)   # vector of energies where we look for the stable states
  
 psi_b = []      # vector of wave function at x = b for all of the energies in en
 for e1 in en:

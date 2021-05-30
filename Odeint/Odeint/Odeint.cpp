@@ -240,7 +240,7 @@ size_t ODE_Finite_potential_well()
 		return Y0.back();
 	};
 
-	const double epsilon = 1e-6;
+	const double epsilon = 1e-10;
 
 	const auto brent = new Brent(epsilon, Wave_function);
 	const auto dekker = new Dekker(epsilon, Wave_function);
@@ -259,7 +259,7 @@ size_t ODE_Finite_potential_well()
 		{
 			if ((s[i] + s[i + 1]) == 0)
 			{
-				auto zero = dekker->solve(x[i], x[i + 1]);
+				auto zero = brent->solve(x[i], x[i + 1]);
 
 				//std::cout << x[i] << " " << x[i + 1] << " " << zero << " " << E << std::endl;
 				all_zeroes.push_back(zero);
@@ -271,7 +271,7 @@ size_t ODE_Finite_potential_well()
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
 	std::cout.precision(8);
 
-	auto en = linspace(0., Vo, 8);
+	auto en = linspace(0., Vo, 7);
 	std::vector<double> psi_b, E_zeroes;
 	//std::cout << en << std::endl;
 
