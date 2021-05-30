@@ -243,8 +243,6 @@ size_t ODE_Finite_potential_well()
 	const double epsilon = 1e-10;
 
 	const auto brent = new Brent(epsilon, Wave_function);
-	const auto dekker = new Dekker(epsilon, Wave_function);
-	const auto secant = new Secant(epsilon, Wave_function);
 
 	auto find_all_zeroes = [&](const auto& x, const auto & y) {
 

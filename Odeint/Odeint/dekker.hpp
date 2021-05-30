@@ -1,4 +1,5 @@
 
+//https://thoughts-on-coding.com/2019/06/06/numerical-methods-with-cpp-part-3-root-approximation-algorithms/
 template<typename T, typename F>
 class Dekker {
 public:
