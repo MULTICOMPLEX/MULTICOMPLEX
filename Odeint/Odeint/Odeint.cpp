@@ -229,6 +229,7 @@ size_t ODE_Finite_potential_well()
 
 		while (x <= tmax)
 		{
+			//Embedded_Fehlberg_7_8(SE, x, y, h);
 			Embedded_Fehlberg_3_4(SE, x, y, h);
 			x += h;
 			
@@ -239,10 +240,11 @@ size_t ODE_Finite_potential_well()
 		return Y0.back();
 	};
 
-	const double epsilon = 1e-10;
+	const double epsilon = 1e-6;
 
-	auto brent = new Brent(epsilon, Wave_function);
-	auto dekker = new Dekker(epsilon, Wave_function);
+	const auto brent = new Brent(epsilon, Wave_function);
+	const auto dekker = new Dekker(epsilon, Wave_function);
+	const auto secant = new Secant(epsilon, Wave_function);
 
 	auto find_all_zeroes = [&](const auto& x, const auto & y) {
 

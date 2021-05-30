@@ -69,6 +69,39 @@ def Wave_function(energy):
     psi = odeint(SE, psi0, x)
     return psi[-1,0]
  
+def secant(f, x1, x2, E):
+    n = 0; xm = 0; x0 = 0; c = 0;
+    if (f(x1) * f(x2) < 0):
+        while True:
+             
+            # calculate the intermediate value
+            x0 = ((x1 * f(x2) - x2 * f(x1)) /
+                            (f(x2) - f(x1)));
+ 
+            # check if x0 is root of
+            # equation or not
+            c = f(x1) * f(x0);
+ 
+            # update the value of interval
+            x1 = x2;
+            x2 = x0;
+ 
+            # update number of iteration
+            n += 1;
+ 
+            # if x0 is the root of equation
+            # then break the loop
+            if (c == 0):
+                break;
+            xm = ((x1 * f(x2) - x2 * f(x1)) /
+                            (f(x2) - f(x1)));
+             
+            if(abs(xm - x0) < E):
+                break;
+              
+    return x0
+
+
 def find_all_zeroes(x,y):
     """
     Gives all zeroes in y = Psi(x)
@@ -78,6 +111,7 @@ def find_all_zeroes(x,y):
    
     for i in range(len(y)-1):
         if s[i]+s[i+1] == 0:
+             #zero = secant(Wave_function, x[i], x[i+1], 0.0001)
             zero = optimize.brentq(Wave_function, x[i], x[i+1])
             print(x[i], x[i+1], zero)
             all_zeroes.append(zero)
