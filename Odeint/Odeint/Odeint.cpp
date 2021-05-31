@@ -280,12 +280,20 @@ size_t ODE_Finite_potential_well()
 	}
 
 	//std::cout << E_zeroes << std::endl;
-	std::string colour[4] = { "Blue", "Red",
-															"Orange", "Green" };
+	std::string colour[4] = { "Blue", "Green",
+															"Red", "Cyan" };
 	int t = 0;
-	for (auto& i : E_zeroes) {
-		Wave_function(i);
-		plot.plot_somedata(X, Y0, "k", "E = "+ to_string(i) +" ", colour[t++]);
+	std::reverse(E_zeroes.begin(), E_zeroes.end());
+	
+	std::ostringstream oss;
+	oss.setf(ios::fixed);
+	oss.precision(2);
+
+	for (auto& E : E_zeroes) {
+		Wave_function(E);
+		oss.str(std::string());
+		oss << Vo - E;
+		plot.plot_somedata(X, Y0, "k", "E = "+ oss.str() +" ", colour[t++], 1.0);
 	}
 	//plot.plot_somedata(X, Y1, "k", "Y[1]", "blue");
 
@@ -297,9 +305,12 @@ size_t ODE_Finite_potential_well()
 
 	//plot.plot_somedata(Y0, Y1, "k", "Y[0] vs Y[1]", "green");
 	t = 0;
-	for (auto& i : E_zeroes) {
-		Wave_function(i);
-		plot.plot_somedata(Y1, Y0, "k", "E = " + to_string(i) + " ", colour[t++]);
+	
+	for (auto& E : E_zeroes) {
+		Wave_function(E);
+		oss.str(std::string());
+		oss << Vo - E;
+		plot.plot_somedata(Y1, Y0, "k", "E = " + oss.str() + " ", colour[t++], 1.0);
 	}
 	plot.show();
 

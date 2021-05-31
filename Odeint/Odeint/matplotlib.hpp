@@ -81,7 +81,7 @@ public:
 
   //! \brief Add data to the plot with markers (X/Y points and matplotlib properties, e.g. 'o' for points or no properties for points connected by lines)
   void plot_somedata(const std::vector<double>& X, const std::vector<double>& Y,
-    std::string properties = "k", std::string label = "Line 1", std::string color = "green", double alpha = 1);
+    std::string properties = "k", std::string label = "Line 1", std::string color = "green", double linewidth = 2, double alpha = 1);
 
   void plot_somedata_3D(const std::vector<double>& X, const std::vector<double>& Y, const std::vector<double>& Z,
     std::string properties = "k", std::string label = "Line 1", std::string color = "green", double alpha = 1);
@@ -248,7 +248,7 @@ void plot_matplotlib::show()
 }
 
 void plot_matplotlib::plot_somedata(const std::vector<double>& X, const std::vector<double>& Y,
-  std::string properties, std::string label, std::string color, double alpha)
+  std::string properties, std::string label, std::string color, double linewidth, double alpha)
 {
   // Plot Points:
   std::string xpoints = "";
@@ -294,7 +294,8 @@ void plot_matplotlib::plot_somedata(const std::vector<double>& X, const std::vec
   }
 
     PyRun_SimpleStringStd(
-      "plt.plot( [" + xpoints + "], [" + ypoints + "]" + properties + ", label=" + label + ",color=" + color + ",alpha=" + to_string(alpha) + ")");
+      "plt.plot( [" + xpoints + "], [" + ypoints + "]" + properties + ", label=" + label + ",color=" + color + ",\
+      linewidth=" + to_string(linewidth) + ", alpha=" + to_string(alpha) + ")");
   
   if (label != "")PyRun_SimpleStringStd("plt.legend()");
 }
