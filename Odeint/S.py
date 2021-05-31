@@ -101,6 +101,38 @@ def secant(f, x1, x2, E):
               
     return x0
 
+def find_analytic_energies(en):
+    """
+    Calculates Energy values for the finite square well using analytical
+    model (Griffiths, Introduction to Quantum Mechanics, 1st edition, page 62.)
+    """
+    z = np.sqrt(2*en)
+    z0 = np.sqrt(2*Vo)
+    z_zeroes = []
+    f_sym = lambda z: np.tan(z)-np.sqrt((z0/z)**2-1)      # Formula 2.138, symmetrical case
+    f_asym = lambda z: -1/np.tan(z)-np.sqrt((z0/z)**2-1)  # Formula 2.138, antisymmetrical case
+ 
+    # first find the zeroes for the symmetrical case
+    s = np.sign(f_sym(z))
+    for i in range(len(s)-1):   # find zeroes of this crazy function
+       if s[i]+s[i+1] == 0:
+           zero = optimize.brentq(f_sym, z[i], z[i+1])
+           z_zeroes.append(zero)
+    print("Energies from the analyitical model are: ")
+    print("Symmetrical case)")
+    for i in range(0, len(z_zeroes),2):   # discard z=(2n-1)pi/2 solutions cause that's where tan(z) is discontinous
+        print("%.4f" %(z_zeroes[i]**2/2))
+    # Now for the asymmetrical
+    z_zeroes = []
+    s = np.sign(f_asym(z))
+    for i in range(len(s)-1):   # find zeroes of this crazy function
+       if s[i]+s[i+1] == 0:
+           zero = optimize.brentq(f_asym, z[i], z[i+1])
+           z_zeroes.append(zero)
+    print("Antisymmetrical case")
+    for i in range(0, len(z_zeroes),2):   # discard z=npi solutions cause that's where ctg(z) is discontinous
+        print("%.4f" %(z_zeroes[i]**2/2))
+
 
 def find_all_zeroes(x,y):
     """
@@ -125,10 +157,12 @@ E = 0.0                   # global variable Energy  needed for Sch.Eq, changed i
 b = 2                     # point outside of well where we need to check if the function diverges
 x = np.linspace(-b, b, N)    # x-axis
  
-
 # main program        
 
-en = np.linspace(0, Vo, 10)   # vector of energies where we look for the stable states
+en = np.linspace(0, Vo, 20)   # vector of energies where we look for the stable states
+
+find_analytic_energies(en)   
+
  
 psi_b = []      # vector of wave function at x = b for all of the energies in en
 for e1 in en:
@@ -142,11 +176,13 @@ for E in E_zeroes:
  
 plt.grid()
 
+colours = ['b','g','r','c','m','y']
+i=0;
 
-for E in E_zeroes:
+for E in E_zeroes[::-1]:
         Wave_function(E)
-        plt.plot(x, psi[:,0], 'k', label="E = %.6f"%E, linewidth=1, color = 'red')
-
+        plt.plot(x, psi[:,0], 'k', label="E = %.2f"%(Vo-E), linewidth=1, color = colours[i])
+        i+=1
 plt.legend()
 plt.show()
 

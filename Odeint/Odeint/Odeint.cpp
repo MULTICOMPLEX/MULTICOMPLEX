@@ -269,7 +269,7 @@ size_t ODE_Finite_potential_well()
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
 	std::cout.precision(8);
 
-	auto en = linspace(0., Vo, 7);
+	auto en = linspace(0., Vo, 20);
 	std::vector<double> psi_b, E_zeroes;
 	//std::cout << en << std::endl;
 
@@ -280,8 +280,8 @@ size_t ODE_Finite_potential_well()
 	}
 
 	//std::cout << E_zeroes << std::endl;
-	std::string colour[4] = { "Blue", "Green",
-															"Red", "Cyan" };
+	std::string colour[8] = { "Blue", "Green",
+															"Red", "Cyan", "Magenta", "Yellow", "Black", "White"};
 	int t = 0;
 	std::reverse(E_zeroes.begin(), E_zeroes.end());
 	
