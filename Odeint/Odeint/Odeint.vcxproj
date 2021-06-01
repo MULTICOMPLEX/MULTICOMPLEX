@@ -152,6 +152,7 @@
     <ClInclude Include="..\..\include\integrator.hpp" />
     <ClInclude Include="..\..\include\matrix.hpp" />
     <ClInclude Include="matplotlib.hpp" />
+    <ClInclude Include="Midpoint_method.hpp" />
     <ClInclude Include="solver.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

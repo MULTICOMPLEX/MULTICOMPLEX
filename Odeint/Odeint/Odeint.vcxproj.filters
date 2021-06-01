@@ -35,5 +35,8 @@
     <ClInclude Include="matplotlib.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Midpoint_method.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

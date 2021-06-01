@@ -44,9 +44,9 @@ def V(x):
     """
     L = 1
     if abs(x) > L:
-        return 0
-    else:
         return Vo
+    else:
+        return 0
  
 def SE(psi, x):
     """
@@ -55,7 +55,7 @@ def SE(psi, x):
     wave function psi, and state1 is its second derivative.
     """
     state0 = psi[1]
-    state1 = -2.0*(V(x) - E)*psi[0]
+    state1 = 2.0*(V(x) - E)*psi[0]
     return [state0, state1]
  
 def Wave_function(energy):
@@ -152,15 +152,15 @@ def find_all_zeroes(x,y):
     
 N = 1000                  # number of points to take
 psi = np.zeros([N,2])     # Wave function values and its derivative (psi and psi')
-psi0 = [0,1]   # Wave function initial states
-Vo = 20
+psi0 = [1,0]              # Wave function initial states
+Vo = 21
 E = 0.0                   # global variable Energy  needed for Sch.Eq, changed in function "Wave function"
 b = 2                     # point outside of well where we need to check if the function diverges
-x = np.linspace(-b, b, N)    # x-axis
+x = np.linspace(-b, b, N) # x-axis
  
 # main program        
 
-en = np.linspace(0, Vo, 20)   # vector of energies where we look for the stable states
+en = np.linspace(0, Vo, Vo)   # vector of energies where we look for the stable states
 
 find_analytic_energies(en)   
 
@@ -180,9 +180,9 @@ plt.grid()
 colours = ['b','g','r','c','m','y']
 i=0;
 
-for E in E_zeroes[::-1]:
+for E in E_zeroes:
         Wave_function(E)
-        plt.plot(x, psi[:,0], 'k', label="E = %.2f"%(Vo-E), linewidth=1, color = colours[i])
+        plt.plot(x, psi[:,0], 'k', label="E = %.2f"%E, linewidth=1, color = colours[i])
         i+=1
 plt.legend()
 plt.show()

@@ -188,11 +188,11 @@ size_t ODE_Finite_potential_well_solve()
 
 	std::vector<double> y(2);
 
-	y[0] = 0; 
-	y[1] = 1;
+	y[0] = 1; 
+	y[1] = 0;
 
 	std::vector<double> state(y.size());
-	double Vo = 20, E = 0;
+	double Vo = 21, E = 0;
 	//brentq() fails to find last energy level (19.9726) because odeint() doesn’t give solution which drops so fast at b!
 	//This is because of relatively small potential V0 – the smaller V0, the wave function lives longer outside the well, 
 	//and program can not find its exact zero - value.Solution to this problem ? 
@@ -201,10 +201,10 @@ size_t ODE_Finite_potential_well_solve()
 	auto V = [&](const auto& x)
 	{
 		double L = 1;
-		if (abs(x) > L)
-			return Vo;
-		else
+		if (abs(x) < L)
 			return 0.;
+		else
+			return Vo;
 	};
 
 	auto SE = [&](const auto& x, const auto& psi) {
@@ -233,15 +233,16 @@ size_t ODE_Finite_potential_well_solve()
 	Y1.clear();
 
 	x = tmin;	
-	y[0] = 0;
-	y[1] = 1;
+	y[0] = 1;
+	y[1] = 0;
 	Y0.push_back(y[0]);
 	Y1.push_back(y[1]);
 
 		while (x <= tmax)
 		{
-			//Embedded_Fehlberg_7_8(SE, x, y, h);
-			Embedded_Fehlberg_3_4(SE, x, y, h);
+			//Midpoint_method_implicit(SE, x, y, h);
+			Embedded_Fehlberg_7_8(SE, x, y, h);
+
 			x += h;
 			
 			Y0.push_back(y[0]);
@@ -280,7 +281,7 @@ size_t ODE_Finite_potential_well_solve()
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
 	std::cout.precision(8);
 
-	auto en = linspace(0., Vo, 20);
+	auto en = linspace(0., Vo, int(Vo));
 	std::vector<double> psi_b, E_zeroes;
 	//std::cout << en << std::endl;
 
@@ -400,7 +401,9 @@ size_t ODE_quantum_harmonic_oscillator_solve()
 		while (x <= tmax)
 		{
 			//Embedded_Fehlberg_7_8(SE, x, y, h);
+			//Embedded_Verner_8_9(SE, x, y, h);
 			Embedded_Fehlberg_3_4(SE, x, y, h);
+			//Midpoint_method_implicit(SE, x, y, h);
 			x += h;
 
 			Y0.push_back(y[0]);
