@@ -31,6 +31,7 @@ Values of m and L are taken so that h-bar^2/m*L^2 is 1.
  
 v2 adds feature of computational solution of analytical model from the usual textbooks. As a result,
 energies computed by the program are printed and compared with those gained by the previous program.
+https://helentronica.com/2014/09/04/quantum-mechanics-with-the-python/
 """
 import numpy as np
 from scipy.integrate import odeint

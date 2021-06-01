@@ -30,8 +30,10 @@ size_t quantum_harmonic_oscillator();
 size_t ODE_Van_der_Pol_oscillator();
 size_t ODE_quantum_harmonic_oscillator();
 size_t ODE_Predator_Prey();
-size_t ODE_Finite_potential_well();
+
+size_t ODE_Finite_potential_well_solve();
 size_t ODE_quantum_harmonic_oscillator_complex();
+size_t ODE_quantum_harmonic_oscillator_solve();
 
 template <typename T>
 int sign(const T& x);
@@ -49,8 +51,11 @@ int main(int argc, char* argv[]) {
 	//ODE_harmonic_oscillator();
 
 	//ODE_quantum_harmonic_oscillator();
+	//ODE_quantum_harmonic_oscillator_solve();
 	//ODE_quantum_harmonic_oscillator_complex();
-	ODE_Finite_potential_well();
+	
+
+	ODE_Finite_potential_well_solve();
 	
 	//ODE_Predator_Prey();
 	//quantum_harmonic_oscillator();
@@ -171,7 +176,8 @@ size_t ODE_harmonic_oscillator()
 	return steps;
 }
 
-size_t ODE_Finite_potential_well()
+
+size_t ODE_Finite_potential_well_solve()
 {
 	double tmin = -2;
 	double tmax = 2;
@@ -269,7 +275,7 @@ size_t ODE_Finite_potential_well()
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
 	std::cout.precision(8);
 
-	auto en = linspace(0., Vo, 20);
+	auto en = linspace(0., Vo, 10);
 	std::vector<double> psi_b, E_zeroes;
 	//std::cout << en << std::endl;
 
@@ -293,6 +299,8 @@ size_t ODE_Finite_potential_well()
 		Wave_function(E);
 		oss.str(std::string());
 		oss << Vo - E;
+		std::cout << "Vo - E " << Vo - E << std::endl;
+		std::cout << "E " << E << std::endl;
 		plot.plot_somedata(X, Y0, "k", "E = "+ oss.str() +" ", colour[t++], 1.0);
 	}
 	//plot.plot_somedata(X, Y1, "k", "Y[1]", "blue");
@@ -310,6 +318,168 @@ size_t ODE_Finite_potential_well()
 		Wave_function(E);
 		oss.str(std::string());
 		oss << Vo - E;
+		plot.plot_somedata(Y1, Y0, "k", "E = " + oss.str() + " ", colour[t++], 1.0);
+	}
+	plot.show();
+
+	std::cout.setf(std::ios::fixed, std::ios::floatfield);
+	std::cout.precision(15);
+	auto p = std::minmax_element(begin(Y0), end(Y0));
+	std::cout << "minY0 = " << *p.first << ", maxY0 = " << *p.second << '\n';
+	p = std::minmax_element(begin(Y1), end(Y1));
+	std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
+
+	return steps;
+}
+
+size_t ODE_quantum_harmonic_oscillator_solve()
+{
+	double tmin = -2;
+	double tmax = 2;
+	double h = 0.004;
+
+	auto x = tmin;
+
+	std::vector<double> y(2);
+
+	y[0] = .001;
+	y[1] = 0;
+
+	std::vector<double> state(y.size());
+
+	double m = 1;        //mass of the body
+	double k = 100;      // spring constant
+	
+	double w = sqrt(k / m); // classical HO frequency
+	double H = 1;           // normalized Planck constant
+	double L = 1;           // size of the HO
+	double E = 0.0;        //global variable Energy  needed for Sch.Eq, changed in function "Wave function"
+
+	auto V = [&](const auto& x)
+	{
+		if (abs(x) < L)
+			return 0.5 * k * pow(x, 2);
+			else
+			return 0.5 * k * pow(L, 2);
+	};
+
+	auto SE = [&](const auto& x, const auto& psi) {
+
+		state[0] = psi[1];
+
+		state[1] = (2.0 * m / pow(H,2)) * (V(x) - E) * psi[0];
+
+		return state; };
+
+	std::vector<double> X, Y0, Y1;
+
+	size_t steps = 0;
+
+	X.push_back(x);
+	while (x <= tmax)
+	{
+		x += h;
+		X.push_back(x);
+	}
+
+	auto Wave_function = [&](const auto& energy) {
+		E = energy;
+
+		Y0.clear();
+		Y1.clear();
+
+		x = tmin;
+		y[0] = .001;
+		y[1] = 0;
+		Y0.push_back(y[0]);
+		Y1.push_back(y[1]);
+
+		while (x <= tmax)
+		{
+			//Embedded_Fehlberg_7_8(SE, x, y, h);
+			Embedded_Fehlberg_3_4(SE, x, y, h);
+			x += h;
+
+			Y0.push_back(y[0]);
+			Y1.push_back(y[1]);
+			steps++;
+		}
+		return Y0.back();
+	};
+
+	const double epsilon = 1e-10;
+
+	const auto brent = new Brent(epsilon, Wave_function);
+
+	auto find_all_zeroes = [&](const auto& x, const auto& y) {
+
+		//Gives all zeroes in y = Psi(x)
+
+		std::vector<double> all_zeroes, s;
+		for (auto& i : y) {
+			s.push_back(sign(i));
+		}
+
+		for (size_t i = 0; i < y.size() - 1; i++)
+		{
+			if ((s[i] + s[i + 1]) == 0)
+			{
+				auto zero = brent->solve(x[i], x[i + 1]);
+
+				//std::cout << x[i] << " " << x[i + 1] << " " << zero << " " << E << std::endl;
+				all_zeroes.push_back(zero);
+			}
+		}
+		return all_zeroes;
+	};
+
+	std::cout.setf(std::ios::fixed, std::ios::floatfield);
+	std::cout.precision(8);
+
+	auto en = linspace(0., 0.5 * k * pow(L, 2), 50);  //vector of energies where we look for the stable states
+
+	std::vector<double> psi_b, E_zeroes;
+	//std::cout << en << std::endl;
+
+	for (auto& e1 : en)
+	{
+		psi_b.push_back(Wave_function(e1));
+		E_zeroes = find_all_zeroes(en, psi_b);
+	}
+
+	//std::cout << E_zeroes << std::endl;
+	std::string colour[8] = { "Blue", "Green",
+															"Red", "Cyan", "Magenta", "Yellow", "Black", "White" };
+	
+	std::ostringstream oss;
+	oss.setf(ios::fixed);
+	oss.precision(2);
+	
+	for (size_t i = 0; i < 4; i++) {
+		Wave_function(E_zeroes[i]);
+		oss.str(std::string());
+		oss << E_zeroes[i];
+		std::vector<double> Yr;
+		for (auto& k : Y0) 
+			Yr.push_back(pow(100,i)*k*k);
+
+		plot.plot_somedata(X, Yr, "k", "E = " + oss.str() + " ", colour[i], 1.0);
+	}
+	//plot.plot_somedata(X, Y1, "k", "Y[1]", "blue");
+
+	std::u32string title = U"Finite potential well";
+	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
+	plot.set_title(cv.to_bytes(title));
+	plot.grid_on();
+	plot.show();
+
+	//plot.plot_somedata(Y0, Y1, "k", "Y[0] vs Y[1]", "green");
+	int t = 0;
+
+	for (auto& E : E_zeroes) {
+		Wave_function(E);
+		oss.str(std::string());
+		oss << E;
 		plot.plot_somedata(Y1, Y0, "k", "E = " + oss.str() + " ", colour[t++], 1.0);
 	}
 	plot.show();
@@ -362,7 +532,7 @@ y[1] = 0;
 
 		dydx[0] = y[1];
 
-		dydx[1] = - (2 * n + 1 - x * x) * y[0];
+		dydx[1] = - (2 * n + 1 - x * x ) * y[0];
 
 		return dydx; };
 
@@ -384,13 +554,13 @@ y[1] = 0;
 		x += h;
 		X.push_back(x);
 
-		Y0.push_back(y[0]);
+		Y0.push_back(y[0] * y[0]);
 		Y1.push_back(-y[1]);
 		steps++;
 	}
 
 	plot.plot_somedata(X, Y0, "k", "Y[0], n = " + std::to_string(n) + "", "red");
-	plot.plot_somedata(X, Y1, "k", "Y[1]", "blue");
+	//plot.plot_somedata(X, Y1, "k", "Y[1]", "blue");
 
 	std::u32string title = U"Hermite functions Ψn̈(x) + (2n + 1 - x²) Ψn(x) = 0";
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
