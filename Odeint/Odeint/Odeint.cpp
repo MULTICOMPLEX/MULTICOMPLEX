@@ -179,8 +179,9 @@ size_t ODE_harmonic_oscillator()
 
 size_t ODE_Finite_potential_well_solve()
 {
-	double tmin = -2;
-	double tmax = 2;
+	double b = 2;
+	double tmin = -b;
+	double tmax = b;
 	double h = 0.01;
 
 	auto x = tmin;
@@ -192,21 +193,25 @@ size_t ODE_Finite_potential_well_solve()
 
 	std::vector<double> state(y.size());
 	double Vo = 20, E = 0;
+	//brentq() fails to find last energy level (19.9726) because odeint() doesn’t give solution which drops so fast at b!
+	//This is because of relatively small potential V0 – the smaller V0, the wave function lives longer outside the well, 
+	//and program can not find its exact zero - value.Solution to this problem ? 
+	//Increase V0 or b!Than the numerical values of energies will give you exact energies from analytic model!
 
 	auto V = [&](const auto& x)
 	{
 		double L = 1;
 		if (abs(x) > L)
-			return 0.;
-		else
 			return Vo;
+		else
+			return 0.;
 	};
 
 	auto SE = [&](const auto& x, const auto& psi) {
 
 		state[0] = psi[1];
 
-		state[1] = -2.0 * (V(x) - E) * psi[0];
+		state[1] = 2.0 * (V(x) - E) * psi[0];
 
 		return state; };
 
@@ -275,7 +280,7 @@ size_t ODE_Finite_potential_well_solve()
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
 	std::cout.precision(8);
 
-	auto en = linspace(0., Vo, 10);
+	auto en = linspace(0., Vo, 20);
 	std::vector<double> psi_b, E_zeroes;
 	//std::cout << en << std::endl;
 
@@ -289,7 +294,6 @@ size_t ODE_Finite_potential_well_solve()
 	std::string colour[8] = { "Blue", "Green",
 															"Red", "Cyan", "Magenta", "Yellow", "Black", "White"};
 	int t = 0;
-	std::reverse(E_zeroes.begin(), E_zeroes.end());
 	
 	std::ostringstream oss;
 	oss.setf(ios::fixed);
@@ -298,8 +302,7 @@ size_t ODE_Finite_potential_well_solve()
 	for (auto& E : E_zeroes) {
 		Wave_function(E);
 		oss.str(std::string());
-		oss << Vo - E;
-		std::cout << "Vo - E " << Vo - E << std::endl;
+		oss << E;
 		std::cout << "E " << E << std::endl;
 		plot.plot_somedata(X, Y0, "k", "E = "+ oss.str() +" ", colour[t++], 1.0);
 	}
