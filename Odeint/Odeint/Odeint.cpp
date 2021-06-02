@@ -18,6 +18,7 @@
 #include "brent.hpp"
 #include "dekker.hpp"
 #include "secant.hpp"
+#include "Laplace_transform.hpp"
 
 #include <codecvt>
 

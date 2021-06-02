@@ -38,5 +38,11 @@
     <ClInclude Include="Midpoint_method.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Laplace_transform.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="brent.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
