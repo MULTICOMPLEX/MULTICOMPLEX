@@ -61,5 +61,8 @@ https://en.wikipedia.org/wiki/Finite_potential_well
 
 ![Figure_4](https://user-images.githubusercontent.com/75379917/120182498-c8418580-c20e-11eb-99b7-85886500e6f2.png)
 
+![Figure_5](https://user-images.githubusercontent.com/75379917/120670752-05b54580-c491-11eb-9f20-1ccdc0db4223.png)
+
+![Figure_6](https://user-images.githubusercontent.com/75379917/120670886-27163180-c491-11eb-9fee-48d6ca8a10fe.png)
 
 
