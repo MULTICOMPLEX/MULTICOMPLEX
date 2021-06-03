@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
 	//ODE_quantum_harmonic_oscillator_complex();
 	
 
-	ODE_Quantum_Solver(1);
+	ODE_Quantum_Solver(2);
 	
 	//ODE_Predator_Prey();
 	//quantum_harmonic_oscillator();
@@ -234,7 +234,8 @@ size_t ODE_Quantum_Solver(int mode)
 	x = tmin;	
 
 	y[0] = 0;
-	y[1] = 1;
+	if (mode == 2)y[1] = 1e-4;
+	else y[1] = 1;
 
 	Y0.push_back(y[0]);
 	Y1.push_back(y[1]);
@@ -312,7 +313,7 @@ size_t ODE_Quantum_Solver(int mode)
 
 	std::u32string title = U"Finite potential well";
 	if(mode == 1)title = U"Infinite potential well = Particle in 1-D Box"; 
-	else if (mode == 2)title = U"quantum_harmonic_oscillator";
+	else if (mode == 2)title = U"Quantum harmonic oscillator";
 		std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
 	plot.set_title(cv.to_bytes(title));
 	plot.grid_on();
@@ -324,7 +325,7 @@ size_t ODE_Quantum_Solver(int mode)
 	for (auto& E : E_zeroes) {
 		Wave_function(E);
 		oss.str(std::string());
-		oss << Vo - E;
+		oss << E;
 		plot.plot_somedata(Y1, Y0, "k", "E = " + oss.str() + " ", colours[t++], 1.0);
 	}
 	plot.show();
