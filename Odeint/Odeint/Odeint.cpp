@@ -40,6 +40,12 @@ int sign(const T& x);
 template<typename T>
 std::vector<T> linspace(const T start_in, const T end_in, std::size_t num_in);
 void trapezoidal();
+template <typename F, typename T>
+std::vector<T> Find_all_zeroes
+(
+	const F& Wave_function,
+	const std::vector<T>& en
+);
 
 plot_matplotlib plot;
 
@@ -55,7 +61,7 @@ int main(int argc, char* argv[]) {
 	//ODE_quantum_harmonic_oscillator_complex();
 	
 
-	ODE_Quantum_Solver(2);
+	ODE_Quantum_Solver(0);
 	
 	//ODE_Predator_Prey();
 	//quantum_harmonic_oscillator();
@@ -242,8 +248,8 @@ size_t ODE_Quantum_Solver(int mode)
 
 		while (x <= tmax)
 		{
-			//Midpoint_method_explicit(SE, x, y, h);
-			Embedded_Fehlberg_3_4(SE, x, y, h);
+			Midpoint_method_explicit(SE, x, y, h);
+			//Embedded_Fehlberg_3_4(SE, x, y, h);
 			x += h;
 			Y0.push_back(y[0]);
 			Y1.push_back(y[1]);
@@ -252,46 +258,19 @@ size_t ODE_Quantum_Solver(int mode)
 		return Y0.back();
 	};
 
-	const double epsilon = 1e-10;
-
-	const auto brent = new Brent(epsilon, Wave_function);
-
-	std::vector<double> s;
-
-	auto find_all_zeroes = [&](const auto& x, const auto & y) {
-
-		//Gives all zeroes in y = Psi(x)
-
-		std::vector<double> all_zeroes;
-		s.push_back(sign(y));	
-		static int t = 0;
-		for (size_t i = 0; i < s.size() - 1; i++)
-		{
-			if ((s[i] + s[i + 1]) == 0)
-			{
-				auto zero = brent->solve(x[i], x[i + 1]);
-				//std::cout << zero << " " << t++ << std::endl;
-				all_zeroes.push_back(zero);
-			}
-		}
-		return all_zeroes;
-	};
 
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
 	std::cout.precision(8);
 
-	auto en = linspace(0., Vo, int(Vo));
-	std::vector<double> E_zeroes;
-
-	for (auto& e1 : en)
-	{
-		auto psi_b = Wave_function(e1);
-		E_zeroes = find_all_zeroes(en, psi_b);
-	}
+	auto en = linspace(0., Vo, int(Vo)/3);
+	
+	auto E_zeroes = Find_all_zeroes(Wave_function, en);
 
 	//std::cout << E_zeroes << std::endl;
-	std::string colours[8] = { "Blue", "Green",
-															"Red", "Cyan", "Magenta", "Yellow", "Black", "White"};
+	std::string colours[16] = { "Blue", "Green",
+															"Red", "Cyan", "Magenta", "Yellow", "Black", "White",
+	"Blue", "Green",
+															"Red", "Cyan", "Magenta", "Yellow", "Black", "White" };
 	int t = 0;
 	std::ostringstream oss;
 	oss.setf(ios::fixed);
@@ -795,3 +774,40 @@ std::vector<T> linspace(const T start_in, const T end_in, std::size_t num_in)
 	return linspaced;
 }
 
+template <typename F, typename T>
+std::vector<T> Find_all_zeroes
+(
+	const F& Wave_function,
+	const std::vector<T>& en 
+)
+{
+	//Gives all zeroes in y = Psi(x)
+	const T epsilon = 1e-10;
+	const auto brent = new Brent(epsilon, Wave_function);
+
+	std::vector<T> s;
+	
+	std::vector<T> all_zeroes;
+
+	for (auto& e1 : en)
+	{
+		auto psi_b = Wave_function(e1);
+
+		s.push_back(sign(psi_b));
+
+		all_zeroes.clear();
+
+		static int t = 0;
+		for (size_t i = 0; i < s.size() - 1; i++)
+		{
+			if ((s[i] + s[i + 1]) == 0)
+			{
+				T zero = brent->solve(en[i], en[i + 1]);
+				//std::cout << zero << " " << t++ << std::endl;
+				all_zeroes.push_back(zero);
+			}
+		}
+	}
+	delete brent;
+	return all_zeroes;
+}
