@@ -32,9 +32,8 @@ size_t ODE_Van_der_Pol_oscillator();
 size_t ODE_quantum_harmonic_oscillator();
 size_t ODE_Predator_Prey();
 
-size_t ODE_Finite_potential_well_solve();
+size_t ODE_Quantum_Solver(int mode = 0);
 size_t ODE_quantum_harmonic_oscillator_complex();
-size_t ODE_quantum_harmonic_oscillator_solve();
 
 template <typename T>
 int sign(const T& x);
@@ -52,11 +51,11 @@ int main(int argc, char* argv[]) {
 	//ODE_harmonic_oscillator();
 
 	//ODE_quantum_harmonic_oscillator();
-	//ODE_quantum_harmonic_oscillator_solve();
+	
 	//ODE_quantum_harmonic_oscillator_complex();
 	
 
-	ODE_Finite_potential_well_solve();
+	ODE_Quantum_Solver(1);
 	
 	//ODE_Predator_Prey();
 	//quantum_harmonic_oscillator();
@@ -178,9 +177,10 @@ size_t ODE_harmonic_oscillator()
 }
 
 
-size_t ODE_Finite_potential_well_solve()
+size_t ODE_Quantum_Solver(int mode)
 {
 	double b = 2;
+	if(mode==1)b = 1;
 	double tmin = -b;
 	double tmax = b;
 	double h = 0.01;
@@ -189,11 +189,8 @@ size_t ODE_Finite_potential_well_solve()
 
 	std::vector<double> y(2);
 
-	y[0] = 1; 
-	y[1] = 0;
-
 	std::vector<double> state(y.size());
-	double Vo = 21, E = 0;
+	double Vo = 50, E = 0;
 	//brentq() fails to find last energy level (19.9726) because odeint() doesn’t give solution which drops so fast at b!
 	//This is because of relatively small potential V0 – the smaller V0, the wave function lives longer outside the well, 
 	//and program can not find its exact zero - value.Solution to this problem ? 
@@ -201,9 +198,10 @@ size_t ODE_Finite_potential_well_solve()
 
 	auto V = [&](const auto& x)
 	{
-		double L = 1;
-		if (abs(x) < L)
-			return 0.;
+		double L1 = -1, L2 = 1;
+		if (x > L1 && x < L2)
+			if(mode == 2)return Vo * x * x;
+			else return 0.;
 		else
 			return Vo;
 	};
@@ -234,18 +232,18 @@ size_t ODE_Finite_potential_well_solve()
 	Y1.clear();
 
 	x = tmin;	
-	y[0] = 1;
-	y[1] = 0;
+
+	y[0] = 0;
+	y[1] = 1;
+
 	Y0.push_back(y[0]);
 	Y1.push_back(y[1]);
 
 		while (x <= tmax)
 		{
-			//Midpoint_method_implicit(SE, x, y, h);
-			Embedded_Fehlberg_7_8(SE, x, y, h);
-
+			//Midpoint_method_explicit(SE, x, y, h);
+			Embedded_Fehlberg_3_4(SE, x, y, h);
 			x += h;
-			
 			Y0.push_back(y[0]);
 			Y1.push_back(y[1]);
 			steps++;
@@ -257,22 +255,21 @@ size_t ODE_Finite_potential_well_solve()
 
 	const auto brent = new Brent(epsilon, Wave_function);
 
+	std::vector<double> s;
+
 	auto find_all_zeroes = [&](const auto& x, const auto & y) {
 
 		//Gives all zeroes in y = Psi(x)
 
-		std::vector<double> all_zeroes,s;
-		for (auto& i : y) {
-			s.push_back(sign(i));	
-		}
-		
-		for (size_t i = 0; i < y.size() - 1; i++)
+		std::vector<double> all_zeroes;
+		s.push_back(sign(y));	
+		static int t = 0;
+		for (size_t i = 0; i < s.size() - 1; i++)
 		{
 			if ((s[i] + s[i + 1]) == 0)
 			{
 				auto zero = brent->solve(x[i], x[i + 1]);
-
-				//std::cout << x[i] << " " << x[i + 1] << " " << zero << " " << E << std::endl;
+				//std::cout << zero << " " << t++ << std::endl;
 				all_zeroes.push_back(zero);
 			}
 		}
@@ -283,20 +280,18 @@ size_t ODE_Finite_potential_well_solve()
 	std::cout.precision(8);
 
 	auto en = linspace(0., Vo, int(Vo));
-	std::vector<double> psi_b, E_zeroes;
-	//std::cout << en << std::endl;
+	std::vector<double> E_zeroes;
 
 	for (auto& e1 : en)
 	{
-		psi_b.push_back(Wave_function(e1));
+		auto psi_b = Wave_function(e1);
 		E_zeroes = find_all_zeroes(en, psi_b);
 	}
 
 	//std::cout << E_zeroes << std::endl;
-	std::string colour[8] = { "Blue", "Green",
+	std::string colours[8] = { "Blue", "Green",
 															"Red", "Cyan", "Magenta", "Yellow", "Black", "White"};
 	int t = 0;
-	
 	std::ostringstream oss;
 	oss.setf(ios::fixed);
 	oss.precision(2);
@@ -306,12 +301,19 @@ size_t ODE_Finite_potential_well_solve()
 		oss.str(std::string());
 		oss << E;
 		std::cout << "E " << E << std::endl;
-		plot.plot_somedata(X, Y0, "k", "E = "+ oss.str() +" ", colour[t++], 1.0);
+		std::vector<double> Ys;
+		for (auto& k : Y0)
+			Ys.push_back(pow(Vo, t) * k * k);
+
+		if (mode == 2)plot.plot_somedata(X, Ys, "k", "E = "+ oss.str() +" ", colours[t++], 1.0);
+		else plot.plot_somedata(X, Y0, "k", "E = " + oss.str() + " ", colours[t++], 1.0);
 	}
 	//plot.plot_somedata(X, Y1, "k", "Y[1]", "blue");
 
 	std::u32string title = U"Finite potential well";
-	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
+	if(mode == 1)title = U"Infinite potential well = Particle in 1-D Box"; 
+	else if (mode == 2)title = U"quantum_harmonic_oscillator";
+		std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
 	plot.set_title(cv.to_bytes(title));
 	plot.grid_on();
 	plot.show();
@@ -323,171 +325,7 @@ size_t ODE_Finite_potential_well_solve()
 		Wave_function(E);
 		oss.str(std::string());
 		oss << Vo - E;
-		plot.plot_somedata(Y1, Y0, "k", "E = " + oss.str() + " ", colour[t++], 1.0);
-	}
-	plot.show();
-
-	std::cout.setf(std::ios::fixed, std::ios::floatfield);
-	std::cout.precision(15);
-	auto p = std::minmax_element(begin(Y0), end(Y0));
-	std::cout << "minY0 = " << *p.first << ", maxY0 = " << *p.second << '\n';
-	p = std::minmax_element(begin(Y1), end(Y1));
-	std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
-
-	return steps;
-}
-
-size_t ODE_quantum_harmonic_oscillator_solve()
-{
-	double tmin = -2;
-	double tmax = 2;
-	double h = 0.004;
-
-	auto x = tmin;
-
-	std::vector<double> y(2);
-
-	y[0] = .001;
-	y[1] = 0;
-
-	std::vector<double> state(y.size());
-
-	double m = 1;        //mass of the body
-	double k = 100;      // spring constant
-	
-	double w = sqrt(k / m); // classical HO frequency
-	double H = 1;           // normalized Planck constant
-	double L = 1;           // size of the HO
-	double E = 0.0;        //global variable Energy  needed for Sch.Eq, changed in function "Wave function"
-
-	auto V = [&](const auto& x)
-	{
-		if (abs(x) < L)
-			return 0.5 * k * pow(x, 2);
-			else
-			return 0.5 * k * pow(L, 2);
-	};
-
-	auto SE = [&](const auto& x, const auto& psi) {
-
-		state[0] = psi[1];
-
-		state[1] = (2.0 * m / pow(H,2)) * (V(x) - E) * psi[0];
-
-		return state; };
-
-	std::vector<double> X, Y0, Y1;
-
-	size_t steps = 0;
-
-	X.push_back(x);
-	while (x <= tmax)
-	{
-		x += h;
-		X.push_back(x);
-	}
-
-	auto Wave_function = [&](const auto& energy) {
-		E = energy;
-
-		Y0.clear();
-		Y1.clear();
-
-		x = tmin;
-		y[0] = .001;
-		y[1] = 0;
-		Y0.push_back(y[0]);
-		Y1.push_back(y[1]);
-
-		while (x <= tmax)
-		{
-			//Embedded_Fehlberg_7_8(SE, x, y, h);
-			//Embedded_Verner_8_9(SE, x, y, h);
-			Embedded_Fehlberg_3_4(SE, x, y, h);
-			//Midpoint_method_implicit(SE, x, y, h);
-			x += h;
-
-			Y0.push_back(y[0]);
-			Y1.push_back(y[1]);
-			steps++;
-		}
-		return Y0.back();
-	};
-
-	const double epsilon = 1e-10;
-
-	const auto brent = new Brent(epsilon, Wave_function);
-
-	auto find_all_zeroes = [&](const auto& x, const auto& y) {
-
-		//Gives all zeroes in y = Psi(x)
-
-		std::vector<double> all_zeroes, s;
-		for (auto& i : y) {
-			s.push_back(sign(i));
-		}
-
-		for (size_t i = 0; i < y.size() - 1; i++)
-		{
-			if ((s[i] + s[i + 1]) == 0)
-			{
-				auto zero = brent->solve(x[i], x[i + 1]);
-
-				//std::cout << x[i] << " " << x[i + 1] << " " << zero << " " << E << std::endl;
-				all_zeroes.push_back(zero);
-			}
-		}
-		return all_zeroes;
-	};
-
-	std::cout.setf(std::ios::fixed, std::ios::floatfield);
-	std::cout.precision(8);
-
-	auto en = linspace(0., 0.5 * k * pow(L, 2), 50);  //vector of energies where we look for the stable states
-
-	std::vector<double> psi_b, E_zeroes;
-	//std::cout << en << std::endl;
-
-	for (auto& e1 : en)
-	{
-		psi_b.push_back(Wave_function(e1));
-		E_zeroes = find_all_zeroes(en, psi_b);
-	}
-
-	//std::cout << E_zeroes << std::endl;
-	std::string colour[8] = { "Blue", "Green",
-															"Red", "Cyan", "Magenta", "Yellow", "Black", "White" };
-	
-	std::ostringstream oss;
-	oss.setf(ios::fixed);
-	oss.precision(2);
-	
-	for (size_t i = 0; i < 4; i++) {
-		Wave_function(E_zeroes[i]);
-		oss.str(std::string());
-		oss << E_zeroes[i];
-		std::vector<double> Yr;
-		for (auto& k : Y0) 
-			Yr.push_back(pow(100,i)*k*k);
-
-		plot.plot_somedata(X, Yr, "k", "E = " + oss.str() + " ", colour[i], 1.0);
-	}
-	//plot.plot_somedata(X, Y1, "k", "Y[1]", "blue");
-
-	std::u32string title = U"Finite potential well";
-	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
-	plot.set_title(cv.to_bytes(title));
-	plot.grid_on();
-	plot.show();
-
-	//plot.plot_somedata(Y0, Y1, "k", "Y[0] vs Y[1]", "green");
-	int t = 0;
-
-	for (auto& E : E_zeroes) {
-		Wave_function(E);
-		oss.str(std::string());
-		oss << E;
-		plot.plot_somedata(Y1, Y0, "k", "E = " + oss.str() + " ", colour[t++], 1.0);
+		plot.plot_somedata(Y1, Y0, "k", "E = " + oss.str() + " ", colours[t++], 1.0);
 	}
 	plot.show();
 

@@ -36,7 +36,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 template<typename F, typename T>
-T Runge_Kutta_5_6(F f, T t, std::vector<T>& y, T h);
+std::vector<T> Runge_Kutta_5_6(F f, T t, std::vector<T>& y, T h);
 
 ////////////////////////////////////////////////////////////////////////////////
 // int Embedded_Fehlberg_4_5( double (*f)(double, double), double y[],        //
@@ -107,7 +107,7 @@ int Embedded_Fehlberg_5_6(F f, T t, std::vector<T>& y, T h)
 ////////////////////////////////////////////////////////////////////////////////
 
 template<typename F, typename T>
-T Runge_Kutta_5_6(F f, T t, std::vector<T>& y, T h) 
+std::vector<T> Runge_Kutta_5_6(F f, T t, std::vector<T>& y, T h)
 {
   static const T c1 = 682.0 / 8448.0;
   static const T c3 = 3375.0 / 8448.0;
@@ -159,5 +159,5 @@ T Runge_Kutta_5_6(F f, T t, std::vector<T>& y, T h)
   k8 = f(t + h, y + h * (b81 * k1 + b82 * k2 + b83 * k3 + b84 * k4
     + b85 * k5 + k7));
   y += h * (c1 * k1 + c3 * k3 + c4 * k4 + c5 * k5 + c6 * k6);
-  //return err_factor * (k1 + k6 - k7 - k8);
+  return err_factor * (k1 + k6 - k7 - k8);
 }
