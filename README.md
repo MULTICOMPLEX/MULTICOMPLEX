@@ -64,6 +64,7 @@ https://en.wikipedia.org/wiki/Finite_potential_well
 https://en.wikipedia.org/wiki/Quantum_harmonic_oscillator
 
 ![Figure_5](https://user-images.githubusercontent.com/75379917/120670752-05b54580-c491-11eb-9f20-1ccdc0db4223.png)
+![Figure_8](https://user-images.githubusercontent.com/75379917/120684544-1c629900-c49f-11eb-9f51-f846a5ba7239.png)
 
 https://en.wikipedia.org/wiki/Particle_in_a_box
 
