@@ -182,11 +182,11 @@ size_t ODE_harmonic_oscillator()
 }
 
 template <typename T>
-std::vector<T> gaussian_wave_packet(const std::vector<T>& en, const T& sigma=0.5)
+std::vector<T> gaussian_wave_packet(const std::vector<T>& en, const T& sigma=1.0, const T& mu = 0.0)
 {
 	std::vector<T> v;
 	T a = 1./(sigma * sqrt(2 * pi));
-	T mu = 0;
+	a = 4e-1;
 
 	for (auto& x : en)
 	{
@@ -215,6 +215,9 @@ size_t ODE_Quantum_Solver(int mode)
 	std::vector<double> X, Y0, Y1;
 	size_t steps = 0;
 
+	double dispersion = 0;
+	if (mode == 2)tmax -= dispersion;
+
 	double Vo = 50, E = 0;
 	if(mode == 2)Vo = 12;
 
@@ -223,8 +226,8 @@ size_t ODE_Quantum_Solver(int mode)
 	auto V = [&](const auto& x)
 	{
 		if (mode == 2)
-			return - (2 * (E+.5) - x * x);
-					 //- (2 *  n+1   - x * x)
+			return - (2 * E + 1 - (x * x)); //- (2 * E + 0.25 - (x * x)/4); 
+					 //- (2 * n + 1 -  x * x)
 		
 		double L1 = -1., L2 = 1.;
 		if (x > L1 && x < L2) {
@@ -238,7 +241,7 @@ size_t ODE_Quantum_Solver(int mode)
 		state[0] = psi[1];
 
 		if (mode == 2)
-			state[1] = V(x) * psi[0];
+			state[1] =  V(x) * psi[0];
 		else
 			state[1] = 2 * (V(x) - E) * psi[0];
 
@@ -263,7 +266,7 @@ size_t ODE_Quantum_Solver(int mode)
 	y[1] = 1;
 	
 	if (mode == 2) {
-		y[1] = 1e-5; 
+		y[1] = 1e-5;//3e-4;  
 	}
 
 	Y0.push_back(y[0]);
@@ -286,7 +289,9 @@ size_t ODE_Quantum_Solver(int mode)
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
 	std::cout.precision(8);
 
-	std::string colours[16] = { "Blue", "Green",
+	std::string colours[24] = { "Blue", "Green",
+															"Red", "Cyan", "Magenta", "Yellow", "Black", "Silver",
+	"Blue", "Green",
 															"Red", "Cyan", "Magenta", "Yellow", "Black", "Silver",
 	"Blue", "Green",
 															"Red", "Cyan", "Magenta", "Yellow", "Black", "Silver" };
@@ -295,17 +300,18 @@ size_t ODE_Quantum_Solver(int mode)
 	oss.setf(ios::fixed);
 	oss.precision(2);
 
-	std::vector<std::vector<double>> psi_sol, psi_sols;
+	std::vector<std::vector<double>> psi_sola, psi_solb, psi_sols;
 	std::vector<double> E_zeroes;
 
-	auto en = linspace(0., Vo, 2*int(Vo));
+	auto en = linspace(0., Vo, int(2*Vo));
 	
 		E_zeroes = Find_all_zeroes(Wave_function, en);
 
 		for (auto& E : E_zeroes) {
 			Wave_function(E);
 
-			psi_sol.push_back(Y0);
+			psi_sola.push_back(Y0);
+			psi_solb.push_back(Y1);
 			std::vector<double> Ys;
 			for (auto& k : Y0)
 				Ys.push_back(pow(Vo, t) * k * k);
@@ -316,9 +322,9 @@ size_t ODE_Quantum_Solver(int mode)
 	//std::fill(sum_psi_sol.begin(), sum_psi_sol.end(), 0);
 	//auto op_psi_sol = psi_sol.front() + psi_sol.back();
 	
-	auto gwp = gaussian_wave_packet(X, 1.);
-	//plot.plot_somedata(X, gwp, "k", "gwp", "Blue", 1.0);
-	//plot.plot_somedata(X, psi_sol[0], "k", "psi_sol[0]", "Red", 1.0);
+	auto gwp = gaussian_wave_packet(X, 1.0/*sigma*/, -dispersion/*mu*/);
+	plot.plot_somedata(X, gwp, "k", "gwp", "Red", 1.0);
+	//plot.plot_somedata(X, psi_sola[0], "k", "psi_sol[0]", "Red", 1.0);
 	
 	//Wave_function(E_zeroes.back());
 	//Y0 *= 100;
@@ -331,7 +337,8 @@ size_t ODE_Quantum_Solver(int mode)
 			oss.str(std::string());
 			oss << E;
 			std::cout << "E " << E << std::endl;
-			plot.plot_somedata(X, psi_sol[t], "k", "E = " + oss.str() + " ", colours[t], 1.0);
+			plot.plot_somedata(X, psi_sola[t], "k", "E = " + oss.str() + " ", colours[t], 1.0);
+			//plot.plot_somedata(X, psi_solb[t], "k", "E = " + oss.str() + " ", colours[t], 1.0);
 	t++;
 	}
 	//plot.plot_somedata(X, Y1, "k", "Y[1]", "blue");
