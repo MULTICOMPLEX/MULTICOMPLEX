@@ -46,10 +46,6 @@
 //     The new step size is h := scale * h.                                   //
 ////////////////////////////////////////////////////////////////////////////////
 
-template<typename F, typename T>
-void Midpoint_method(F f, T t, std::vector<T>& y, T h);
-template<typename F, typename T>
-void Midpoint_method(F f, T t, std::vector<MX0>& y, T h);
 
 template<typename F, typename T>
 void Runge_Kutta_7_8(F f, T t, std::vector<T>& y, T h);

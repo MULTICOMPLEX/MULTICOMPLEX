@@ -59,9 +59,8 @@ int main(int argc, char* argv[]) {
 	//ODE_quantum_harmonic_oscillator();
 	
 	//ODE_quantum_harmonic_oscillator_complex();
-	
 
-	ODE_Quantum_Solver(0);
+	ODE_Quantum_Solver(2);
 	
 	//ODE_Predator_Prey();
 	//quantum_harmonic_oscillator();
@@ -182,11 +181,28 @@ size_t ODE_harmonic_oscillator()
 	return steps;
 }
 
+template <typename T>
+std::vector<T> gaussian_wave_packet(const std::vector<T>& en, const T& sigma=0.5)
+{
+	std::vector<T> v;
+	T a = 1./(sigma * sqrt(2 * pi));
+	T mu = 0;
+
+	for (auto& x : en)
+	{
+		v.push_back(a * exp(-0.5 * pow((x - mu) / sigma, 2)));
+		//v.push_back(a * exp(-0.5 * pow((x-mu)/sigma, 2)) * sin(2*pi*8*x));
+	}
+
+	return v;
+}
 
 size_t ODE_Quantum_Solver(int mode)
 {
 	double b = 2;
 	if(mode==1)b = 1;
+	else if (mode == 2)
+		b = 6;
 	double tmin = -b;
 	double tmax = b;
 	double h = 0.01;
@@ -196,33 +212,37 @@ size_t ODE_Quantum_Solver(int mode)
 	std::vector<double> y(2);
 
 	std::vector<double> state(y.size());
+	std::vector<double> X, Y0, Y1;
+	size_t steps = 0;
+
 	double Vo = 50, E = 0;
-	//brentq() fails to find last energy level (19.9726) because odeint() doesn’t give solution which drops so fast at b!
-	//This is because of relatively small potential V0 – the smaller V0, the wave function lives longer outside the well, 
-	//and program can not find its exact zero - value.Solution to this problem ? 
-	//Increase V0 or b!Than the numerical values of energies will give you exact energies from analytic model!
+	if(mode == 2)Vo = 12;
+
+	int n = 0;
 
 	auto V = [&](const auto& x)
 	{
-		double L1 = -1, L2 = 1;
-		if (x > L1 && x < L2)
-			if(mode == 2)return Vo * x * x;
-			else return 0.;
-		else
-			return Vo;
+		if (mode == 2)
+			return - (2 * (E+.5) - x * x);
+					 //- (2 *  n+1   - x * x)
+		
+		double L1 = -1., L2 = 1.;
+		if (x > L1 && x < L2) {
+			return 0.;
+		}
+		else return Vo;
 	};
 
 	auto SE = [&](const auto& x, const auto& psi) {
 
 		state[0] = psi[1];
 
-		state[1] = 2.0 * (V(x) - E) * psi[0];
+		if (mode == 2)
+			state[1] = V(x) * psi[0];
+		else
+			state[1] = 2 * (V(x) - E) * psi[0];
 
 		return state; };
-
-	std::vector<double> X, Y0, Y1;
-
-	size_t steps = 0;
 
 	X.push_back(x);
 	while (x <= tmax)
@@ -238,18 +258,22 @@ size_t ODE_Quantum_Solver(int mode)
 	Y1.clear();
 
 	x = tmin;	
-
+	
 	y[0] = 0;
-	if (mode == 2)y[1] = 1e-4;
-	else y[1] = 1;
+	y[1] = 1;
+	
+	if (mode == 2) {
+		y[1] = 1e-5; 
+	}
 
 	Y0.push_back(y[0]);
 	Y1.push_back(y[1]);
 
 		while (x <= tmax)
 		{
-			Midpoint_method_explicit(SE, x, y, h);
-			//Embedded_Fehlberg_3_4(SE, x, y, h);
+			//Midpoint_method_implicit(SE, x, y, h);
+			Embedded_Fehlberg_3_4(SE, x, y, h);
+			//Embedded_Fehlberg_7_8(SE, x, y, h);
 			x += h;
 			Y0.push_back(y[0]);
 			Y1.push_back(y[1]);
@@ -262,31 +286,53 @@ size_t ODE_Quantum_Solver(int mode)
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
 	std::cout.precision(8);
 
-	auto en = linspace(0., Vo, int(Vo)/3);
-	
-	auto E_zeroes = Find_all_zeroes(Wave_function, en);
-
-	//std::cout << E_zeroes << std::endl;
 	std::string colours[16] = { "Blue", "Green",
-															"Red", "Cyan", "Magenta", "Yellow", "Black", "White",
+															"Red", "Cyan", "Magenta", "Yellow", "Black", "Silver",
 	"Blue", "Green",
-															"Red", "Cyan", "Magenta", "Yellow", "Black", "White" };
+															"Red", "Cyan", "Magenta", "Yellow", "Black", "Silver" };
 	int t = 0;
 	std::ostringstream oss;
 	oss.setf(ios::fixed);
 	oss.precision(2);
 
-	for (auto& E : E_zeroes) {
-		Wave_function(E);
-		oss.str(std::string());
-		oss << E;
-		std::cout << "E " << E << std::endl;
-		std::vector<double> Ys;
-		for (auto& k : Y0)
-			Ys.push_back(pow(Vo, t) * k * k);
+	std::vector<std::vector<double>> psi_sol, psi_sols;
+	std::vector<double> E_zeroes;
 
-		if (mode == 2)plot.plot_somedata(X, Ys, "k", "E = "+ oss.str() +" ", colours[t++], 1.0);
-		else plot.plot_somedata(X, Y0, "k", "E = " + oss.str() + " ", colours[t++], 1.0);
+	auto en = linspace(0., Vo, 2*int(Vo));
+	
+		E_zeroes = Find_all_zeroes(Wave_function, en);
+
+		for (auto& E : E_zeroes) {
+			Wave_function(E);
+
+			psi_sol.push_back(Y0);
+			std::vector<double> Ys;
+			for (auto& k : Y0)
+				Ys.push_back(pow(Vo, t) * k * k);
+			psi_sols.push_back(Ys);
+			t++;
+		}
+	
+	//std::fill(sum_psi_sol.begin(), sum_psi_sol.end(), 0);
+	//auto op_psi_sol = psi_sol.front() + psi_sol.back();
+	
+	auto gwp = gaussian_wave_packet(X, 1.);
+	//plot.plot_somedata(X, gwp, "k", "gwp", "Blue", 1.0);
+	//plot.plot_somedata(X, psi_sol[0], "k", "psi_sol[0]", "Red", 1.0);
+	
+	//Wave_function(E_zeroes.back());
+	//Y0 *= 100;
+	//Y0 *= Y0;
+	//plot.plot_somedata(X, Y0, "k", "E = " + oss.str() + " ", colours[t-1], 1.0);
+
+		t = 0;
+		for (auto& E : E_zeroes) {
+			Wave_function(E);
+			oss.str(std::string());
+			oss << E;
+			std::cout << "E " << E << std::endl;
+			plot.plot_somedata(X, psi_sol[t], "k", "E = " + oss.str() + " ", colours[t], 1.0);
+	t++;
 	}
 	//plot.plot_somedata(X, Y1, "k", "Y[1]", "blue");
 
@@ -321,7 +367,6 @@ size_t ODE_Quantum_Solver(int mode)
 
 size_t ODE_quantum_harmonic_oscillator()
 {
-
 	double tmin = -5.5 * pi;
 	double tmax = 5.5 * pi;
 	double h = 0.001;
@@ -786,7 +831,6 @@ std::vector<T> Find_all_zeroes
 	const auto brent = new Brent(epsilon, Wave_function);
 
 	std::vector<T> s;
-	
 	std::vector<T> all_zeroes;
 
 	for (auto& e1 : en)

@@ -1141,6 +1141,36 @@ template <typename T>
 inline const std::vector<T> operator/=
 (
 	std::vector<T>& a,
+	const T& b
+	)
+{
+	std::size_t i;
+
+	for (i = 0; i < a.size(); i++)
+		a[i] /= b;
+
+	return a;
+}
+
+template <typename T>
+inline const std::vector<T> operator/=
+(
+	std::vector<T>& a,
+	const int& b
+	)
+{
+	std::size_t i;
+
+	for (i = 0; i < a.size(); i++)
+		a[i] /= b;
+
+	return a;
+}
+
+template <typename T>
+inline const std::vector<T> operator/=
+(
+	std::vector<T>& a,
 	const std::vector<T>& b
 	)
 {
