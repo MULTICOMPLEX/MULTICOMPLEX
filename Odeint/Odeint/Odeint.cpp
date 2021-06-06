@@ -201,7 +201,7 @@ size_t ODE_Quantum_Solver(int mode)
 	double b = 2;
 	if(mode==1)b = 1;
 	else if (mode == 2)
-		b = 8;
+		b = 6;
 	double tmin = -b;
 	double tmax = b;
 	double h = 0.01;
@@ -212,19 +212,20 @@ size_t ODE_Quantum_Solver(int mode)
 	std::vector<double> X, Y0, Y1;
 	size_t steps = 0;
 
-	double dispersion = 0, offset = 1;
-
 	auto x = tmin;
-
+	
+	double dispersion = 1, offset = 0;
 	double Vo = 20, E = 0;
+	
 	if(mode == 2)Vo = 12;
-
+	if (Vo == 0)dispersion = 1;
+	
 	int n = 0;
 
 	auto V = [&](const auto& x)
 	{
 		if (mode == 2)
-			return  -(2 * E + 1 - (x * x)); //- (2 * E + 0.25 - (x * x)/4); 
+			return  -(2 * E + (1/dispersion) - (x * x) / dispersion); //- (2 * E + 0.25 - (x * x)/4); 
 					 //- (2 * n + 1 -  x * x)
 		
 		double L1 = -1., L2 = 1.;
@@ -239,7 +240,7 @@ size_t ODE_Quantum_Solver(int mode)
 		state[0] = psi[1];
 
 		if (mode == 2)
-			state[1] =  V(x) * psi[0];
+			state[1] =  V(x - offset) * psi[0];
 		else
 			state[1] = 2 * (V(x) - E) * psi[0];
 
@@ -272,8 +273,8 @@ size_t ODE_Quantum_Solver(int mode)
 
 		while (x <= tmax)
 		{
-			//Midpoint_method_explicit(SE, x, y, h);
-			Midpoint_method_implicit(SE, x, y, h);
+			Midpoint_method_explicit(SE, x, y, h);
+			//Midpoint_method_implicit(SE, x, y, h);
 			//Euler_method(SE, x, y, h);
 			//Embedded_Fehlberg_3_4(SE, x, y, h);
 			//Embedded_Fehlberg_7_8(SE, x, y, h);
@@ -283,7 +284,7 @@ size_t ODE_Quantum_Solver(int mode)
 			Y1.push_back(y[1]);
 			steps++;
 		}
-		return Y0.back();
+		return *Y0.rbegin();
 	};
 
 
@@ -302,10 +303,12 @@ size_t ODE_Quantum_Solver(int mode)
 	oss.precision(2);
 
 	std::vector<std::vector<double>> psi_sola, psi_solb, psi_sols;
-	std::vector<double> E_zeroes;
+	std::vector<double> E_zeroes,en;
 
-	auto en = linspace(0., Vo, int(2*Vo));
 	
+	if(Vo==0)en = linspace(0., h, int(2 + h));
+	else en = linspace(0., Vo + h, int((h + 2 * (Vo + (dispersion - 1)))));
+
 		E_zeroes = Find_all_zeroes(Wave_function, en);
 
 		for (auto& E : E_zeroes) {
@@ -315,7 +318,7 @@ size_t ODE_Quantum_Solver(int mode)
 			psi_solb.push_back(Y1);
 			std::vector<double> Ys;
 			for (auto& k : Y0)
-				Ys.push_back(pow(Vo, t) * k * k);
+				Ys.push_back(k * k);
 			psi_sols.push_back(Ys);
 			t++;
 		}
