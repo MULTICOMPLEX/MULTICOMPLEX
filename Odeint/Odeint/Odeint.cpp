@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
 	
 	//ODE_quantum_harmonic_oscillator_complex();
 
-	ODE_Quantum_Solver(0);
+	ODE_Quantum_Solver(2);
 	
 	//ODE_Predator_Prey();
 	//quantum_harmonic_oscillator();
@@ -217,8 +217,7 @@ size_t ODE_Quantum_Solver(int mode)
 	double dispersion = 1, offset = 0;
 	double Vo = 20, E = 0;
 	
-	if(mode == 2)Vo = 12;
-	if (Vo == 0)dispersion = 1;
+	if(mode == 2)Vo = 2;
 	
 	int n = 0;
 
@@ -304,9 +303,11 @@ size_t ODE_Quantum_Solver(int mode)
 
 	std::vector<std::vector<double>> psi_sola, psi_solb, psi_sols;
 	std::vector<double> E_zeroes,en;
-
 	
-	if(Vo==0)en = linspace(0., h, int(2 + h));
+	if (Vo == 0) {
+		if (dispersion >= 2)en = linspace(0., 1/(sqrt(dispersion)), int(h + 2 * (dispersion - 1)));
+		else en = linspace(0., .5, int(h + 2));
+	}
 	else en = linspace(0., Vo + h, int((h + 2 * (Vo + (dispersion - 1)))));
 
 		E_zeroes = Find_all_zeroes(Wave_function, en);
