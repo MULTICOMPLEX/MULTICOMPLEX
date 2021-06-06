@@ -4,6 +4,25 @@ template<typename F, typename T>
 void fehlberg_4_5(F f, T t, std::vector<T>& y, T h) {
 
   std::vector<T> k1, k2, k3, k4, k5, k6;
+  const T a1 = 3 / 8;
+  const T a2 = 3 / 32;
+  const T a3 = 9 / 32;
+  const T a4 = 12 / 13;
+  const T a5 = 1932 / 2197;
+  const T a6 = 7200 / 2197;
+  const T a7 = 7296 / 2197;
+  const T a8 = 439 / 216;
+
+  const T a9 = 3680 / 513;
+  const T a10 = 845 / 4104;
+  const T a11 = 8 / 27;
+  const T a12 = 3544 / 2565;
+  const T a13 = 1859 / 4104;
+  const T a14 = 11 / 40;
+
+  const T a15 = 128 / 4275;
+  const T a16 = 2197 / 75240;
+  const T a17 = 2 / 55;
 
   k1 = h * f(t, y);
   k2 = h * f(t + h * 0.25, y + k1 * 0.25);

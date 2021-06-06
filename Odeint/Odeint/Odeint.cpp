@@ -10,7 +10,6 @@
 #include "Embedded_Verner_8_9.hpp"
 #include "Embedded_Fehlberg_7_8.hpp"
 #include "Embedded_Fehlberg_3_4.hpp"
-#include "fehlberg_4_5.hpp"
 #include "embedded_fehlberg_5_6.hpp"
 #include "Euler_method.hpp"
 #include "Midpoint_method.hpp"
@@ -60,7 +59,7 @@ int main(int argc, char* argv[]) {
 	
 	//ODE_quantum_harmonic_oscillator_complex();
 
-	ODE_Quantum_Solver(2);
+	ODE_Quantum_Solver(0);
 	
 	//ODE_Predator_Prey();
 	//quantum_harmonic_oscillator();
@@ -202,12 +201,10 @@ size_t ODE_Quantum_Solver(int mode)
 	double b = 2;
 	if(mode==1)b = 1;
 	else if (mode == 2)
-		b = 6;
+		b = 8;
 	double tmin = -b;
 	double tmax = b;
 	double h = 0.01;
-
-	auto x = tmin;
 
 	std::vector<double> y(2);
 
@@ -215,10 +212,11 @@ size_t ODE_Quantum_Solver(int mode)
 	std::vector<double> X, Y0, Y1;
 	size_t steps = 0;
 
-	double dispersion = 0;
-	if (mode == 2)tmax -= dispersion;
+	double dispersion = 0, offset = 1;
 
-	double Vo = 50, E = 0;
+	auto x = tmin;
+
+	double Vo = 20, E = 0;
 	if(mode == 2)Vo = 12;
 
 	int n = 0;
@@ -226,7 +224,7 @@ size_t ODE_Quantum_Solver(int mode)
 	auto V = [&](const auto& x)
 	{
 		if (mode == 2)
-			return - (2 * E + 1 - (x * x)); //- (2 * E + 0.25 - (x * x)/4); 
+			return  -(2 * E + 1 - (x * x)); //- (2 * E + 0.25 - (x * x)/4); 
 					 //- (2 * n + 1 -  x * x)
 		
 		double L1 = -1., L2 = 1.;
@@ -274,9 +272,12 @@ size_t ODE_Quantum_Solver(int mode)
 
 		while (x <= tmax)
 		{
-			//Midpoint_method_implicit(SE, x, y, h);
-			Embedded_Fehlberg_3_4(SE, x, y, h);
+			//Midpoint_method_explicit(SE, x, y, h);
+			Midpoint_method_implicit(SE, x, y, h);
+			//Euler_method(SE, x, y, h);
+			//Embedded_Fehlberg_3_4(SE, x, y, h);
 			//Embedded_Fehlberg_7_8(SE, x, y, h);
+			
 			x += h;
 			Y0.push_back(y[0]);
 			Y1.push_back(y[1]);
@@ -322,8 +323,8 @@ size_t ODE_Quantum_Solver(int mode)
 	//std::fill(sum_psi_sol.begin(), sum_psi_sol.end(), 0);
 	//auto op_psi_sol = psi_sol.front() + psi_sol.back();
 	
-	auto gwp = gaussian_wave_packet(X, 1.0/*sigma*/, -dispersion/*mu*/);
-	plot.plot_somedata(X, gwp, "k", "gwp", "Red", 1.0);
+	auto gwp = gaussian_wave_packet(X, 1.0/*sigma*/, -offset/*mu*/);
+	//plot.plot_somedata(X, gwp, "k", "gwp", "Red", 1.0);
 	//plot.plot_somedata(X, psi_sola[0], "k", "psi_sol[0]", "Red", 1.0);
 	
 	//Wave_function(E_zeroes.back());
@@ -421,11 +422,8 @@ y[1] = 0;
 	{
 		//Embedded_Verner_8_9(func, x, y, h);
 		Embedded_Fehlberg_7_8(func, x, y, h);
-		//fehlberg_4_5(func, x, y, h);
-
 		//Embedded_Fehlberg_3_4(func, x, y, h);
 		//Embedded_Fehlberg_5_6(func, x, y, h);
-
 		//Midpoint_method_explicit(func, x, y, h);
 
 		x += h;
@@ -493,11 +491,8 @@ size_t ODE_quantum_harmonic_oscillator_complex()
 	{
 		//Embedded_Verner_8_9(func, x, y, h);
 		Embedded_Fehlberg_7_8(func, x, y, h);
-		//fehlberg_4_5(func, x, y, h);
-
 		//Embedded_Fehlberg_3_4(func, x, y, h);
 		//Embedded_Fehlberg_5_6(func, x, y, h);
-
 		//Midpoint_method_explicit(func, x, y, h);
 
 		x += h;
@@ -848,7 +843,7 @@ std::vector<T> Find_all_zeroes
 
 		all_zeroes.clear();
 
-		static int t = 0;
+		//static int t = 0;
 		for (size_t i = 0; i < s.size() - 1; i++)
 		{
 			if ((s[i] + s[i + 1]) == 0)
@@ -859,6 +854,6 @@ std::vector<T> Find_all_zeroes
 			}
 		}
 	}
-	delete brent;
+	
 	return all_zeroes;
 }
