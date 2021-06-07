@@ -300,7 +300,7 @@ size_t ODE_Quantum_Solver(int mode)
 	
 	if (Vo == 0) {
 		if (sigma >= 2)en = linspace(0., 1/(sqrt(sigma)), int(h + 2 * (sigma - 1)));
-		else en = linspace(0., .5, int(h + 2));
+		else en = linspace(0., .75, int(h + 2));
 	}
 	else en = linspace(0., Vo + h, int((h + 2 * (Vo + (sigma - 1)))));
 
@@ -327,7 +327,9 @@ size_t ODE_Quantum_Solver(int mode)
 Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 0.0072973525693 = Fine-structure constant\\n\
 2.377343271833 ≈ 4 sqrt(C_HSM), C_HSM = Hafner-Sarnak-McCurley Constant";//4 sqrt(C_HSM)≈2.3773476711
+	//http://www.totemconsulting.ca/FineStructure.html
 	//https://mathworld.wolfram.com/Hafner-Sarnak-McCurleyConstant.html
+
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv1; 
 	
 	plot.plot_somedata(X, gwp, "k", cv1.to_bytes(text), "Red", 1.0);
