@@ -186,7 +186,7 @@ std::vector<T> gaussian_wave_packet(const std::vector<T>& en, const T& sigma=1.0
 {
 	std::vector<T> v;
 	T a = 1./(sigma * sqrt(2 * pi));
-	a = 2.0115e-2;
+	a = 2.0111e-2;
 
 	for (auto& x : en)
 	{
@@ -321,14 +321,21 @@ size_t ODE_Quantum_Solver(int mode)
 	//std::fill(sum_psi_sol.begin(), sum_psi_sol.end(), 0);
 	//auto op_psi_sol = psi_sol.front() + psi_sol.back();
 	
-	auto gwp = gaussian_wave_packet(X, (1+2*0.0072973525693)/(1 +sqrt(2)) * sqrt(sigma), mu);//σ μ
-	std::u32string text = U"Gaussian wave packet((1+2*0.0072973525693) / (1 + sqrt(2)) * sqrt(32), 1)\\n\
+	auto gwp = gaussian_wave_packet(X, (1 + 2 * 0.0072973525693) / (1 +sqrt(2)) * sqrt(sigma), mu);//σ μ
+	std::u32string text = U"Gaussian wave packet( (1 + 2 * 0.0072973525693) / (1 + sqrt(2)) * sqrt(32), 1 )\\n\
 Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 0.0072973525693 = Fine-structure constant\\n\
 2.377343271833 ≈ 4 sqrt(C_HSM), C_HSM = Hafner-Sarnak-McCurley Constant";//4 sqrt(C_HSM)≈2.3773476711
 	//https://mathworld.wolfram.com/Hafner-Sarnak-McCurleyConstant.html
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv1; 
+	
 	plot.plot_somedata(X, gwp, "k", cv1.to_bytes(text), "Red", 1.0);
+
+	gwp = gaussian_wave_packet(X, 1 / (1 + sqrt(2)) * sqrt(sigma), mu);//σ μ
+	text = U"Gaussian wave packet(1 / (1 + sqrt(2)) * sqrt(32), 1)";
+
+	//plot.plot_somedata(X, gwp, "k", cv1.to_bytes(text), "Yellow");
+
 	//plot.plot_somedata(X, psi_sola[0], "k", "psi_sol[0]", "Red", 1.0);
 	
 	//Wave_function(E_zeroes.back());
