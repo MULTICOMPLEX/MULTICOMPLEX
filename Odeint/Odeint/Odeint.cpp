@@ -321,7 +321,8 @@ size_t ODE_Quantum_Solver(int mode)
 	//std::fill(sum_psi_sol.begin(), sum_psi_sol.end(), 0);
 	//auto op_psi_sol = psi_sol.front() + psi_sol.back();
 	
-	auto gwp = gaussian_wave_packet(X, (1 + 2 * 0.0072973525693) / (1 +sqrt(2)) * sqrt(sigma), mu);//σ μ
+	auto gwp = gaussian_wave_packet(X, (1 + 2 * 0.0072973525693) / (1 + sqrt(2)) * sqrt(sigma), mu);//σ μ
+	//gwp -= gaussian_wave_packet(X, 1 / (1 + sqrt(2)) * sqrt(sigma + 1 + 2 * 0.0072973525693), mu);
 	std::u32string text = U"Gaussian wave packet( (1 + 2 * 0.0072973525693) / (1 + sqrt(2)) * sqrt(32), 1 )\\n\
 Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 0.0072973525693 = Fine-structure constant\\n\
