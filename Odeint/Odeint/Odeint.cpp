@@ -47,6 +47,7 @@ std::vector<T> Find_all_zeroes
 );
 
 plot_matplotlib plot;
+std::string colours(const int& t);
 
 int main(int argc, char* argv[]) {
 
@@ -185,7 +186,7 @@ std::vector<T> gaussian_wave_packet(const std::vector<T>& en, const T& sigma=1.0
 {
 	std::vector<T> v;
 	T a = 1./(sigma * sqrt(2 * pi));
-	a = 4e-1;
+	a = 2.0115e-2;
 
 	for (auto& x : en)
 	{
@@ -201,9 +202,9 @@ size_t ODE_Quantum_Solver(int mode)
 	double b = 2;
 	if(mode==1)b = 1;
 	else if (mode == 2)
-		b = 6;
+		b = 9;
 	double tmin = -b;
-	double tmax = b;
+	double tmax = 10;
 	double h = 0.01;
 
 	std::vector<double> y(2);
@@ -214,17 +215,17 @@ size_t ODE_Quantum_Solver(int mode)
 
 	auto x = tmin;
 	
-	double dispersion = 1, offset = 0;
+	double sigma = 32, mu = 1;
 	double Vo = 20, E = 0;
 	
-	if(mode == 2)Vo = 2;
+	if(mode == 2)Vo = 0;
 	
 	int n = 0;
 
 	auto V = [&](const auto& x)
 	{
 		if (mode == 2)
-			return  -(2 * E + (1/dispersion) - (x * x) / dispersion); //- (2 * E + 0.25 - (x * x)/4); 
+			return  -(2 * E - (x * x) / sigma); //- (2 * E + 0.25 - (x * x)/4); 
 					 //- (2 * n + 1 -  x * x)
 		
 		double L1 = -1., L2 = 1.;
@@ -239,7 +240,7 @@ size_t ODE_Quantum_Solver(int mode)
 		state[0] = psi[1];
 
 		if (mode == 2)
-			state[1] =  V(x - offset) * psi[0];
+			state[1] =  V(x - mu) * psi[0];
 		else
 			state[1] = 2 * (V(x) - E) * psi[0];
 
@@ -286,16 +287,9 @@ size_t ODE_Quantum_Solver(int mode)
 		return *Y0.rbegin();
 	};
 
-
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
 	std::cout.precision(8);
 
-	std::string colours[24] = { "Blue", "Green",
-															"Red", "Cyan", "Magenta", "Yellow", "Black", "Silver",
-	"Blue", "Green",
-															"Red", "Cyan", "Magenta", "Yellow", "Black", "Silver",
-	"Blue", "Green",
-															"Red", "Cyan", "Magenta", "Yellow", "Black", "Silver" };
 	int t = 0;
 	std::ostringstream oss;
 	oss.setf(ios::fixed);
@@ -305,10 +299,10 @@ size_t ODE_Quantum_Solver(int mode)
 	std::vector<double> E_zeroes,en;
 	
 	if (Vo == 0) {
-		if (dispersion >= 2)en = linspace(0., 1/(sqrt(dispersion)), int(h + 2 * (dispersion - 1)));
+		if (sigma >= 2)en = linspace(0., 1/(sqrt(sigma)), int(h + 2 * (sigma - 1)));
 		else en = linspace(0., .5, int(h + 2));
 	}
-	else en = linspace(0., Vo + h, int((h + 2 * (Vo + (dispersion - 1)))));
+	else en = linspace(0., Vo + h, int((h + 2 * (Vo + (sigma - 1)))));
 
 		E_zeroes = Find_all_zeroes(Wave_function, en);
 
@@ -327,14 +321,20 @@ size_t ODE_Quantum_Solver(int mode)
 	//std::fill(sum_psi_sol.begin(), sum_psi_sol.end(), 0);
 	//auto op_psi_sol = psi_sol.front() + psi_sol.back();
 	
-	auto gwp = gaussian_wave_packet(X, 1.0/*sigma*/, -offset/*mu*/);
-	//plot.plot_somedata(X, gwp, "k", "gwp", "Red", 1.0);
+	auto gwp = gaussian_wave_packet(X, (1+2*0.0072973525693)/(1 +sqrt(2)) * sqrt(sigma), mu);//σ μ
+	std::u32string text = U"Gaussian wave packet((1+2*0.0072973525693) / (1 + sqrt(2)) * sqrt(32), 1)\\n\
+Normal distribution(σ = 2.377343271833, μ = 1)\\n\
+0.0072973525693 = Fine-structure constant\\n\
+2.377343271833 ≈ 4 sqrt(C_HSM), C_HSM = Hafner-Sarnak-McCurley Constant";//4 sqrt(C_HSM)≈2.3773476711
+	//https://mathworld.wolfram.com/Hafner-Sarnak-McCurleyConstant.html
+	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv1; 
+	plot.plot_somedata(X, gwp, "k", cv1.to_bytes(text), "Red", 1.0);
 	//plot.plot_somedata(X, psi_sola[0], "k", "psi_sol[0]", "Red", 1.0);
 	
 	//Wave_function(E_zeroes.back());
 	//Y0 *= 100;
 	//Y0 *= Y0;
-	//plot.plot_somedata(X, Y0, "k", "E = " + oss.str() + " ", colours[t-1], 1.0);
+	//plot.plot_somedata(X, Y0, "k", "E = " + oss.str() + " ", colours(t-1), 1.0);
 
 		t = 0;
 		for (auto& E : E_zeroes) {
@@ -342,8 +342,8 @@ size_t ODE_Quantum_Solver(int mode)
 			oss.str(std::string());
 			oss << E;
 			std::cout << "E " << E << std::endl;
-			plot.plot_somedata(X, psi_sola[t], "k", "E = " + oss.str() + " ", colours[t], 1.0);
-			//plot.plot_somedata(X, psi_solb[t], "k", "E = " + oss.str() + " ", colours[t], 1.0);
+			plot.plot_somedata(X, psi_sola[t], "k", "E = " + oss.str() + " ", colours(t), 1.0);
+			//plot.plot_somedata(X, psi_solb[t], "k", "E = " + oss.str() + " ", colours(t), 1.0);
 	t++;
 	}
 	//plot.plot_somedata(X, Y1, "k", "Y[1]", "blue");
@@ -363,7 +363,7 @@ size_t ODE_Quantum_Solver(int mode)
 		Wave_function(E);
 		oss.str(std::string());
 		oss << E;
-		plot.plot_somedata(Y1, Y0, "k", "E = " + oss.str() + " ", colours[t++], 1.0);
+		plot.plot_somedata(Y1, Y0, "k", "E = " + oss.str() + " ", colours(t++), 1.0);
 	}
 	plot.show();
 
@@ -860,4 +860,15 @@ std::vector<T> Find_all_zeroes
 	}
 	
 	return all_zeroes;
+}
+
+std::string colours(const int& t)
+{
+	std::string colours[24] = { "Blue", "Green",
+																"Red", "Cyan", "Magenta", "Yellow", "Black", "Silver",
+		"Blue", "Green",
+																"Red", "Cyan", "Magenta", "Yellow", "Black", "Silver",
+		"Blue", "Green",
+																"Red", "Cyan", "Magenta", "Yellow", "Black", "Silver" };
+	return colours[t];
 }

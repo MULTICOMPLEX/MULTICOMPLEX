@@ -167,7 +167,7 @@ void plot_matplotlib::set_ylabel(std::string ylabel, std::string properties)
 }
 
 //! \brief Set the plot title
-void plot_matplotlib::set_title(string title)
+void plot_matplotlib::set_title(std::string title)
 {
   PyRun_SimpleStringStd("plt.title('" + title + "')");
 }
