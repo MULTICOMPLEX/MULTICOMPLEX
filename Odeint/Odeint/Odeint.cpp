@@ -31,7 +31,7 @@ size_t ODE_Van_der_Pol_oscillator();
 size_t ODE_quantum_harmonic_oscillator();
 size_t ODE_Predator_Prey();
 
-size_t ODE_Quantum_Solver(int mode = 0);
+size_t ODE_Quantum_Solver(int mode = 0, bool sc = true);
 size_t ODE_quantum_harmonic_oscillator_complex();
 
 template <typename T>
@@ -128,8 +128,8 @@ size_t ODE_harmonic_oscillator()
 
 	std::vector<double> y(2);
 
-	y[0] = 0.5*sqrt(2);
-	y[1] = 0.5*sqrt(2);
+	y[0] = 0;//0.5*sqrt(2);
+	y[1] = 1;//0.5*sqrt(2)0
 
 	std::vector<double> dydx(y.size());
 
@@ -144,9 +144,9 @@ size_t ODE_harmonic_oscillator()
 		const double zeta = 0.3;//0.3
 		int n = 5;
 
-		dydx[0] =   n * y[1];
+		dydx[0] =  n * y[1];
 		//dydx[1] = -2. * zeta * w0 * y[1] - pow(w0, 2) * y[0];
-		dydx[1] = - n * y[0];
+		dydx[1] = -n * y[0];
 
 		return dydx; };
 
@@ -163,8 +163,8 @@ size_t ODE_harmonic_oscillator()
 		steps++;
 	}
 
-	plot.plot_somedata(X, Y0, "k", "cosine", "blue");
-	plot.plot_somedata(X, Y1, "k", "sine", "red");
+	plot.plot_somedata(X, Y0, "k", "cosine", "blue", 1);
+	plot.plot_somedata(X, Y1, "k", "sine", "red", 1);
 
 	std::u32string title = U"ÿ = -y";
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
@@ -197,20 +197,21 @@ std::vector<T> gaussian_wave_packet(const std::vector<T>& en, const T& sigma=1.0
 	return v;
 }
 
-size_t ODE_Quantum_Solver(int mode)
+size_t ODE_Quantum_Solver(int mode, bool sc)
 {
 	double b = 2;
 	if(mode==1)b = 1;
 	else if (mode == 2)
 		b = 9;
 	double tmin = -b;
-	double tmax = 10;
-	double h = 0.01;
+	double tmax = b;
+	if (mode == 2)tmax = 10;
+	double h = 0.005;
 
-	std::vector<double> y(2);
+	std::vector<double> y(4);
 
 	std::vector<double> state(y.size());
-	std::vector<double> X, Y0, Y1;
+	std::vector<double> X, Y0, Y1, Y2, Y3;
 	size_t steps = 0;
 
 	auto x = tmin;
@@ -225,7 +226,7 @@ size_t ODE_Quantum_Solver(int mode)
 	auto V = [&](const auto& x)
 	{
 		if (mode == 2)
-			return  -(2 * E - (x * x) / sigma); //- (2 * E + 0.25 - (x * x)/4); 
+			return  -(2 * E - (x * x) / sigma);
 					 //- (2 * n + 1 -  x * x)
 		
 		double L1 = -1., L2 = 1.;
@@ -240,11 +241,15 @@ size_t ODE_Quantum_Solver(int mode)
 		state[0] = psi[1];
 
 		if (mode == 2)
-			state[1] =  V(x - mu) * psi[0];
+			state[1] = V(x - mu) * psi[0];
 		else
 			state[1] = 2 * (V(x) - E) * psi[0];
-
-		return state; };
+		
+		state[2] = psi[3] * 7;
+		state[3] = -psi[2] * 7;
+		
+		return state; 
+	};
 
 	X.push_back(x);
 	while (x <= tmax)
@@ -258,11 +263,16 @@ size_t ODE_Quantum_Solver(int mode)
 
 	Y0.clear();
 	Y1.clear();
+	Y2.clear();
+	Y3.clear();
 
 	x = tmin;	
 	
 	y[0] = 0;
 	y[1] = 1;
+	
+	y[2] = 0;
+	y[3] = 1;
 	
 	if (mode == 2) {
 		y[1] = 1e-5;//3e-4;  
@@ -270,11 +280,14 @@ size_t ODE_Quantum_Solver(int mode)
 
 	Y0.push_back(y[0]);
 	Y1.push_back(y[1]);
+	Y2.push_back(y[2] * y[0]);
+	Y3.push_back(y[3] * y[0]);
+
 
 		while (x <= tmax)
 		{
-			Midpoint_method_explicit(SE, x, y, h);
-			//Midpoint_method_implicit(SE, x, y, h);
+			//Midpoint_method_explicit(SE, x, y, h);
+			Midpoint_method_implicit(SE, x, y, h);
 			//Euler_method(SE, x, y, h);
 			//Embedded_Fehlberg_3_4(SE, x, y, h);
 			//Embedded_Fehlberg_7_8(SE, x, y, h);
@@ -282,6 +295,9 @@ size_t ODE_Quantum_Solver(int mode)
 			x += h;
 			Y0.push_back(y[0]);
 			Y1.push_back(y[1]);
+			Y2.push_back(y[2] * y[0]);
+			Y3.push_back(y[3] * y[0]);
+
 			steps++;
 		}
 		return *Y0.rbegin();
@@ -332,15 +348,17 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv1; 
 	
-	plot.plot_somedata(X, gwp, "k", cv1.to_bytes(text), "Red", 1.0);
+	if (mode == 2)plot.plot_somedata(X, gwp, "k", cv1.to_bytes(text), "Red", 1.0);
 
 	gwp = gaussian_wave_packet(X, 1 / (1 + sqrt(2)) * sqrt(sigma), mu);//σ μ
 	text = U"Gaussian wave packet(1 / (1 + sqrt(2)) * sqrt(32), 1)";
 
 	//plot.plot_somedata(X, gwp, "k", cv1.to_bytes(text), "Yellow");
 
-	//plot.plot_somedata(X, psi_sola[0], "k", "psi_sol[0]", "Red", 1.0);
-	
+	if (sc) {
+		plot.plot_somedata(X, Y2, "k", "y[2]", "Red", 1.0);
+		plot.plot_somedata(X, Y3, "k", "y[3]", "Green", 1.0);
+	}
 	//Wave_function(E_zeroes.back());
 	//Y0 *= 100;
 	//Y0 *= Y0;

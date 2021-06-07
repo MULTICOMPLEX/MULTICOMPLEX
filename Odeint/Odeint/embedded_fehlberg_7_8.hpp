@@ -48,13 +48,13 @@
 
 
 template<typename F, typename T>
-void Runge_Kutta_7_8(F f, T t, std::vector<T>& y, T h);
+void Runge_Kutta_7_8(F& f, const T& t, std::vector<T>& y, const T& h);
 
 template<typename F, typename T>
-void Runge_Kutta_7_8(F f, T t, std::vector<MX0>& y, T h);
+void Runge_Kutta_7_8(F& f, const T& t, std::vector<MX0>& y, const T& h);
 
 template<typename F, typename T>
-int Embedded_Fehlberg_7_8(F f, T t, std::vector<MX0>& y, T h) {
+int Embedded_Fehlberg_7_8(F& f, const T& t, std::vector<MX0>& y, const T& h) {
 
   Runge_Kutta_7_8(f, t, y, h);
 
@@ -62,7 +62,7 @@ int Embedded_Fehlberg_7_8(F f, T t, std::vector<MX0>& y, T h) {
 }
 
 template<typename F, typename T>
-int Embedded_Fehlberg_7_8(F f, T t, std::vector<T>& y, T h) {
+int Embedded_Fehlberg_7_8(F& f, const T& t, std::vector<T>& y, const T& h) {
 
   Runge_Kutta_7_8(f, t, y, h);
 
@@ -70,7 +70,7 @@ int Embedded_Fehlberg_7_8(F f, T t, std::vector<T>& y, T h) {
 }
 
 template<typename F, typename T>
-void Runge_Kutta_7_8(F f, T t, std::vector<T>& y, T h) {
+void Runge_Kutta_7_8(F& f, const T& t, std::vector<T>& y, const T& h) {
 
   static const T c_1_11 = 41.0 / 840.0;
   static const T c6 = 34.0 / 105.0;
@@ -173,7 +173,7 @@ void Runge_Kutta_7_8(F f, T t, std::vector<T>& y, T h) {
 
 
 template<typename F, typename T>
-void Runge_Kutta_7_8(F f, T t, std::vector<MX0>& y, T h) {
+void Runge_Kutta_7_8(F& f, const T& t, std::vector<MX0>& y, const T& h) {
 
   static const T c_1_11 = 41.0 / 840.0;
   static const T c6 = 34.0 / 105.0;

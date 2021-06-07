@@ -32,10 +32,10 @@
 
 
 template<typename F, typename T>
-void Runge_Kutta_3_4(F f, T t, std::vector<T>& y, T h);
+void Runge_Kutta_3_4(F& f, const T& t, std::vector<T>& y, const T& h);
 
 template<typename F, typename T>
-int Embedded_Fehlberg_3_4(F f, T t, std::vector<T>& y, T h) {
+int Embedded_Fehlberg_3_4(F& f, const T& t, std::vector<T>& y, const T& h) {
 
   Runge_Kutta_3_4(f, t, y, h);
 
@@ -43,7 +43,7 @@ int Embedded_Fehlberg_3_4(F f, T t, std::vector<T>& y, T h) {
 }
 
 template<typename F, typename T>
-void Runge_Kutta_3_4(F f, T t, std::vector<T>& y, T h)
+void Runge_Kutta_3_4(F& f, const T& t, std::vector<T>& y, const T& h)
 {
   static const T a2 = 2.0 / 7.0;
   static const T a3 = 7.0 / 15.0;

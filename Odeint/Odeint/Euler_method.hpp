@@ -1,7 +1,7 @@
 #pragma once
 
 template<typename F, typename T>
-void Euler_method(F f, T t, std::vector<T>& y, T h)
+void Euler_method(F& f, const T& t, std::vector<T>& y, const T& h)
 {
   std::vector<T> k1;
 
