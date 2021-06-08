@@ -31,7 +31,7 @@ size_t ODE_Van_der_Pol_oscillator();
 size_t ODE_quantum_harmonic_oscillator();
 size_t ODE_Predator_Prey();
 
-size_t ODE_Quantum_Solver(int mode = 0, bool sc = true);
+size_t ODE_Quantum_Solver(int mode = 0);
 size_t ODE_quantum_harmonic_oscillator_complex();
 
 template <typename T>
@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
 	
 	//ODE_quantum_harmonic_oscillator_complex();
 
-	ODE_Quantum_Solver(2,1);
+	ODE_Quantum_Solver(2);
 	
 	//ODE_Predator_Prey();
 	//quantum_harmonic_oscillator();
@@ -200,20 +200,20 @@ std::vector<T> gaussian_wave_packet(const std::vector<T>& en, const T& sigma=1.0
 template <typename T>
 std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
 (
-	const T& Vo,
+	const T& Vo_b,
+	const T& Vo_e,
 	const T& tmin,
 	const T& tmax,
 	const T& h
 )
 {
-
 	std::vector<T> y(4);
-
 	std::vector<T> state(y.size());
 	std::vector<T> Y0, Y1, Y2, Y3;
 
 	T x = tmin;
 	T E = 0;
+	auto en = linspace(Vo_b, Vo_e + h, int(h + 2 * abs(Vo_e - Vo_b)));
 
 	auto SE = [&](const auto& x, const auto& psi) {
 
@@ -269,9 +269,7 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
 	};
 
 	
-	std::vector<T> E_zeroes1, E_zeroes2, en;
-
-	en = linspace(0., Vo + h, int(h + 2 * Vo));
+	std::vector<T> E_zeroes1, E_zeroes2;
 
 	//E_zeroes1 = Find_all_zeroes(Wave_function, en);
 	sr = 1;
@@ -297,7 +295,7 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
 	return { psi_sol, E_zeroes2 };
 }
 
-size_t ODE_Quantum_Solver(int mode, bool sc)
+size_t ODE_Quantum_Solver(int mode)
 {
 	double b = 2;
 	if(mode==1)b = 1;
@@ -317,7 +315,7 @@ size_t ODE_Quantum_Solver(int mode, bool sc)
 	auto x = tmin;
 	
 	double sigma = 32, mu = 1;
-	double Vo = 10, E = 0;
+	double Vo = 20, E = 0;
 	
 	if(mode == 2)Vo = 0;
 
@@ -403,7 +401,7 @@ size_t ODE_Quantum_Solver(int mode, bool sc)
 		if (sigma >= 2)en = linspace(0., 1/(sqrt(sigma)), int(h + 2 * (sigma - 1)));
 		else en = linspace(0., .75, int(h + 2));
 	}
-	else en = linspace(0., Vo + h, int((h + 2 * (Vo + (sigma - 1)))));
+	else en = linspace(E, Vo + h, int((h + 2 * (Vo + (sigma - 1)))));
 
 		E_zeroes = Find_all_zeroes(Wave_function, en);
 
@@ -419,8 +417,6 @@ size_t ODE_Quantum_Solver(int mode, bool sc)
 			t++;
 		}
 	
-	//std::fill(sum_psi_sol.begin(), sum_psi_sol.end(), 0);
-	//auto op_psi_sol = psi_sol.front() + psi_sol.back();
 	
 	auto gwp = gaussian_wave_packet(X, (1 + 2 * 0.0072973525693) / (1 + sqrt(2)) * sqrt(sigma), mu);//σ μ
 	//gwp -= gaussian_wave_packet(X, 1 / (1 + sqrt(2)) * sqrt(sigma + 1 + 2 * 0.0072973525693), mu);
@@ -438,11 +434,9 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 	gwp = gaussian_wave_packet(X, 1 / (1 + sqrt(2)) * sqrt(sigma), mu);//σ μ
 	text = U"Gaussian wave packet(1 / (1 + sqrt(2)) * sqrt(32), 1)";
 
-	//plot.plot_somedata(X, gwp, "k", cv1.to_bytes(text), "Yellow");
-
-	if (sc && mode == 2) {
+	if (mode == 2) {
 		t = 0;
-		auto v = ODE_Q_sine_cosine(8., tmin, tmax, h);
+		auto v = ODE_Q_sine_cosine(0., 8., tmin, tmax, h);
 		for (auto& i : std::get<0>(v))
 		{
 			oss.str(std::string());
@@ -451,9 +445,9 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 			t++;
 		}
 
-		auto rf = psi_sola[0] * std::get<0>(v)[std::get<1>(v).size() - 1];
+		auto rf = psi_sola[0] * *(std::get<0>(v).rbegin());
 		plot.plot_somedata(X, rf, "k", "E = " + oss.str() + " ", "Red", 1.0);
-		rf = psi_sola[0] * (std::get<0>(v)[std::get<1>(v).size() - 2]);
+		rf = psi_sola[0] * *(std::get<0>(v).rbegin()+1);
 		plot.plot_somedata(X, rf, "k", "E = " + oss.str() + " ", "Green", 1.0);
 	}
 
@@ -467,19 +461,17 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 			//plot.plot_somedata(X, psi_solb[t], "k", "E = " + oss.str() + " ", colours(t), 1.0);
 	t++;
 	}
-	//plot.plot_somedata(X, Y1, "k", "Y[1]", "blue");
 
 	std::u32string title = U"Finite potential well";
 	if(mode == 1)title = U"Infinite potential well = Particle in 1-D Box"; 
 	else if (mode == 2)title = U"Gaussian wave packet";
-		std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
+	
+	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
 	plot.set_title(cv.to_bytes(title));
 	plot.grid_on();
 	plot.show();
 
-	//plot.plot_somedata(Y0, Y1, "k", "Y[0] vs Y[1]", "green");
 	t = 0;
-	
 	for (auto& E : E_zeroes) {
 		Wave_function(E);
 		oss.str(std::string());
