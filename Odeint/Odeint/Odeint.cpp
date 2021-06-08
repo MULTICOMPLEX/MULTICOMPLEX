@@ -46,6 +46,9 @@ std::vector<T> Find_all_zeroes
 	const std::vector<T>& en
 );
 
+template <typename T>
+std::vector<T> zeroCrossing(const std::vector<T>& s, const std::vector<T>& en);
+
 plot_matplotlib plot;
 std::string colours(const int& t);
 
@@ -392,7 +395,7 @@ size_t ODE_Quantum_Solver(int mode)
 	int t = 0;
 	std::ostringstream oss;
 	oss.setf(ios::fixed);
-	oss.precision(2);
+	oss.precision(6);
 
 	std::vector<std::vector<double>> psi_sola, psi_solb, psi_sols;
 	std::vector<double> E_zeroes,en;
@@ -441,6 +444,9 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 		{
 			oss.str(std::string());
 			oss << std::get<1>(v)[t];
+			//std::cout << oss.str() << std::endl;
+			//auto k = zeroCrossing(i, X);
+			//std::cout << k << std::endl;
 			//plot.plot_somedata(X, i, "k", "E = " + oss.str() + " ", colours(t), 1.0);
 			t++;
 		}
@@ -984,4 +990,22 @@ std::string colours(const int& t)
 		"Blue", "Green",
 																"Red", "Cyan", "Magenta", "Yellow", "Black", "Silver" };
 	return colours[t];
+}
+
+template <typename T>
+std::vector<T> zeroCrossing(const std::vector<T>& s, const std::vector<T>& en)
+{
+	std::vector<size_t> zerCrossi;
+	std::vector<T> zerCross;
+
+	for (size_t i=0; i < s.size()-1; i++)     /* loop over data  */
+	{
+		if ((sign(s[i]) + sign(s[i + 1])) == 0) /* set zero crossing location */
+			zerCrossi.push_back(i);
+	}
+
+	for (size_t i = 0; i < zerCrossi.size(); i++)
+		zerCross.push_back(en[zerCrossi[i]]);
+
+	return zerCross;
 }
