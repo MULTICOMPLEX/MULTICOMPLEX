@@ -69,8 +69,7 @@ https://en.wikipedia.org/wiki/Particle_in_a_box
 ![Figure_6](https://user-images.githubusercontent.com/75379917/120670886-27163180-c491-11eb-9fee-48d6ca8a10fe.png)
 
 https://en.wikipedia.org/wiki/Fine-structure_constant
+
 https://en.wikipedia.org/wiki/Wave_packet
 
 ![Figure_11](https://user-images.githubusercontent.com/75379917/121229298-0cc3c580-c88e-11eb-8804-153e34e52e52.png)
-
-
