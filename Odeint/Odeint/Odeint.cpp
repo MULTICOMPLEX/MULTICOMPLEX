@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
 	
 	//ODE_quantum_harmonic_oscillator_complex();
 
-	ODE_Quantum_Solver(2);
+	ODE_Quantum_Solver(2,1);
 	
 	//ODE_Predator_Prey();
 	//quantum_harmonic_oscillator();
@@ -197,6 +197,106 @@ std::vector<T> gaussian_wave_packet(const std::vector<T>& en, const T& sigma=1.0
 	return v;
 }
 
+template <typename T>
+std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
+(
+	const T& Vo,
+	const T& tmin,
+	const T& tmax,
+	const T& h
+)
+{
+
+	std::vector<T> y(4);
+
+	std::vector<T> state(y.size());
+	std::vector<T> Y0, Y1, Y2, Y3;
+
+	T x = tmin;
+	T E = 0;
+
+	auto SE = [&](const auto& x, const auto& psi) {
+
+		state[0] = psi[1];
+		state[1] = -2 * E * psi[0];
+
+		state[2] = psi[3];
+		state[3] = -2 * E * psi[2];
+
+		return state;
+	};
+
+	bool sr = 0;
+
+	auto Wave_function = [&](const auto& energy) {
+		E = energy;
+
+		Y0.clear();
+		Y1.clear();
+		Y2.clear();
+		Y3.clear();
+
+		x = tmin;
+
+		y[0] = 1;
+		y[1] = 0;
+
+		y[2] = 0;
+		y[3] = 1;
+
+		Y0.push_back(y[0]);
+		Y1.push_back(y[1]);
+		Y2.push_back(y[2]);
+		Y3.push_back(y[3]);
+
+		while (x <= tmax)
+		{
+			//Midpoint_method_explicit(SE, x, y, h);
+			Midpoint_method_implicit(SE, x, y, h);
+			//Euler_method(SE, x, y, h);
+			//Embedded_Fehlberg_3_4(SE, x, y, h);
+			//Embedded_Fehlberg_7_8(SE, x, y, h);
+
+			x += h;
+			Y0.push_back(y[0]);
+			Y1.push_back(y[1]);
+			Y2.push_back(y[2]);
+			Y3.push_back(y[3]);
+		}
+
+		if (sr)return *Y0.rbegin();
+		else return *Y2.rbegin();
+	};
+
+	
+	std::vector<T> E_zeroes1, E_zeroes2, en;
+
+	en = linspace(0., Vo + h, int(h + 2 * Vo));
+
+	//E_zeroes1 = Find_all_zeroes(Wave_function, en);
+	sr = 1;
+	E_zeroes2 = Find_all_zeroes(Wave_function, en);
+
+	//std::cout << E_zeroes;
+
+	std::vector<std::vector<T>> psi_sol;
+
+	for (auto& E : E_zeroes1) {
+		//Wave_function(E);
+		//psi_sol.push_back(Y0);
+	}
+
+	for (auto& E : E_zeroes2) {
+		Wave_function(E);
+		psi_sol.push_back(Y3);
+		std::reverse(Y3.begin(), Y3.end());
+		psi_sol.push_back(Y3);
+	}
+
+	E_zeroes2.insert(E_zeroes2.end(), E_zeroes2.begin(), E_zeroes2.end());
+	return { psi_sol, E_zeroes2 };
+}
+
 size_t ODE_Quantum_Solver(int mode, bool sc)
 {
 	double b = 2;
@@ -208,20 +308,18 @@ size_t ODE_Quantum_Solver(int mode, bool sc)
 	if (mode == 2)tmax = 10;
 	double h = 0.005;
 
-	std::vector<double> y(4);
+	std::vector<double> y(2);
 
 	std::vector<double> state(y.size());
-	std::vector<double> X, Y0, Y1, Y2, Y3;
+	std::vector<double> X, Y0, Y1;
 	size_t steps = 0;
 
 	auto x = tmin;
 	
 	double sigma = 32, mu = 1;
-	double Vo = 20, E = 0;
+	double Vo = 10, E = 0;
 	
 	if(mode == 2)Vo = 0;
-	
-	int n = 0;
 
 	auto V = [&](const auto& x)
 	{
@@ -245,9 +343,6 @@ size_t ODE_Quantum_Solver(int mode, bool sc)
 		else
 			state[1] = 2 * (V(x) - E) * psi[0];
 		
-		state[2] = psi[3] * 7;
-		state[3] = -psi[2] * 7;
-		
 		return state; 
 	};
 
@@ -263,8 +358,6 @@ size_t ODE_Quantum_Solver(int mode, bool sc)
 
 	Y0.clear();
 	Y1.clear();
-	Y2.clear();
-	Y3.clear();
 
 	x = tmin;	
 	
@@ -280,9 +373,6 @@ size_t ODE_Quantum_Solver(int mode, bool sc)
 
 	Y0.push_back(y[0]);
 	Y1.push_back(y[1]);
-	Y2.push_back(y[2] * y[0]);
-	Y3.push_back(y[3] * y[0]);
-
 
 		while (x <= tmax)
 		{
@@ -295,8 +385,6 @@ size_t ODE_Quantum_Solver(int mode, bool sc)
 			x += h;
 			Y0.push_back(y[0]);
 			Y1.push_back(y[1]);
-			Y2.push_back(y[2] * y[0]);
-			Y3.push_back(y[3] * y[0]);
 
 			steps++;
 		}
@@ -355,14 +443,22 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 
 	//plot.plot_somedata(X, gwp, "k", cv1.to_bytes(text), "Yellow");
 
-	if (sc) {
-		plot.plot_somedata(X, Y2, "k", "y[2]", "Red", 1.0);
-		plot.plot_somedata(X, Y3, "k", "y[3]", "Green", 1.0);
+	if (sc && mode == 2) {
+		t = 0;
+		auto v = ODE_Q_sine_cosine(8., tmin, tmax, h);
+		for (auto& i : std::get<0>(v))
+		{
+			oss.str(std::string());
+			oss << std::get<1>(v)[t];
+			//plot.plot_somedata(X, i, "k", "E = " + oss.str() + " ", colours(t), 1.0);
+			t++;
+		}
+
+		auto rf = psi_sola[0] * std::get<0>(v)[std::get<1>(v).size() - 1];
+		plot.plot_somedata(X, rf, "k", "E = " + oss.str() + " ", "Red", 1.0);
+		rf = psi_sola[0] * (std::get<0>(v)[std::get<1>(v).size() - 2]);
+		plot.plot_somedata(X, rf, "k", "E = " + oss.str() + " ", "Green", 1.0);
 	}
-	//Wave_function(E_zeroes.back());
-	//Y0 *= 100;
-	//Y0 *= Y0;
-	//plot.plot_somedata(X, Y0, "k", "E = " + oss.str() + " ", colours(t-1), 1.0);
 
 		t = 0;
 		for (auto& E : E_zeroes) {
