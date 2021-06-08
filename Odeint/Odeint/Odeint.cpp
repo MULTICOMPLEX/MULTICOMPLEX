@@ -364,9 +364,6 @@ size_t ODE_Quantum_Solver(int mode, bool sc)
 	y[0] = 0;
 	y[1] = 1;
 	
-	y[2] = 0;
-	y[3] = 1;
-	
 	if (mode == 2) {
 		y[1] = 1e-5;//3e-4;  
 	}
@@ -474,7 +471,7 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 
 	std::u32string title = U"Finite potential well";
 	if(mode == 1)title = U"Infinite potential well = Particle in 1-D Box"; 
-	else if (mode == 2)title = U"Quantum harmonic oscillator";
+	else if (mode == 2)title = U"Gaussian wave packet";
 		std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
 	plot.set_title(cv.to_bytes(title));
 	plot.grid_on();
