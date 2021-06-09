@@ -332,14 +332,13 @@ size_t ODE_Quantum_Solver(int mode)
 		h = 0.005;
 		E = 0;
 		physicist = 0;
-	
 	}
 
 	auto x = tmin;
 
-	bool tunnel = true;
+	bool tunnel = false;
 	if (tunnel) {
-		L1 = mu, L2 = mu + 0.1;
+		L1 = 2*mu, L2 = 2*mu + 0.1;
 		plot.line(L1, L1, 0, 2060);
 		plot.line(L2, L2, 0, 2060);
 	}
@@ -348,7 +347,7 @@ size_t ODE_Quantum_Solver(int mode)
 	{
 		if (mode == 2) {
 			if (tunnel) {
-			if (x > L1 && x < L2)
+			if (x > (L1-mu) && x < (L2-mu))
 				return  20.;
 		}
 			return  -(2 * E + physicist - (x * x) / sigma);
