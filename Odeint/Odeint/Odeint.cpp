@@ -229,8 +229,6 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
 		return state;
 	};
 
-	bool sr = 0;
-
 	auto Wave_function = [&](const auto& energy) {
 		E = energy;
 
@@ -267,15 +265,14 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
 			Y3.push_back(y[3]);
 		}
 
-		if (sr)return *Y0.rbegin();
-		else return *Y2.rbegin();
+		return *Y0.rbegin();
 	};
 
-	
+
 	std::vector<T> E_zeroes1, E_zeroes2;
 
 	//E_zeroes1 = Find_all_zeroes(Wave_function, en);
-	sr = 1;
+
 	E_zeroes2 = Find_all_zeroes(Wave_function, en);
 
 	//std::cout << E_zeroes;
@@ -300,13 +297,19 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
 
 size_t ODE_Quantum_Solver(int mode)
 {
-	double b = 2;
-	if(mode==1)b = 1;
-	else if (mode == 2)
-		b = 9;
-	double tmin = -b;
-	double tmax = b;
-	if (mode == 2)tmax = 10;
+	double tmin = -1;
+	double tmax = 1;
+
+	if (mode == 0) {
+		tmin = -2; tmax = 2;
+	}
+	else if (mode == 1) {
+		tmin = -1; tmax = 1;
+	}
+	else if (mode == 2) {
+		tmin = -6; tmax = 6;
+	}
+
 	double h = 0.005;
 
 	std::vector<double> y(2);
@@ -315,19 +318,29 @@ size_t ODE_Quantum_Solver(int mode)
 	std::vector<double> X, Y0, Y1;
 	size_t steps = 0;
 
-	auto x = tmin;
-	
-	double sigma = 32, mu = 1;
+	double sigma = 1, mu = 0;
 	double Vo = 20, E = 0;
-	
-	if(mode == 2)Vo = 0;
+	int physicist = 1;
+
+	if (mode == 2)Vo = 10;
+
+	bool wave_packet = 1;
+	if (wave_packet) {
+		sigma = 32, mu = 1;
+		Vo = 0; tmin = -9; tmax = 10;
+		h = 0.005;
+		E = 0;
+		physicist = 0;
+	}
+
+	auto x = tmin;
 
 	auto V = [&](const auto& x)
 	{
 		if (mode == 2)
-			return  -(2 * E - (x * x) / sigma);
-					 //- (2 * n + 1 -  x * x)
-		
+			return  -(2 * E + physicist - (x * x) / sigma);
+		//- (2 * n + 1 -  x * x)
+
 		double L1 = -1., L2 = 1.;
 		if (x > L1 && x < L2) {
 			return 0.;
@@ -343,8 +356,8 @@ size_t ODE_Quantum_Solver(int mode)
 			state[1] = V(x - mu) * psi[0];
 		else
 			state[1] = 2 * (V(x) - E) * psi[0];
-		
-		return state; 
+
+		return state;
 	};
 
 	X.push_back(x);
@@ -353,33 +366,33 @@ size_t ODE_Quantum_Solver(int mode)
 		x += h;
 		X.push_back(x);
 	}
-	
+
 	auto Wave_function = [&](const auto& energy) {
-	E = energy;
+		E = energy;
 
-	Y0.clear();
-	Y1.clear();
+		Y0.clear();
+		Y1.clear();
 
-	x = tmin;	
-	
-	y[0] = 0;
-	y[1] = 1;
-	
-	if (mode == 2) {
-		y[1] = 1e-5;//3e-4;  
-	}
+		x = tmin;
 
-	Y0.push_back(y[0]);
-	Y1.push_back(y[1]);
+		y[0] = 0;
+		y[1] = 1;
+
+		if (mode == 2) {
+			y[1] = 1e-5;//3e-4;  
+		}
+
+		Y0.push_back(y[0]);
+		Y1.push_back(y[1]);
 
 		while (x <= tmax)
 		{
-			//Midpoint_method_explicit(SE, x, y, h);
-			Midpoint_method_implicit(SE, x, y, h);
+			Midpoint_method_explicit(SE, x, y, h);
+			//Midpoint_method_implicit(SE, x, y, h);
 			//Euler_method(SE, x, y, h);
 			//Embedded_Fehlberg_3_4(SE, x, y, h);
 			//Embedded_Fehlberg_7_8(SE, x, y, h);
-			
+
 			x += h;
 			Y0.push_back(y[0]);
 			Y1.push_back(y[1]);
@@ -398,46 +411,42 @@ size_t ODE_Quantum_Solver(int mode)
 	oss.precision(6);
 
 	std::vector<std::vector<double>> psi_sola, psi_solb, psi_sols;
-	std::vector<double> E_zeroes,en;
-	
+	std::vector<double> E_zeroes, en;
+
 	if (Vo == 0) {
-		if (sigma >= 2)en = linspace(0., 1/(sqrt(sigma)), int(h + 2 * (sigma - 1)));
-		else en = linspace(0., .75, int(h + 2));
+		en = linspace(0., 1/sqrt(sigma), 2);
 	}
-	else en = linspace(E, Vo + h, int((h + 2 * (Vo + (sigma - 1)))));
+	else en = linspace(E, Vo, int(2*Vo));
 
-		E_zeroes = Find_all_zeroes(Wave_function, en);
+	E_zeroes = Find_all_zeroes(Wave_function, en);
 
-		for (auto& E : E_zeroes) {
-			Wave_function(E);
+	for (auto& E : E_zeroes) {
+		Wave_function(E);
 
-			psi_sola.push_back(Y0);
-			psi_solb.push_back(Y1);
-			std::vector<double> Ys;
-			for (auto& k : Y0)
-				Ys.push_back(k * k);
-			psi_sols.push_back(Ys);
-			t++;
-		}
-	
-	
-	auto gwp = gaussian_wave_packet(X, (1 + 2 * 0.0072973525693) / (1 + sqrt(2)) * sqrt(sigma), mu);//σ μ
+		psi_sola.push_back(Y0);
+		psi_solb.push_back(Y1);
+		std::vector<double> Ys;
+		for (auto& k : Y0)
+			Ys.push_back(k * k);
+		psi_sols.push_back(Ys);
+		t++;
+	}
+
+	if (wave_packet)
+	{
+		auto gwp = gaussian_wave_packet(X, (1 + 2 * 0.0072973525693) / (1 + sqrt(2)) * sqrt(sigma), mu);//σ μ
 	//gwp -= gaussian_wave_packet(X, 1 / (1 + sqrt(2)) * sqrt(sigma + 1 + 2 * 0.0072973525693), mu);
-	std::u32string text = U"Gaussian wave packet( (1 + 2 * 0.0072973525693) / (1 + sqrt(2)) * sqrt(32), 1 )\\n\
+		std::u32string text = U"Gaussian wave packet( (1 + 2 * 0.0072973525693) / (1 + sqrt(2)) * sqrt(32), 1 )\\n\
 Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 0.0072973525693 = Fine-structure constant\\n\
 2.377343271833 ≈ 4 sqrt(C_HSM), C_HSM = Hafner-Sarnak-McCurley Constant";//4 sqrt(C_HSM)≈2.3773476711
 	//http://www.totemconsulting.ca/FineStructure.html
 	//https://mathworld.wolfram.com/Hafner-Sarnak-McCurleyConstant.html
 
-	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv1; 
-	
-	if (mode == 2)plot.plot_somedata(X, gwp, "k", cv1.to_bytes(text), "Red", 1.0);
+		std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv1;
 
-	gwp = gaussian_wave_packet(X, 1 / (1 + sqrt(2)) * sqrt(sigma), mu);//σ μ
-	text = U"Gaussian wave packet(1 / (1 + sqrt(2)) * sqrt(32), 1)";
+		plot.plot_somedata(X, gwp, "k", cv1.to_bytes(text), "Red", 1.0);
 
-	if (mode == 2) {
 		t = 0;
 		auto v = ODE_Q_sine_cosine(0., 8., tmin, tmax, h);
 		for (auto& i : std::get<0>(v))
@@ -453,25 +462,26 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 
 		auto rf = psi_sola[0] * *(std::get<0>(v).rbegin());
 		plot.plot_somedata(X, rf, "k", "E = " + oss.str() + " ", "Red", 1.0);
-		rf = psi_sola[0] * *(std::get<0>(v).rbegin()+1);
+		rf = psi_sola[0] * *(std::get<0>(v).rbegin() + 1);
 		plot.plot_somedata(X, rf, "k", "E = " + oss.str() + " ", "Green", 1.0);
 	}
 
-		t = 0;
-		for (auto& E : E_zeroes) {
-			Wave_function(E);
-			oss.str(std::string());
-			oss << E;
-			std::cout << "E " << E << std::endl;
-			plot.plot_somedata(X, psi_sola[t], "k", "E = " + oss.str() + " ", colours(t), 1.0);
-			//plot.plot_somedata(X, psi_solb[t], "k", "E = " + oss.str() + " ", colours(t), 1.0);
-	t++;
+	t = 0;
+	for (auto& E : E_zeroes) {
+		Wave_function(E);
+		oss.str(std::string());
+		oss << E;
+		std::cout << "E " << E << std::endl;
+		plot.plot_somedata(X, psi_sola[t], "k", "E = " + oss.str() + " ", colours(t), 1.0);
+		//plot.plot_somedata(X, psi_solb[t], "k", "E = " + oss.str() + " ", colours(t), 1.0);
+		t++;
 	}
 
 	std::u32string title = U"Finite potential well";
-	if(mode == 1)title = U"Infinite potential well = Particle in 1-D Box"; 
-	else if (mode == 2)title = U"Gaussian wave packet";
-	
+	if (mode == 1)title = U"Infinite potential well = Particle in 1-D Box";
+	else if (mode == 2 && wave_packet)title = U"Gaussian wave packet";
+	else title = U"Quantum harmonic oscillator";
+
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
 	plot.set_title(cv.to_bytes(title));
 	plot.grid_on();
