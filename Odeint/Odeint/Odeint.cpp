@@ -189,12 +189,11 @@ std::vector<T> gaussian_wave_packet(const std::vector<T>& en, const T& sigma=1.0
 {
 	std::vector<T> v;
 	T a = 1./(sigma * sqrt(2 * pi));
-	a = 2.0111e-2;
+	a *= 1.198585e4;
 
 	for (auto& x : en)
 	{
 		v.push_back(a * exp(-0.5 * pow((x - mu) / sigma, 2)));
-		//v.push_back(a * exp(-0.5 * pow((x-mu)/sigma, 2)) * sin(2*pi*8*x));
 	}
 
 	return v;
@@ -324,6 +323,8 @@ size_t ODE_Quantum_Solver(int mode)
 
 	if (mode == 2)Vo = 10;
 
+	double L1 = -1., L2 = 1.;
+
 	bool wave_packet = 1;
 	if (wave_packet) {
 		sigma = 32, mu = 1;
@@ -331,22 +332,36 @@ size_t ODE_Quantum_Solver(int mode)
 		h = 0.005;
 		E = 0;
 		physicist = 0;
+	
 	}
 
 	auto x = tmin;
 
+	bool tunnel = true;
+	if (tunnel) {
+		L1 = mu, L2 = mu + 0.1;
+		plot.line(L1, L1, 0, 2060);
+		plot.line(L2, L2, 0, 2060);
+	}
+
 	auto V = [&](const auto& x)
 	{
-		if (mode == 2)
-			return  -(2 * E + physicist - (x * x) / sigma);
-		//- (2 * n + 1 -  x * x)
-
-		double L1 = -1., L2 = 1.;
-		if (x > L1 && x < L2) {
-			return 0.;
+		if (mode == 2) {
+			if (tunnel) {
+			if (x > L1 && x < L2)
+				return  20.;
 		}
-		else return Vo;
-	};
+			return  -(2 * E + physicist - (x * x) / sigma);
+			//- (2 * n + 1 -  x * x)
+			}
+			else	if (mode == 0 || mode == 1) {
+				if (x > L1 && x < L2) {
+					return 0.;
+				}
+				else return Vo;
+			}
+			else return 0.;
+		};
 
 	auto SE = [&](const auto& x, const auto& psi) {
 
@@ -379,7 +394,7 @@ size_t ODE_Quantum_Solver(int mode)
 		y[1] = 1;
 
 		if (mode == 2) {
-			y[1] = 1e-5;//3e-4;  
+			y[1] = 1;//3e-4;  
 		}
 
 		Y0.push_back(y[0]);
@@ -408,7 +423,7 @@ size_t ODE_Quantum_Solver(int mode)
 	int t = 0;
 	std::ostringstream oss;
 	oss.setf(ios::fixed);
-	oss.precision(6);
+	oss.precision(2);
 
 	std::vector<std::vector<double>> psi_sola, psi_solb, psi_sols;
 	std::vector<double> E_zeroes, en;
@@ -444,7 +459,7 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 	//https://mathworld.wolfram.com/Hafner-Sarnak-McCurleyConstant.html
 
 		std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv1;
-
+		text = U"Normal distribution (σ = (1 + 2 * 0.0072973525693) / (1 + sqrt(2)) * sqrt(32), μ = 1 )";
 		plot.plot_somedata(X, gwp, "k", cv1.to_bytes(text), "Red", 1.0);
 
 		t = 0;
@@ -456,7 +471,8 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 			//std::cout << oss.str() << std::endl;
 			//auto k = zeroCrossing(i, X);
 			//std::cout << k << std::endl;
-			//plot.plot_somedata(X, i, "k", "E = " + oss.str() + " ", colours(t), 1.0);
+			//auto s = i * 1000;
+			//plot.plot_somedata(X, s, "k", "E = " + oss.str() + " ", colours(t), 1.0);
 			t++;
 		}
 
@@ -479,7 +495,8 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 
 	std::u32string title = U"Finite potential well";
 	if (mode == 1)title = U"Infinite potential well = Particle in 1-D Box";
-	else if (mode == 2 && wave_packet)title = U"Gaussian wave packet";
+	else if (mode == 2 && wave_packet && !tunnel)title = U"Quantum Gaussian wave packet";
+	else if (mode == 2 && tunnel)title = U"Quantum Gaussian wave packet + tunnelling";
 	else title = U"Quantum harmonic oscillator";
 
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;

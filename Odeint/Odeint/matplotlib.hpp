@@ -91,7 +91,7 @@ public:
   void init_plot_window(const char* name, int x, int y);
   void grid_off();
   void grid_on();
-
+  void line(const double x1=0, const double y1=0, const double x2=10, const double y2=10);
 };
 
 
@@ -375,6 +375,12 @@ void plot_matplotlib::PyRun_Simple(std::string somestring)
     _pythoncmd += "\n";
   }
   _pythoncmd += somestring;
+}
+
+void plot_matplotlib::line(const double x1, const double x2, const double y1, const double y2)
+{
+  PyRun_SimpleStringStd("plt.plot([" + to_string(x1) + ", " 
+    + to_string(x2) + "], [" + to_string(y1) + ", " + to_string(y2) + "], color = 'black', linestyle = 'dotted')");
 }
 
 
