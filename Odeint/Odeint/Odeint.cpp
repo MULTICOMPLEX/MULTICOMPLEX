@@ -215,7 +215,7 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
 
 	T x = tmin;
 	T E = 0;
-	auto en = linspace(Vo_b, Vo_e + h, int(h + 2 * abs(Vo_e - Vo_b)));
+	auto en = linspace(Vo_b, Vo_e + h, int(2 * abs(Vo_e - Vo_b)));
 
 	auto SE = [&](const auto& x, const auto& psi) {
 
@@ -231,9 +231,9 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
 	auto Wave_function = [&](const auto& energy) {
 		E = energy;
 
-		for(size_t i=0; i < y.size(); i++)
-			Y[i].clear();
-		
+		Y.clear();
+		Y.resize(y.size());
+
 		x = tmin;
 
 		y[0] = 1;
@@ -388,10 +388,6 @@ size_t ODE_Quantum_Solver(int mode)
 
 		y[0] = 0;
 		y[1] = 1;
-
-		if (mode == 2) {
-			y[1] = 1;//3e-4;  
-		}
 
 		Y0.push_back(y[0]);
 		Y1.push_back(y[1]);
