@@ -72,4 +72,10 @@ https://en.wikipedia.org/wiki/Fine-structure_constant
 
 https://en.wikipedia.org/wiki/Wave_packet
 
-![Figure_11](https://user-images.githubusercontent.com/75379917/121229298-0cc3c580-c88e-11eb-8804-153e34e52e52.png)
+![Figure_11](https://user-images.githubusercontent.com/75379917/121396509-bde06380-c953-11eb-8ff6-e3475a05580b.png)
+
+https://en.wikipedia.org/wiki/Quantum_tunnelling
+
+![Figure_9](https://user-images.githubusercontent.com/75379917/121396582-d05a9d00-c953-11eb-9052-2616404aea6f.png)
+
+
