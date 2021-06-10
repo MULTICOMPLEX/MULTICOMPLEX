@@ -1,7 +1,5 @@
 ﻿
-
 #include "MULTICOMPLEX.hpp"
-
 #include "rkf78.hpp"
 #include "vector_calculus.hpp"
 #include "matplotlib.hpp"
@@ -18,27 +16,27 @@
 #include "dekker.hpp"
 #include "secant.hpp"
 #include "Laplace_transform.hpp"
-
 #include <codecvt>
 
 void Leapfrog_integration();
+void ODE_test_nl(bool e_plot);
+void ODE_Lorenz_System();
+void ODE_harmonic_oscillator();
+void quantum_harmonic_oscillator();
+void ODE_Van_der_Pol_oscillator();
+void ODE_quantum_harmonic_oscillator();
+void ODE_Predator_Prey();
+void ODE_Quantum_Solver(int mode = 0);
+void ODE_quantum_harmonic_oscillator_complex();
 
-size_t ODE_test_nl(bool e_plot);
-size_t ODE_Lorenz_System();
-size_t ODE_harmonic_oscillator();
-size_t quantum_harmonic_oscillator();
-size_t ODE_Van_der_Pol_oscillator();
-size_t ODE_quantum_harmonic_oscillator();
-size_t ODE_Predator_Prey();
-
-size_t ODE_Quantum_Solver(int mode = 0);
-size_t ODE_quantum_harmonic_oscillator_complex();
+void trapezoidal();
 
 template <typename T>
 int sign(const T& x);
+
 template<typename T>
 std::vector<T> linspace(const T start_in, const T end_in, std::size_t num_in);
-void trapezoidal();
+
 template <typename F, typename T>
 std::vector<T> Find_all_zeroes
 (
@@ -55,16 +53,16 @@ std::string colours(const int& t);
 int main(int argc, char* argv[]) {
 
 	//trapezoidal();
-	
-	//ODE_test_nl(0);
+
+	//ODE_test_nl(1);
 	//ODE_harmonic_oscillator();
 
 	//ODE_quantum_harmonic_oscillator();
-	
+
 	//ODE_quantum_harmonic_oscillator_complex();
 
-	ODE_Quantum_Solver(2);
-	
+	ODE_Quantum_Solver(4);
+
 	//ODE_Predator_Prey();
 	//quantum_harmonic_oscillator();
 
@@ -77,7 +75,7 @@ int main(int argc, char* argv[]) {
 	return 0;
 }
 
-size_t ODE_test_nl(bool e_plot)
+void ODE_test_nl(bool e_plot)
 {
 	double x = -4.0;
 	double tmax = 5.0;
@@ -96,14 +94,12 @@ size_t ODE_test_nl(bool e_plot)
 
 	std::vector<double> X = { x }, Y0 = { y[0] };
 
-	size_t steps = 0;
 	while (x <= tmax)
 	{
 		Embedded_Fehlberg_7_8(func, x, y, h);
 		x += h;
 		X.push_back(x);
 		Y0.push_back(y[0]);
-		steps++;
 	}
 
 	plot.plot_somedata(X, Y0, "k", "test", "blue");
@@ -118,12 +114,9 @@ size_t ODE_test_nl(bool e_plot)
 	std::cout.precision(15);
 	auto p = std::minmax_element(begin(Y0), end(Y0));
 	std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
-
-	std::cout << "test steps = " << steps << '\n';
-	return steps;
 }
 
-size_t ODE_harmonic_oscillator()
+void ODE_harmonic_oscillator()
 {
 	double x = 0;
 	double tmax = 5;
@@ -147,7 +140,7 @@ size_t ODE_harmonic_oscillator()
 		const double zeta = 0.3;//0.3
 		int n = 5;
 
-		dydx[0] =  n * y[1];
+		dydx[0] = n * y[1];
 		//dydx[1] = -2. * zeta * w0 * y[1] - pow(w0, 2) * y[0];
 		dydx[1] = -n * y[0];
 
@@ -155,7 +148,6 @@ size_t ODE_harmonic_oscillator()
 
 	std::vector<double> X = { x }, Y0 = { y[0] }, Y1 = { y[1] };
 
-	size_t steps = 0;
 	while (x <= tmax)
 	{
 		Embedded_Fehlberg_7_8(func, x, y, h);
@@ -163,7 +155,6 @@ size_t ODE_harmonic_oscillator()
 		X.push_back(x);
 		Y0.push_back(y[0]);
 		Y1.push_back(y[1]);
-		steps++;
 	}
 
 	plot.plot_somedata(X, Y0, "k", "cosine", "blue", 1);
@@ -181,14 +172,13 @@ size_t ODE_harmonic_oscillator()
 	p = std::minmax_element(begin(Y1), end(Y1));
 	std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
 
-	return steps;
 }
 
 template <typename T>
-std::vector<T> gaussian_wave_packet(const std::vector<T>& en, const T& sigma=1.0, const T& mu = 0.0)
+std::vector<T> gaussian_wave_packet(const std::vector<T>& en, const T& sigma = 1.0, const T& mu = 0.0)
 {
 	std::vector<T> v;
-	T a = 1./(sigma * sqrt(2 * pi));
+	T a = 1. / (sigma * sqrt(2 * pi));
 	a *= 1.198585e4;
 
 	for (auto& x : en)
@@ -242,24 +232,20 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
 		y[2] = 0;
 		y[3] = 1;
 
-		Y[0].push_back(y[0]);
-		Y[1].push_back(y[1]);
-		Y[2].push_back(y[2]);
-		Y[3].push_back(y[3]);
+		for (size_t i = 0; i < y.size(); i++)
+			Y[i].emplace_back(y[i]);
 
 		while (x <= tmax)
 		{
-			//Midpoint_method_explicit(SE, x, y, h);
-			Midpoint_method_implicit(SE, x, y, h);
+			Midpoint_method_explicit(SE, x, y, h);
+			//Midpoint_method_implicit(SE, x, y, h);
 			//Euler_method(SE, x, y, h);
 			//Embedded_Fehlberg_3_4(SE, x, y, h);
 			//Embedded_Fehlberg_7_8(SE, x, y, h);
 
 			x += h;
-			Y[0].push_back(y[0]);
-			Y[1].push_back(y[1]);
-			Y[2].push_back(y[2]);
-			Y[3].push_back(y[3]);
+			for (size_t i = 0; i < y.size(); i++)
+				Y[i].emplace_back(y[i]);
 		}
 
 		return *Y[0].rbegin();
@@ -282,16 +268,16 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
 
 	for (auto& E : E_zeroes2) {
 		Wave_function(E);
-		psi_sol.push_back(Y[3]);
+		psi_sol.emplace_back(Y[3]);
 		std::reverse(Y[3].begin(), Y[3].end());
-		psi_sol.push_back(Y[3]);
+		psi_sol.emplace_back(Y[3]);
 	}
 
 	E_zeroes2.insert(E_zeroes2.end(), E_zeroes2.begin(), E_zeroes2.end());
 	return { psi_sol, E_zeroes2 };
 }
 
-size_t ODE_Quantum_Solver(int mode)
+void ODE_Quantum_Solver(int mode)
 {
 	double tmin = -1;
 	double tmax = 1;
@@ -311,8 +297,8 @@ size_t ODE_Quantum_Solver(int mode)
 	std::vector<double> y(2);
 
 	std::vector<double> state(y.size());
-	std::vector<double> X, Y0, Y1;
-	size_t steps = 0;
+	std::vector<double> X;
+	std::vector<std::vector<double>> Y(y.size());
 
 	double sigma = 1, mu = 0;
 	double Vo = 20, E = 0;
@@ -322,8 +308,11 @@ size_t ODE_Quantum_Solver(int mode)
 
 	double L1 = -1., L2 = 1.;
 
-	bool wave_packet = 1;
-	if (wave_packet && mode == 2) {
+	bool wave_packet = 0;
+	bool tunnel = 0;
+
+	if (mode == 3 || mode == 4) {
+		wave_packet = true;
 		sigma = 32, mu = 1;
 		Vo = 0; tmin = -9; tmax = 10;
 		h = 0.005;
@@ -331,66 +320,64 @@ size_t ODE_Quantum_Solver(int mode)
 		physicist = 0;
 	}
 
-	auto x = tmin;
-
-	bool tunnel = true;
-	if (tunnel && mode == 2) {
-		L1 = 2*mu, L2 = 2*mu + 0.1;
+	if (mode == 4) {
+		tunnel = true;
+		L1 = 2 * mu, L2 = 2 * mu + 0.1;
 		plot.line(L1, L1, 0, 2060);
 		plot.line(L2, L2, 0, 2060);
 	}
 
+	auto x = tmin;
+
 	auto V = [&](const auto& x)
 	{
-		if (mode == 2) {
-			if (tunnel) {
-			if (x > (L1-mu) && x < (L2-mu))
+		if (mode == 4) {
+			if (x > (L1 - mu) && x < (L2 - mu))
 				return  20.;
 		}
-			return  -(2 * E + physicist - (x * x) / sigma);
-			//- (2 * n + 1 -  x * x)
+
+		if (mode == 0 || mode == 1) {
+			if (x > L1 && x < L2) {
+				return 0.;
 			}
-			else	if (mode == 0 || mode == 1) {
-				if (x > L1 && x < L2) {
-					return 0.;
-				}
-				else return Vo;
-			}
-			else return 0.;
-		};
+			else return Vo;
+		}
+
+		else return -(2 * E + physicist - (x * x) / sigma);
+	};
 
 	auto SE = [&](const auto& x, const auto& psi) {
 
 		state[0] = psi[1];
 
-		if (mode == 2)
-			state[1] = V(x - mu) * psi[0];
-		else
+		if (mode == 0 || mode == 1)
 			state[1] = 2 * (V(x) - E) * psi[0];
+
+		else state[1] = V(x - mu) * psi[0];
 
 		return state;
 	};
 
-	X.push_back(x);
+	X.emplace_back(x);
 	while (x <= tmax)
 	{
 		x += h;
-		X.push_back(x);
+		X.emplace_back(x);
 	}
 
 	auto Wave_function = [&](const auto& energy) {
 		E = energy;
-
-		Y0.clear();
-		Y1.clear();
 
 		x = tmin;
 
 		y[0] = 0;
 		y[1] = 1;
 
-		Y0.push_back(y[0]);
-		Y1.push_back(y[1]);
+		Y.clear();
+		Y.resize(y.size());
+
+		Y[0].emplace_back(y[0]);
+		Y[1].emplace_back(y[1]);
 
 		while (x <= tmax)
 		{
@@ -401,12 +388,11 @@ size_t ODE_Quantum_Solver(int mode)
 			//Embedded_Fehlberg_7_8(SE, x, y, h);
 
 			x += h;
-			Y0.push_back(y[0]);
-			Y1.push_back(y[1]);
+			Y[0].emplace_back(y[0]);
+			Y[1].emplace_back(y[1]);
 
-			steps++;
 		}
-		return *Y0.rbegin();
+		return *Y[0].rbegin();
 	};
 
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
@@ -421,25 +407,25 @@ size_t ODE_Quantum_Solver(int mode)
 	std::vector<double> E_zeroes, en;
 
 	if (Vo == 0) {
-		en = linspace(0., 1/sqrt(sigma), 2);
+		en = linspace(0., 1 / sqrt(sigma), 2);
 	}
-	else en = linspace(E, Vo, int(2*Vo));
+	else en = linspace(E, Vo, int(2 * Vo));
 
 	E_zeroes = Find_all_zeroes(Wave_function, en);
 
 	for (auto& E : E_zeroes) {
 		Wave_function(E);
 
-		psi_sola.push_back(Y0);
-		psi_solb.push_back(Y1);
+		psi_sola.emplace_back(Y[0]);
+		psi_solb.emplace_back(Y[1]);
 		std::vector<double> Ys;
-		for (auto& k : Y0)
-			Ys.push_back(k * k);
-		psi_sols.push_back(Ys);
+		for (auto& k : Y[0])
+			Ys.emplace_back(k * k);
+		psi_sols.emplace_back(Ys);
 		t++;
 	}
 
-	if (wave_packet && mode == 2)
+	if (wave_packet)
 	{
 		auto gwp = gaussian_wave_packet(X, (1 + 2 * 0.0072973525693) / (1 + sqrt(2)) * sqrt(sigma), mu);//σ μ
 	//gwp -= gaussian_wave_packet(X, 1 / (1 + sqrt(2)) * sqrt(sigma + 1 + 2 * 0.0072973525693), mu);
@@ -486,9 +472,10 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 	}
 
 	std::u32string title;
-	if (mode == 1)title = U"Infinite potential well = Particle in 1-D Box";
-	else if (mode == 2 && wave_packet && !tunnel)title = U"Quantum Gaussian wave packet";
-	else if (mode == 2 && tunnel)title = U"Quantum Gaussian wave packet + tunnelling";
+	if (mode == 0)title = U"Finite potential well";
+	else if (mode == 1)title = U"Infinite potential well = Particle in 1-D Box";
+	else if (wave_packet)title = U"Quantum Gaussian wave packet";
+	else if (tunnel)title = U"Quantum Gaussian wave packet + tunnelling";
 	else title = U"Quantum harmonic oscillator";
 
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
@@ -501,21 +488,20 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 		Wave_function(E);
 		oss.str(std::string());
 		oss << E;
-		plot.plot_somedata(Y1, Y0, "k", "E = " + oss.str() + " ", colours(t++), 1.0);
+		plot.plot_somedata(Y[1], Y[0], "k", "E = " + oss.str() + " ", colours(t++), 1.0);
 	}
+	plot.set_title(cv.to_bytes(title));
 	plot.show();
 
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
 	std::cout.precision(15);
-	auto p = std::minmax_element(begin(Y0), end(Y0));
+	auto p = std::minmax_element(begin(Y[0]), end(Y[0]));
 	std::cout << "minY0 = " << *p.first << ", maxY0 = " << *p.second << '\n';
-	p = std::minmax_element(begin(Y1), end(Y1));
+	p = std::minmax_element(begin(Y[1]), end(Y[1]));
 	std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
-
-	return steps;
 }
 
-size_t ODE_quantum_harmonic_oscillator()
+void ODE_quantum_harmonic_oscillator()
 {
 	double tmin = -5.5 * pi;
 	double tmax = 5.5 * pi;
@@ -552,13 +538,11 @@ y[1] = 0;
 
 		dydx[0] = y[1];
 
-		dydx[1] = - (2 * n + 1 - x * x ) * y[0];
+		dydx[1] = -(2 * n + 1 - x * x) * y[0];
 
 		return dydx; };
 
 	std::vector<double> X = { x }, Y0 = { y[0] }, Y1 = { y[1] };
-
-	size_t steps = 0;
 
 	while (x <= tmax)
 	{
@@ -573,7 +557,6 @@ y[1] = 0;
 
 		Y0.push_back(y[0] * y[0]);
 		Y1.push_back(-y[1]);
-		steps++;
 	}
 
 	plot.plot_somedata(X, Y0, "k", "Y[0], n = " + std::to_string(n) + "", "red");
@@ -595,10 +578,9 @@ y[1] = 0;
 	p = std::minmax_element(begin(Y1), end(Y1));
 	std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
 
-	return steps;
 }
 
-size_t ODE_quantum_harmonic_oscillator_complex()
+void ODE_quantum_harmonic_oscillator_complex()
 {
 
 	double tmin = -5.5 * pi;
@@ -627,8 +609,6 @@ size_t ODE_quantum_harmonic_oscillator_complex()
 
 	std::vector<double> X = { x }, Y0 = { y[0].real }, Y1 = { y[1].real }, Y2 = { y[0].real }, Y3 = { y[1].real };
 
-	size_t steps = 0;
-
 	while (x <= tmax)
 	{
 		//Embedded_Verner_8_9(func, x, y, h);
@@ -644,7 +624,6 @@ size_t ODE_quantum_harmonic_oscillator_complex()
 		Y1.push_back(y[0].imag);
 		Y2.push_back(y[1].real);
 		Y3.push_back(y[1].imag);
-		steps++;
 	}
 
 	plot.plot_somedata(X, Y0, "k", "y[0].real, n = " + std::to_string(n) + "", "red");
@@ -667,12 +646,10 @@ size_t ODE_quantum_harmonic_oscillator_complex()
 	std::cout << "minY0 = " << *p.first << ", maxY0 = " << *p.second << '\n';
 	p = std::minmax_element(begin(Y3), end(Y3));
 	std::cout << "minY3 = " << *p.first << ", maxY3 = " << *p.second << '\n';
-
-	return steps;
 }
 
 //https://sam-dolan.staff.shef.ac.uk/mas212/notebooks/ODE_Example.html
-size_t ODE_Predator_Prey()
+void ODE_Predator_Prey()
 {
 	double x = 0;
 	double tmax = 12;
@@ -696,7 +673,6 @@ size_t ODE_Predator_Prey()
 
 	std::vector<double> X = { x }, Y0 = { y[0] }, Y1 = { y[1] };
 
-	size_t steps = 0;
 	while (x <= tmax)
 	{
 		Embedded_Fehlberg_7_8(func, x, y, h);
@@ -704,8 +680,6 @@ size_t ODE_Predator_Prey()
 		X.push_back(x);
 		Y0.push_back(y[0]);
 		Y1.push_back(y[1]);
-
-		steps++;
 	}
 
 	plot.plot_somedata(X, Y0, "k", "Y[0]", "blue");
@@ -724,12 +698,10 @@ size_t ODE_Predator_Prey()
 	std::cout << "minY0 = " << *p.first << ", maxY0 = " << *p.second << '\n';
 	p = std::minmax_element(begin(Y1), end(Y1));
 	std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
-
-	return steps;
 }
 
 
-size_t ODE_Van_der_Pol_oscillator()
+void ODE_Van_der_Pol_oscillator()
 {
 	double x = -2;
 	double tmax = 20;
@@ -753,7 +725,6 @@ size_t ODE_Van_der_Pol_oscillator()
 
 	std::vector<double> X = { x }, Y0 = { y[0] }, Y1 = { y[1] };
 
-	size_t steps = 0;
 	while (x <= tmax)
 	{
 		Embedded_Fehlberg_7_8(func, x, y, h);
@@ -761,8 +732,6 @@ size_t ODE_Van_der_Pol_oscillator()
 		X.push_back(x);
 		Y0.push_back(y[0]);
 		Y1.push_back(y[1]);
-
-		steps++;
 	}
 
 	plot.plot_somedata(X, Y0, "k", "Y[0]", "blue");
@@ -779,12 +748,10 @@ size_t ODE_Van_der_Pol_oscillator()
 	std::cout << "minY0 = " << *p.first << ", maxY0 = " << *p.second << '\n';
 	p = std::minmax_element(begin(Y1), end(Y1));
 	std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
-
-	return steps;
 }
 
 //https://www.numbercrunch.de/blog/2014/08/calculating-the-hermite-functions/
-size_t quantum_harmonic_oscillator()
+void quantum_harmonic_oscillator()
 {
 	double tmin = -5.5 * pi;
 	double tmax = 5.5 * pi;
@@ -794,7 +761,6 @@ size_t quantum_harmonic_oscillator()
 
 	std::vector<double> X, Y0, Y1;
 
-	size_t steps = 0;
 
 	int n = 115;
 
@@ -814,8 +780,6 @@ size_t quantum_harmonic_oscillator()
 		//Y1.push_back(p2 * p2);
 
 		x += h;
-
-		steps++;
 	}
 
 	plot.plot_somedata(X, Y0, "k", "y[0], m = " + std::to_string(n) + " ", "blue");
@@ -832,11 +796,9 @@ size_t quantum_harmonic_oscillator()
 	auto p = std::minmax_element(begin(Y0), end(Y0));
 	std::cout << "minY0 = " << *p.first << ", maxY0 = " << *p.second << '\n';
 
-
-	return steps;
 }
 
-size_t ODE_Lorenz_System()
+void ODE_Lorenz_System()
 {
 	double x = 0;
 	double tmax = 25.0;
@@ -864,7 +826,6 @@ size_t ODE_Lorenz_System()
 
 	std::vector<double> X = { x }, Y0 = { y[0] }, Y1 = { y[1] }, Y2 = { y[2] };
 
-	size_t steps = 0;
 	while (x <= tmax)
 	{
 		Embedded_Fehlberg_7_8(func, x, y, h);
@@ -873,22 +834,19 @@ size_t ODE_Lorenz_System()
 		Y0.push_back(y[0]);
 		Y1.push_back(y[1]);
 		Y2.push_back(y[2]);
-		steps++;
 	}
 
 	plot.plot_somedata_3D(Y0, Y1, Y2, "k", "Lorenz System", "blue");
 	plot.show();
-
-	return steps;
 }
 
 
 template<typename F, typename T>
 T Trapezoidal_Quadrature
 (
-	F y, 
-	const T& a, 
-	const T& b, 
+	F y,
+	const T& a,
+	const T& b,
 	const T& n
 )
 {
@@ -924,7 +882,7 @@ void trapezoidal()
 		return 1 / (1 + x * x);
 	};
 	//Value of integral is 0.7842
-	std::cout << "Value of integral is" << std::endl 
+	std::cout << "Value of integral is" << std::endl
 		<< Trapezoidal_Quadrature(func, x0, xn, n) << std::endl;
 }
 
@@ -967,12 +925,14 @@ template <typename F, typename T>
 std::vector<T> Find_all_zeroes
 (
 	const F& Wave_function,
-	const std::vector<T>& en 
+	const std::vector<T>& en
 )
 {
 	//Gives all zeroes in y = Psi(x)
 	const T epsilon = 1e-10;
 	const auto brent = new Brent(epsilon, Wave_function);
+	const auto secant = new Secant(epsilon, Wave_function);
+	const auto dekker = new Dekker(epsilon, Wave_function);
 
 	std::vector<T> s;
 	std::vector<T> all_zeroes;
@@ -990,13 +950,15 @@ std::vector<T> Find_all_zeroes
 		{
 			if ((s[i] + s[i + 1]) == 0)
 			{
+				//T zero = secant->solve(en[i], en[i + 1]);
+				//T zero = dekker->solve(en[i], en[i + 1]);
 				T zero = brent->solve(en[i], en[i + 1]);
 				//std::cout << zero << " " << t++ << std::endl;
 				all_zeroes.push_back(zero);
 			}
 		}
 	}
-	
+
 	return all_zeroes;
 }
 
@@ -1017,7 +979,7 @@ std::vector<T> zeroCrossing(const std::vector<T>& s, const std::vector<T>& en)
 	std::vector<size_t> zerCrossi;
 	std::vector<T> zerCross;
 
-	for (size_t i=0; i < s.size()-1; i++)     /* loop over data  */
+	for (size_t i = 0; i < s.size() - 1; i++)     /* loop over data  */
 	{
 		if ((sign(s[i]) + sign(s[i + 1])) == 0) /* set zero crossing location */
 			zerCrossi.push_back(i);

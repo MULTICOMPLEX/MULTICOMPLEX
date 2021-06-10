@@ -3,7 +3,7 @@ template<typename T, typename F, typename FP>
 class Newton {
 
 public:
-    Newton(double epsilon, const F &f, const FP &fPrime) : epsilon(epsilon), mf(f), mfPrime(fPrime) {}
+    Newton(double epsilon, const F &f, const FP &fPrime) : mEpsilon(epsilon), mf(f), mfPrime(fPrime) {}
  
     Newton() = default;
     virtual ~Newton() = default;
