@@ -211,7 +211,7 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
 {
 	std::vector<T> y(4);
 	std::vector<T> state(y.size());
-	std::vector<T> Y0, Y1, Y2, Y3;
+	std::vector<std::vector<T>> Y(y.size());
 
 	T x = tmin;
 	T E = 0;
@@ -231,11 +231,9 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
 	auto Wave_function = [&](const auto& energy) {
 		E = energy;
 
-		Y0.clear();
-		Y1.clear();
-		Y2.clear();
-		Y3.clear();
-
+		for(size_t i=0; i < y.size(); i++)
+			Y[i].clear();
+		
 		x = tmin;
 
 		y[0] = 1;
@@ -244,10 +242,10 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
 		y[2] = 0;
 		y[3] = 1;
 
-		Y0.push_back(y[0]);
-		Y1.push_back(y[1]);
-		Y2.push_back(y[2]);
-		Y3.push_back(y[3]);
+		Y[0].push_back(y[0]);
+		Y[1].push_back(y[1]);
+		Y[2].push_back(y[2]);
+		Y[3].push_back(y[3]);
 
 		while (x <= tmax)
 		{
@@ -258,15 +256,14 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
 			//Embedded_Fehlberg_7_8(SE, x, y, h);
 
 			x += h;
-			Y0.push_back(y[0]);
-			Y1.push_back(y[1]);
-			Y2.push_back(y[2]);
-			Y3.push_back(y[3]);
+			Y[0].push_back(y[0]);
+			Y[1].push_back(y[1]);
+			Y[2].push_back(y[2]);
+			Y[3].push_back(y[3]);
 		}
 
-		return *Y0.rbegin();
+		return *Y[0].rbegin();
 	};
-
 
 	std::vector<T> E_zeroes1, E_zeroes2;
 
@@ -285,9 +282,9 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
 
 	for (auto& E : E_zeroes2) {
 		Wave_function(E);
-		psi_sol.push_back(Y3);
-		std::reverse(Y3.begin(), Y3.end());
-		psi_sol.push_back(Y3);
+		psi_sol.push_back(Y[3]);
+		std::reverse(Y[3].begin(), Y[3].end());
+		psi_sol.push_back(Y[3]);
 	}
 
 	E_zeroes2.insert(E_zeroes2.end(), E_zeroes2.begin(), E_zeroes2.end());
@@ -326,7 +323,7 @@ size_t ODE_Quantum_Solver(int mode)
 	double L1 = -1., L2 = 1.;
 
 	bool wave_packet = 1;
-	if (wave_packet) {
+	if (wave_packet && mode == 2) {
 		sigma = 32, mu = 1;
 		Vo = 0; tmin = -9; tmax = 10;
 		h = 0.005;
@@ -336,8 +333,8 @@ size_t ODE_Quantum_Solver(int mode)
 
 	auto x = tmin;
 
-	bool tunnel = false;
-	if (tunnel) {
+	bool tunnel = true;
+	if (tunnel && mode == 2) {
 		L1 = 2*mu, L2 = 2*mu + 0.1;
 		plot.line(L1, L1, 0, 2060);
 		plot.line(L2, L2, 0, 2060);
@@ -446,7 +443,7 @@ size_t ODE_Quantum_Solver(int mode)
 		t++;
 	}
 
-	if (wave_packet)
+	if (wave_packet && mode == 2)
 	{
 		auto gwp = gaussian_wave_packet(X, (1 + 2 * 0.0072973525693) / (1 + sqrt(2)) * sqrt(sigma), mu);//σ μ
 	//gwp -= gaussian_wave_packet(X, 1 / (1 + sqrt(2)) * sqrt(sigma + 1 + 2 * 0.0072973525693), mu);
@@ -492,7 +489,7 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 		t++;
 	}
 
-	std::u32string title = U"Finite potential well";
+	std::u32string title;
 	if (mode == 1)title = U"Infinite potential well = Particle in 1-D Box";
 	else if (mode == 2 && wave_packet && !tunnel)title = U"Quantum Gaussian wave packet";
 	else if (mode == 2 && tunnel)title = U"Quantum Gaussian wave packet + tunnelling";
