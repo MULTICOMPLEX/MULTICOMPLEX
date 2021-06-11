@@ -30,6 +30,8 @@ public:
 
   ~plot_matplotlib(); // Destructor
 
+  void init_plot_window(const char* name, int x, int y);
+
   //! \brief Set the label on the X axis
   void set_xlabel(std::string xlabel, std::string properties = "");
 
@@ -88,13 +90,15 @@ public:
 
   void PyRun_Simple(std::string somestring);
 
-  void init_plot_window(const char* name, int x, int y);
   void grid_off();
   void grid_on();
   void line(const double x1=0, const double y1=0, const double x2=10, const double y2=10);
 
   void text(const double x, const double y,
     std::string somestring, std::string color, double fontsize);
+
+  void arrow(const double x_tail, const double y_tail,
+    const double x_head, const double y_head, std::string color);
 };
 
 
@@ -392,6 +396,25 @@ void plot_matplotlib::text(const double x, const double y,
   PyRun_SimpleStringStd("plt.text(" + to_string(x) + ", " + to_string(y) +", '" + somestring + "', color = \
       '" + color + "', fontsize = "+to_string(fontsize) + ")");
 }
+
+void plot_matplotlib::arrow(const double x_tail, const double y_tail,
+  const double x_head, const double y_head, std::string color)
+{
+  //PyRun_SimpleStringStd("plt.arrow(" + to_string(x) + ", " + to_string(y) + "," + to_string(dx) + ", \
+    //" + to_string(dy) + ", head_width=1, linewidth = 5, facecolor = '" + color + "')");
+
+  PyRun_SimpleStringStd("import matplotlib.patches as mpatches");
+  PyRun_SimpleStringStd("x_tail = " + to_string(x_tail) + "");//3.4
+  PyRun_SimpleStringStd("y_tail = " + to_string(y_tail) + "");//2020
+  PyRun_SimpleStringStd("x_head = " + to_string(x_head) + "");//2.1
+  PyRun_SimpleStringStd("y_head = " + to_string(y_head) + "");//2020
+  PyRun_SimpleStringStd("dx = x_head - x_tail");
+  PyRun_SimpleStringStd("dy = y_head - y_tail");
+  PyRun_SimpleStringStd("arrow = mpatches.FancyArrowPatch((x_tail, y_tail), (x_head, y_head), \
+    color = '" + color + "', mutation_scale = 10)");
+  PyRun_SimpleStringStd("ax = plt.gca()");
+  PyRun_SimpleStringStd("ax.add_patch(arrow)");
+ }
 
 void plot_matplotlib::init_plot_window(const char* name, int x, int y)
 {

@@ -62,6 +62,7 @@ int main(int argc, char* argv[]) {
 
 	//ODE_quantum_harmonic_oscillator_complex();
 
+	//testk1();
 	ODE_Quantum_Solver(4);
 
 	//ODE_Predator_Prey();
@@ -331,11 +332,14 @@ void ODE_Quantum_Solver(int mode)
 		plot.line(L1, L1, 0, 2060);
 		plot.line(L2, L2, 0, 2060);
 		Vb = 20;
-		plot.text(L2 + 0.5, 1900, "Vb = " + std::to_string(int(Vb)) + " ", "black", 12);
 		std::ostringstream out;
 		out.precision(2);
-		out << std::fixed << "W  = " << ws;
-		plot.text(L2 + 0.5, 1800, out.str(), "black", 12);
+		out << std::fixed << "W   = " << ws;
+		plot.text(L2 + 1.4, 2000, out.str(), "black", 12);
+		plot.arrow(3.4, 2020, 2.1, 2020, "green");
+		out.str(std::string());
+		out << std::fixed << "Vb  = " << Vb;
+		plot.text(L2 + 1.4, 1850, out.str(), "black", 12);
 	}
 
 	auto x = tmin;
@@ -1011,3 +1015,4 @@ std::vector<T> zeroCrossing(const std::vector<T>& s, const std::vector<T>& en)
 
 	return zerCross;
 }
+
