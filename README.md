@@ -76,7 +76,5 @@ https://en.wikipedia.org/wiki/Wave_packet
 
 https://en.wikipedia.org/wiki/Quantum_tunnelling
 
-![Figure_9](https://user-images.githubusercontent.com/75379917/121740160-fcfde880-cafc-11eb-9bd1-eae339e82e7b.png)
-
-
+![Figure_9](https://user-images.githubusercontent.com/75379917/121740476-6da50500-cafd-11eb-994d-da60217b70e4.png)
 
