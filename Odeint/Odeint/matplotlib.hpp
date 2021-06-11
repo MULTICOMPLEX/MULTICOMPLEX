@@ -92,6 +92,9 @@ public:
   void grid_off();
   void grid_on();
   void line(const double x1=0, const double y1=0, const double x2=10, const double y2=10);
+
+  void text(const double x, const double y,
+    std::string somestring, std::string color, double fontsize);
 };
 
 
@@ -383,6 +386,12 @@ void plot_matplotlib::line(const double x1, const double x2, const double y1, co
     + to_string(x2) + "], [" + to_string(y1) + ", " + to_string(y2) + "], color = 'black', linestyle = 'dotted')");
 }
 
+void plot_matplotlib::text(const double x, const double y, 
+  std::string somestring, std::string color, double fontsize)
+{
+  PyRun_SimpleStringStd("plt.text(" + to_string(x) + ", " + to_string(y) +", '" + somestring + "', color = \
+      '" + color + "', fontsize = "+to_string(fontsize) + ")");
+}
 
 void plot_matplotlib::init_plot_window(const char* name, int x, int y)
 {

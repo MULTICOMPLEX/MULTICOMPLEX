@@ -326,10 +326,16 @@ void ODE_Quantum_Solver(int mode)
 
 	double Vb=0;
 	if (mode == 4) {
-		L1 = 2 * mu, L2 = 2 * mu + .3;
+		double ws = .4;
+		L1 = 2 * mu, L2 = 2 * mu + ws;
 		plot.line(L1, L1, 0, 2060);
 		plot.line(L2, L2, 0, 2060);
 		Vb = 20;
+		plot.text(L2 + 0.5, 1900, "Vb = " + std::to_string(int(Vb)) + " ", "black", 12);
+		std::ostringstream out;
+		out.precision(2);
+		out << std::fixed << "L   = " << ws;
+		plot.text(L2 + 0.5, 1800, out.str(), "black", 12);
 	}
 
 	auto x = tmin;
