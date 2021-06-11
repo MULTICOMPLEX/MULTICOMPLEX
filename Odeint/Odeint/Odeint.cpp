@@ -42,7 +42,7 @@ std::vector<T> Find_all_zeroes
 (
 	const F& Wave_function,
 	const std::vector<T>& en, 
-	bool groundstate
+	bool tunnel
 );
 
 template <typename T>
@@ -326,7 +326,7 @@ void ODE_Quantum_Solver(int mode)
 
 	double Vb=0;
 	if (mode == 4) {
-		double ws = .4;
+		double ws = .1;
 		L1 = 2 * mu, L2 = 2 * mu + ws;
 		plot.line(L1, L1, 0, 2060);
 		plot.line(L2, L2, 0, 2060);
@@ -334,7 +334,7 @@ void ODE_Quantum_Solver(int mode)
 		plot.text(L2 + 0.5, 1900, "Vb = " + std::to_string(int(Vb)) + " ", "black", 12);
 		std::ostringstream out;
 		out.precision(2);
-		out << std::fixed << "L   = " << ws;
+		out << std::fixed << "W  = " << ws;
 		plot.text(L2 + 0.5, 1800, out.str(), "black", 12);
 	}
 
@@ -938,7 +938,7 @@ std::vector<T> Find_all_zeroes
 (
 	const F& Wave_function,
 	const std::vector<T>& en,
-	bool groundstate
+	bool tunnel
 )
 {
 	//Gives all zeroes in y = Psi(x)
@@ -958,7 +958,7 @@ std::vector<T> Find_all_zeroes
 
 		all_zeroes.clear();
 
-		if (groundstate)
+		if (tunnel)
 		{
 			T zero = secant->solve(e1, e1 + epsilon);
 			all_zeroes.push_back(zero);
