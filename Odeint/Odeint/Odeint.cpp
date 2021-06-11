@@ -41,7 +41,8 @@ template <typename F, typename T>
 std::vector<T> Find_all_zeroes
 (
 	const F& Wave_function,
-	const std::vector<T>& en
+	const std::vector<T>& en, 
+	bool groundstate
 );
 
 template <typename T>
@@ -255,7 +256,7 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
 
 	//E_zeroes1 = Find_all_zeroes(Wave_function, en);
 
-	E_zeroes2 = Find_all_zeroes(Wave_function, en);
+	E_zeroes2 = Find_all_zeroes(Wave_function, en, 0);
 
 	//std::cout << E_zeroes;
 
@@ -302,29 +303,33 @@ void ODE_Quantum_Solver(int mode)
 
 	double sigma = 1, mu = 0;
 	double Vo = 20, E = 0;
-	int physicist = 1;
+	int physicist = 0;
 
 	if (mode == 2)Vo = 10;
 
+	bool wave_packet = 0;
+	
 	double L1 = -1., L2 = 1.;
 
-	bool wave_packet = 0;
-	bool tunnel = 0;
+	if (mode == 2) {
+		physicist = 1;
+	}
 
 	if (mode == 3 || mode == 4) {
 		wave_packet = true;
 		sigma = 32, mu = 1;
-		Vo = 0; tmin = -9; tmax = 10;
+		Vo = 0; tmin = -9; tmax = 11;
 		h = 0.005;
 		E = 0;
 		physicist = 0;
 	}
 
+	double Vb=0;
 	if (mode == 4) {
-		tunnel = true;
-		L1 = 2 * mu, L2 = 2 * mu + 0.1;
+		L1 = 2 * mu, L2 = 2 * mu + .3;
 		plot.line(L1, L1, 0, 2060);
 		plot.line(L2, L2, 0, 2060);
+		Vb = 20;
 	}
 
 	auto x = tmin;
@@ -333,7 +338,7 @@ void ODE_Quantum_Solver(int mode)
 	{
 		if (mode == 4) {
 			if (x > (L1 - mu) && x < (L2 - mu))
-				return  20.;
+				return  Vb;
 		}
 
 		if (mode == 0 || mode == 1) {
@@ -411,7 +416,8 @@ void ODE_Quantum_Solver(int mode)
 	}
 	else en = linspace(E, Vo, int(2 * Vo));
 
-	E_zeroes = Find_all_zeroes(Wave_function, en);
+	E_zeroes = Find_all_zeroes(Wave_function, en, mode == 4);
+	if (E_zeroes.empty()) { std::cout << "No roots found !\n\n"; return; }
 
 	for (auto& E : E_zeroes) {
 		Wave_function(E);
@@ -474,10 +480,10 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 	std::u32string title;
 	if (mode == 0)title = U"Finite potential well";
 	else if (mode == 1)title = U"Infinite potential well = Particle in 1-D Box";
-	else if (wave_packet)title = U"Quantum Gaussian wave packet";
-	else if (tunnel)title = U"Quantum Gaussian wave packet + tunnelling";
-	else title = U"Quantum harmonic oscillator";
-
+	else if (mode == 2)title = U"Quantum harmonic oscillator";
+	else if (mode == 3)title = U"Quantum Gaussian wave packet";
+	else title = U"Quantum Gaussian wave packet + tunnelling";
+	
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
 	plot.set_title(cv.to_bytes(title));
 	plot.grid_on();
@@ -925,11 +931,12 @@ template <typename F, typename T>
 std::vector<T> Find_all_zeroes
 (
 	const F& Wave_function,
-	const std::vector<T>& en
+	const std::vector<T>& en,
+	bool groundstate
 )
 {
 	//Gives all zeroes in y = Psi(x)
-	const T epsilon = 1e-10;
+	const T epsilon = 1e-8;
 	const auto brent = new Brent(epsilon, Wave_function);
 	const auto secant = new Secant(epsilon, Wave_function);
 	const auto dekker = new Dekker(epsilon, Wave_function);
@@ -945,20 +952,28 @@ std::vector<T> Find_all_zeroes
 
 		all_zeroes.clear();
 
-		//static int t = 0;
-		for (size_t i = 0; i < s.size() - 1; i++)
+		if (groundstate)
 		{
-			if ((s[i] + s[i + 1]) == 0)
+			T zero = secant->solve(e1, e1 + epsilon);
+			all_zeroes.push_back(zero);
+			return all_zeroes;
+		}
+
+		else {
+			//static int t = 0;
+			for (size_t i = 0; i < s.size() - 1; i++)
 			{
-				//T zero = secant->solve(en[i], en[i + 1]);
-				//T zero = dekker->solve(en[i], en[i + 1]);
-				T zero = brent->solve(en[i], en[i + 1]);
-				//std::cout << zero << " " << t++ << std::endl;
-				all_zeroes.push_back(zero);
+				if ((s[i] + s[i + 1]) == 0)
+				{
+					//T zero = secant->solve(en[i], en[i + 1]);
+					//T zero = dekker->solve(en[i], en[i + 1]);
+					T zero = brent->solve(en[i], en[i + 1]);
+					//std::cout << zero << " " << t++ << std::endl;
+					all_zeroes.push_back(zero);
+				}
 			}
 		}
 	}
-
 	return all_zeroes;
 }
 
