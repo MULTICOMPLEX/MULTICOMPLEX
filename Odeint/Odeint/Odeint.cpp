@@ -41,7 +41,7 @@ template <typename F, typename T>
 std::vector<T> Find_all_zeroes
 (
 	const F& Wave_function,
-	const std::vector<T>& en, 
+	const std::vector<T>& en,
 	bool tunnel
 );
 
@@ -63,7 +63,8 @@ int main(int argc, char* argv[]) {
 	//ODE_quantum_harmonic_oscillator_complex();
 
 	//testk1();
-	ODE_Quantum_Solver(4);
+	//for (int x = 0; x <= 5; x++)
+	ODE_Quantum_Solver(6);
 
 	//ODE_Predator_Prey();
 	//quantum_harmonic_oscillator();
@@ -279,6 +280,101 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
 	return { psi_sol, E_zeroes2 };
 }
 
+template <typename T>
+std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine_Rectangular_potential_barrier
+(
+	const T& Vo_b,
+	const T& Vo_e,
+	const T& tmin,
+	const T& tmax,
+	const T& h,
+	const T& B1,
+	const T& B2
+)
+{
+	std::vector<T> y(4);
+	std::vector<T> state(y.size());
+	std::vector<std::vector<T>> Y(y.size());
+
+	T x = tmin;
+	T E = 0;
+	auto en = linspace(Vo_b, Vo_e + h, int(2 * abs(Vo_e - Vo_b)));
+
+	auto SE = [&](const auto& x, const auto& psi) {
+
+		state[0] = psi[1];
+		if (x > B1 && x < B2)
+			state[1] = 100.;
+		else state[1] = -2 * E * psi[0];
+
+
+		state[2] = psi[3];
+		if (x > B1 && x < B2)
+			state[3] = 100.;
+		else state[3] = -2 * E * psi[2];
+
+		return state;
+	};
+
+	auto Wave_function = [&](const auto& energy) {
+		E = energy;
+
+		Y.clear();
+		Y.resize(y.size());
+
+		x = tmin;
+
+		y[0] = 1;
+		y[1] = 0;
+
+		y[2] = 0;
+		y[3] = 1;
+
+		for (size_t i = 0; i < y.size(); i++)
+			Y[i].emplace_back(y[i]);
+
+		while (x <= tmax)
+		{
+			Midpoint_method_explicit(SE, x, y, h);
+			//Midpoint_method_implicit(SE, x, y, h);
+			//Euler_method(SE, x, y, h);
+			//Embedded_Fehlberg_3_4(SE, x, y, h);
+			//Embedded_Fehlberg_7_8(SE, x, y, h);
+
+			x += h;
+			for (size_t i = 0; i < y.size(); i++)
+				Y[i].emplace_back(y[i]);
+		}
+
+		return *Y[3].rbegin();
+	};
+
+	std::vector<T> E_zeroes1, E_zeroes2;
+
+	//E_zeroes1 = Find_all_zeroes(Wave_function, en);
+
+	E_zeroes2 = Find_all_zeroes(Wave_function, en, 0);
+
+	//std::cout << E_zeroes;
+
+	std::vector<std::vector<T>> psi_sol;
+
+	for (auto& E : E_zeroes1) {
+		//Wave_function(E);
+		//psi_sol.push_back(Y0);
+	}
+
+	for (auto& E : E_zeroes2) {
+		Wave_function(E);
+		//psi_sol.emplace_back(Y[2]);
+		std::reverse(Y[2].begin(), Y[2].end());
+		psi_sol.emplace_back(Y[2]);
+	}
+
+	E_zeroes2.insert(E_zeroes2.end(), E_zeroes2.begin(), E_zeroes2.end());
+	return { psi_sol, E_zeroes2 };
+}
+
 void ODE_Quantum_Solver(int mode)
 {
 	double tmin = -1;
@@ -309,7 +405,7 @@ void ODE_Quantum_Solver(int mode)
 	if (mode == 2)Vo = 10;
 
 	bool wave_packet = 0;
-	
+
 	double L1 = -1., L2 = 1.;
 
 	if (mode == 2) {
@@ -325,7 +421,7 @@ void ODE_Quantum_Solver(int mode)
 		physicist = 0;
 	}
 
-	double Vb=0;
+	double Vb = 0;
 	if (mode == 4) {
 		double ws = .1;
 		L1 = 2 * mu, L2 = 2 * mu + ws;
@@ -457,7 +553,7 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 		plot.plot_somedata(X, gwp, "k", cv1.to_bytes(text), "Red", 1.0);
 
 		t = 0;
-		auto v = ODE_Q_sine_cosine(0., 8., tmin, tmax, h);
+		auto v = ODE_Q_sine_cosine(4., 8., tmin, tmax, h);
 		for (auto& i : std::get<0>(v))
 		{
 			oss.str(std::string());
@@ -474,47 +570,96 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 		plot.plot_somedata(X, rf, "k", "E = " + oss.str() + " ", "Red", 1.0);
 		rf = psi_sola[0] * *(std::get<0>(v).rbegin() + 1);
 		plot.plot_somedata(X, rf, "k", "E = " + oss.str() + " ", "Green", 1.0);
+
 	}
 
-	t = 0;
-	for (auto& E : E_zeroes) {
-		Wave_function(E);
-		oss.str(std::string());
-		oss << E;
-		std::cout << "E " << E << std::endl;
-		plot.plot_somedata(X, psi_sola[t], "k", "E = " + oss.str() + " ", colours(t), 1.0);
-		//plot.plot_somedata(X, psi_solb[t], "k", "E = " + oss.str() + " ", colours(t), 1.0);
-		t++;
+	if (mode != 5 && mode != 6) {
+		t = 0;
+		for (auto& E : E_zeroes) {
+			Wave_function(E);
+			oss.str(std::string());
+			oss << E;
+			std::cout << "E " << E << std::endl;
+			plot.plot_somedata(X, psi_sola[t], "k", "E = " + oss.str() + " ", colours(t), 1.0);
+			//plot.plot_somedata(X, psi_solb[t], "k", "E = " + oss.str() + " ", colours(t), 1.0);
+			t++;
+		}
+	}
+
+	else
+	{
+		X.clear();
+		if (mode == 5) {
+			tmin = -4;
+			tmax = 4;
+		}
+
+		else {
+			tmin = -8;
+			tmax = 8;
+		}
+
+		x = tmin;
+		X.emplace_back(x);
+		while (x <= tmax)
+		{
+			x += h;
+			X.emplace_back(x);
+		}
+
+
+		std::tuple<std::vector<std::vector<double>>, std::vector<double>> v;
+		if (mode == 5)v = ODE_Q_sine_cosine(0., 8., tmin, tmax, h);
+
+		else {
+			double B1 = -.03, B2 = .03;
+			v = ODE_Q_sine_cosine_Rectangular_potential_barrier(0., 8., tmin, tmax, h, B1, B2);
+			plot.line(B1, B1, 0, 7.5);
+			plot.line(B2, B2, 0, 7.5);
+		}
+
+		t = 0;
+		for (auto& i : std::get<0>(v))
+		{
+			oss.str(std::string());
+			oss << std::get<1>(v)[t];
+			plot.plot_somedata(X, i, "k", "E = " + oss.str() + " ", colours(t), 1.0);
+			t++;
+		}
 	}
 
 	std::u32string title;
 	if (mode == 0)title = U"Finite potential well";
 	else if (mode == 1)title = U"Infinite potential well = Particle in 1-D Box";
-	else if (mode == 2)title = U"Quantum harmonic oscillator";
-	else if (mode == 3)title = U"Quantum Gaussian wave packet";
-	else title = U"Quantum Gaussian wave packet + tunnelling";
-	
+	else if (mode == 2)title = U"Harmonic oscillator";
+	else if (mode == 3)title = U"Gaussian wave packet";
+	else if (mode == 4) title = U"Gaussian wave packet + tunnelling through a rectangular potential barrier";
+	else if (mode == 5) title = U"Sine and cosine";
+	else title = U"Sine and cosine + tunnelling through a rectangular potential barrier";
+
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
 	plot.set_title(cv.to_bytes(title));
 	plot.grid_on();
 	plot.show();
 
-	t = 0;
-	for (auto& E : E_zeroes) {
-		Wave_function(E);
-		oss.str(std::string());
-		oss << E;
-		plot.plot_somedata(Y[1], Y[0], "k", "E = " + oss.str() + " ", colours(t++), 1.0);
-	}
-	plot.set_title(cv.to_bytes(title));
-	plot.show();
+	if (mode != 5 && mode != 6) {
+		t = 0;
+		for (auto& E : E_zeroes) {
+			Wave_function(E);
+			oss.str(std::string());
+			oss << E;
+			plot.plot_somedata(Y[1], Y[0], "k", "E = " + oss.str() + " ", colours(t++), 1.0);
+		}
+		plot.set_title(cv.to_bytes(title));
+		plot.show();
 
-	std::cout.setf(std::ios::fixed, std::ios::floatfield);
-	std::cout.precision(15);
-	auto p = std::minmax_element(begin(Y[0]), end(Y[0]));
-	std::cout << "minY0 = " << *p.first << ", maxY0 = " << *p.second << '\n';
-	p = std::minmax_element(begin(Y[1]), end(Y[1]));
-	std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
+		std::cout.setf(std::ios::fixed, std::ios::floatfield);
+		std::cout.precision(15);
+		auto p = std::minmax_element(begin(Y[0]), end(Y[0]));
+		std::cout << "minY0 = " << *p.first << ", maxY0 = " << *p.second << '\n';
+		p = std::minmax_element(begin(Y[1]), end(Y[1]));
+		std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
+	}
 }
 
 void ODE_quantum_harmonic_oscillator()
