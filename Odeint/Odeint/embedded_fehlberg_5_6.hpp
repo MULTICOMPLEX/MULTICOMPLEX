@@ -36,7 +36,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 template<typename F, typename T>
-std::vector<T> Runge_Kutta_5_6(F f, T t, std::vector<T>& y, T h);
+std::vector<T> Runge_Kutta_5_6(F f, T t, std::vector<T>& y, T h, T reset);
 
 ////////////////////////////////////////////////////////////////////////////////
 // int Embedded_Fehlberg_4_5( double (*f)(double, double), double y[],        //
@@ -72,9 +72,9 @@ std::vector<T> Runge_Kutta_5_6(F f, T t, std::vector<T>& y, T h);
 // 
 
 template<typename F, typename T>
-int Embedded_Fehlberg_5_6(F f, T t, std::vector<T>& y, T h) 
+int Embedded_Fehlberg_5_6(F f, T t, std::vector<T>& y, T h, T reset)
 {
-  Runge_Kutta_5_6(f, t, y, h);
+  Runge_Kutta_5_6(f, t, y, h, reset);
 
   return 0;
 }
@@ -107,7 +107,7 @@ int Embedded_Fehlberg_5_6(F f, T t, std::vector<T>& y, T h)
 ////////////////////////////////////////////////////////////////////////////////
 
 template<typename F, typename T>
-std::vector<T> Runge_Kutta_5_6(F f, T t, std::vector<T>& y, T h)
+std::vector<T> Runge_Kutta_5_6(F f, T t, std::vector<T>& y, T h, T reset)
 {
   static const T c1 = 682.0 / 8448.0;
   static const T c3 = 3375.0 / 8448.0;
@@ -149,15 +149,16 @@ std::vector<T> Runge_Kutta_5_6(F f, T t, std::vector<T>& y, T h)
   std::vector<T>  k1, k2, k3, k4, k5, k6, k7, k8;
   T h6 = a2 * h;
 
-  k1 = f(t, y);
-  k2 = f(t + h6, y + h6 * k1);
-  k3 = f(t + a3 * h, y + h * (b31 * k1 + b32 * k2));
-  k4 = f(t + a4 * h, y + h * (b41 * k1 + b42 * k2 + b43 * k3));
-  k5 = f(t + a5 * h, y + h * (b51 * k1 + b52 * k2 + b53 * k3 + b54 * k4));
-  k6 = f(t + h, y + h * (b61 * k1 + b62 * k2 + b63 * k3 + b64 * k4 + b65 * k5));
-  k7 = f(t, y + h * (b71 * k1 + b73 * k3 + b74 * k4 + b75 * k5));
+  k1 = f(t, y, reset);
+  k2 = f(t + h6, y + h6 * k1, reset);
+  k3 = f(t + a3 * h, y + h * (b31 * k1 + b32 * k2), reset);
+  k4 = f(t + a4 * h, y + h * (b41 * k1 + b42 * k2 + b43 * k3), reset);
+  k5 = f(t + a5 * h, y + h * (b51 * k1 + b52 * k2 + b53 * k3 + b54 * k4), reset);
+  k6 = f(t + h, y + h * (b61 * k1 + b62 * k2 + b63 * k3 + b64 * k4 + b65 * k5), reset);
+  k7 = f(t, y + h * (b71 * k1 + b73 * k3 + b74 * k4 + b75 * k5), reset);
   k8 = f(t + h, y + h * (b81 * k1 + b82 * k2 + b83 * k3 + b84 * k4
-    + b85 * k5 + k7));
+    + b85 * k5 + k7), reset);
   y += h * (c1 * k1 + c3 * k3 + c4 * k4 + c5 * k5 + c6 * k6);
+  y *= reset;
   return err_factor * (k1 + k6 - k7 - k8);
 }

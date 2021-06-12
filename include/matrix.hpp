@@ -1113,6 +1113,29 @@ inline const std::vector<T> operator*=
 	const MX0& b
 	)
 {
+	a = a * b.real;
+	return a;
+}
+
+template <typename T>
+inline const std::vector<MX0> operator*=
+(
+	std::vector<MX0>& a,
+	const T& b
+	)
+{
+	a = a * b;
+	return a;
+}
+
+
+template <typename T>
+inline const std::vector<T> operator*=
+(
+	std::vector<T>& a,
+	const T& b
+	)
+{
 	a = a * b;
 	return a;
 }

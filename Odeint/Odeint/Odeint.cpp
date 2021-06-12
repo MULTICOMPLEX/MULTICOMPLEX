@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
 	//ODE_quantum_harmonic_oscillator_complex();
 
 	//testk1();
-	//for (int x = 0; x <= 5; x++)
+	//for (int x = 0; x <= 6; x++)
 	ODE_Quantum_Solver(6);
 
 	//ODE_Predator_Prey();
@@ -90,7 +90,7 @@ void ODE_test_nl(bool e_plot)
 
 	std::vector<double> dydx(y.size());
 
-	auto func = [&](const auto& x, const auto& y) {
+	auto func = [&](const auto& x, const auto& y, auto& reset) {
 
 		dydx[0] = x * sqrt(abs(y[0])) + pow(sin(x * pi / 2), 3) - 5. * (x > 2.);
 		return dydx; };
@@ -99,7 +99,7 @@ void ODE_test_nl(bool e_plot)
 
 	while (x <= tmax)
 	{
-		Embedded_Fehlberg_7_8(func, x, y, h);
+		Embedded_Fehlberg_7_8(func, x, y, h, 1.);
 		x += h;
 		X.push_back(x);
 		Y0.push_back(y[0]);
@@ -138,7 +138,7 @@ void ODE_harmonic_oscillator()
 	// z' = -y
 
 	//mxws mxws;
-	auto func = [&](const auto& x, const auto& y) {
+	auto func = [&](const auto& x, const auto& y, auto& reset) {
 		const double w0 = 2 * pi * 0.25;
 		const double zeta = 0.3;//0.3
 		int n = 5;
@@ -153,15 +153,15 @@ void ODE_harmonic_oscillator()
 
 	while (x <= tmax)
 	{
-		Embedded_Fehlberg_7_8(func, x, y, h);
+		Embedded_Fehlberg_7_8(func, x, y, h, 1.);
 		x += h;
 		X.push_back(x);
 		Y0.push_back(y[0]);
 		Y1.push_back(y[1]);
 	}
 
-	plot.plot_somedata(X, Y0, "k", "cosine", "blue", 1);
-	plot.plot_somedata(X, Y1, "k", "sine", "red", 1);
+	plot.plot_somedata(X, Y0, "k", "sine", "blue", 1);
+	plot.plot_somedata(X, Y1, "k", "cosine", "red", 1);
 
 	std::u32string title = U"ÿ = -y";
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
@@ -210,7 +210,7 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
 	T E = 0;
 	auto en = linspace(Vo_b, Vo_e + h, int(2 * abs(Vo_e - Vo_b)));
 
-	auto SE = [&](const auto& x, const auto& psi) {
+	auto SE = [&](const auto& x, const auto& psi, auto& reset) {
 
 		state[0] = psi[1];
 		state[1] = -2 * E * psi[0];
@@ -240,11 +240,11 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
 
 		while (x <= tmax)
 		{
-			Midpoint_method_explicit(SE, x, y, h);
-			//Midpoint_method_implicit(SE, x, y, h);
-			//Euler_method(SE, x, y, h);
-			//Embedded_Fehlberg_3_4(SE, x, y, h);
-			//Embedded_Fehlberg_7_8(SE, x, y, h);
+			Midpoint_method_explicit(SE, x, y, h, 1.);
+			//Midpoint_method_implicit(SE, x, y, h, 1.);
+			//Euler_method(SE, x, y, h, 1.);
+			//Embedded_Fehlberg_3_4(SE, x, y, h, 1.);
+			//Embedded_Fehlberg_7_8(SE, x, y, h, 1.);
 
 			x += h;
 			for (size_t i = 0; i < y.size(); i++)
@@ -289,7 +289,8 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine_Rectan
 	const T& tmax,
 	const T& h,
 	const T& B1,
-	const T& B2
+	const T& B2,
+	const T& Reset
 )
 {
 	std::vector<T> y(4);
@@ -298,20 +299,25 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine_Rectan
 
 	T x = tmin;
 	T E = 0;
-	auto en = linspace(Vo_b, Vo_e + h, int(2 * abs(Vo_e - Vo_b)));
+	auto en = linspace(Vo_b, Vo_e, int(2 * abs(Vo_e - Vo_b)));
 
-	auto SE = [&](const auto& x, const auto& psi) {
+	auto SE = [&](const auto& x, const auto& psi, auto& reset) {
 
 		state[0] = psi[1];
-		if (x > B1 && x < B2)
-			state[1] = 100.;
-		else state[1] = -2 * E * psi[0];
-
-
 		state[2] = psi[3];
+
 		if (x > B1 && x < B2)
-			state[3] = 100.;
-		else state[3] = -2 * E * psi[2];
+		{
+			reset = pow(Reset, 2);
+		}
+
+		else if (x > B2)
+		{
+			reset = Reset;
+		}
+
+		state[1] = -2 * E * psi[0];
+		state[3] = -2 * E * psi[2];
 
 		return state;
 	};
@@ -335,18 +341,18 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine_Rectan
 
 		while (x <= tmax)
 		{
-			Midpoint_method_explicit(SE, x, y, h);
-			//Midpoint_method_implicit(SE, x, y, h);
-			//Euler_method(SE, x, y, h);
-			//Embedded_Fehlberg_3_4(SE, x, y, h);
-			//Embedded_Fehlberg_7_8(SE, x, y, h);
+			Midpoint_method_explicit(SE, x, y, h, 1.);
+			//Midpoint_method_implicit(SE, x, y, h, 1.);
+			//Euler_method(SE, x, y, h, 1.);
+			//Embedded_Fehlberg_3_4(SE, x, y, h, 1.);
+			//Embedded_Fehlberg_7_8(SE, x, y, h, 1.);
 
 			x += h;
 			for (size_t i = 0; i < y.size(); i++)
 				Y[i].emplace_back(y[i]);
 		}
 
-		return *Y[3].rbegin();
+		return *Y[2].rbegin();
 	};
 
 	std::vector<T> E_zeroes1, E_zeroes2;
@@ -366,9 +372,9 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine_Rectan
 
 	for (auto& E : E_zeroes2) {
 		Wave_function(E);
-		//psi_sol.emplace_back(Y[2]);
-		std::reverse(Y[2].begin(), Y[2].end());
-		psi_sol.emplace_back(Y[2]);
+		psi_sol.emplace_back(Y[3]);
+		//std::reverse(Y[3].begin(), Y[3].end());
+		//psi_sol.emplace_back(Y[3]);
 	}
 
 	E_zeroes2.insert(E_zeroes2.end(), E_zeroes2.begin(), E_zeroes2.end());
@@ -457,7 +463,7 @@ void ODE_Quantum_Solver(int mode)
 		else return -(2 * E + physicist - (x * x) / sigma);
 	};
 
-	auto SE = [&](const auto& x, const auto& psi) {
+	auto SE = [&](const auto& x, const auto& psi, auto& reset) {
 
 		state[0] = psi[1];
 
@@ -492,11 +498,11 @@ void ODE_Quantum_Solver(int mode)
 
 		while (x <= tmax)
 		{
-			Midpoint_method_explicit(SE, x, y, h);
-			//Midpoint_method_implicit(SE, x, y, h);
-			//Euler_method(SE, x, y, h);
-			//Embedded_Fehlberg_3_4(SE, x, y, h);
-			//Embedded_Fehlberg_7_8(SE, x, y, h);
+			Midpoint_method_explicit(SE, x, y, h, 1.);
+			//Midpoint_method_implicit(SE, x, y, h, 1.);
+			//Euler_method(SE, x, y, h, 1.);
+			//Embedded_Fehlberg_3_4(SE, x, y, h, 1.);
+			//Embedded_Fehlberg_7_8(SE, x, y, h, 1.);
 
 			x += h;
 			Y[0].emplace_back(y[0]);
@@ -612,10 +618,10 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 		if (mode == 5)v = ODE_Q_sine_cosine(0., 8., tmin, tmax, h);
 
 		else {
-			double B1 = -.03, B2 = .03;
-			v = ODE_Q_sine_cosine_Rectangular_potential_barrier(0., 8., tmin, tmax, h, B1, B2);
-			plot.line(B1, B1, 0, 7.5);
-			plot.line(B2, B2, 0, 7.5);
+			double B1 = -.5, B2 = .5;
+			v = ODE_Q_sine_cosine_Rectangular_potential_barrier(0., 8., tmin, tmax, h, B1, B2, 0.995);
+			plot.line(B1, B1, -1., 1.);
+			plot.line(B2, B2, -1., 1.);
 		}
 
 		t = 0;
@@ -635,7 +641,7 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 	else if (mode == 3)title = U"Gaussian wave packet";
 	else if (mode == 4) title = U"Gaussian wave packet + tunnelling through a rectangular potential barrier";
 	else if (mode == 5) title = U"Sine and cosine";
-	else title = U"Sine and cosine + tunnelling through a rectangular potential barrier";
+	else title = U"Cosine + tunnelling through a rectangular potential barrier";
 
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
 	plot.set_title(cv.to_bytes(title));
@@ -695,7 +701,7 @@ y[1] = 0;
 	*/
 	std::vector<double> dydx(y.size());
 
-	auto func = [&](const auto& x, const auto& y) {
+	auto func = [&](const auto& x, const auto& y, auto& reset) {
 
 		dydx[0] = y[1];
 
@@ -707,11 +713,11 @@ y[1] = 0;
 
 	while (x <= tmax)
 	{
-		//Embedded_Verner_8_9(func, x, y, h);
-		Embedded_Fehlberg_7_8(func, x, y, h);
-		//Embedded_Fehlberg_3_4(func, x, y, h);
-		//Embedded_Fehlberg_5_6(func, x, y, h);
-		//Midpoint_method_explicit(func, x, y, h);
+		//Midpoint_method_explicit(func, x, y, h, 1.);
+		//Midpoint_method_implicit(func, x, y, h, 1.);
+		//Euler_method(func, x, y, h, 1.);
+		//Embedded_Fehlberg_3_4(func, x, y, h, 1.);
+		Embedded_Fehlberg_7_8(func, x, y, h, 1.);
 
 		x += h;
 		X.push_back(x);
@@ -760,7 +766,7 @@ void ODE_quantum_harmonic_oscillator_complex()
 	std::vector<MX0> dydx(y.size());
 
 	MX0 i{ 0,-1 };
-	auto func = [&](const auto& x, const auto& y) {
+	auto func = [&](const auto& x, const auto& y, auto& reset) {
 
 		dydx[0] = i * y[1];
 
@@ -772,11 +778,11 @@ void ODE_quantum_harmonic_oscillator_complex()
 
 	while (x <= tmax)
 	{
-		//Embedded_Verner_8_9(func, x, y, h);
-		Embedded_Fehlberg_7_8(func, x, y, h);
-		//Embedded_Fehlberg_3_4(func, x, y, h);
-		//Embedded_Fehlberg_5_6(func, x, y, h);
-		//Midpoint_method_explicit(func, x, y, h);
+		//Embedded_Verner_8_9(func, x, y, h, 1.);
+		Embedded_Fehlberg_7_8(func, x, y, h, 1.);
+		//Embedded_Fehlberg_3_4(func, x, y, h, 1.);
+		//Embedded_Fehlberg_5_6(func, x, y, h, 1.);
+		//Midpoint_method_explicit(func, x, y, h, 1.);
 
 		x += h;
 		X.push_back(x);
@@ -825,7 +831,7 @@ void ODE_Predator_Prey()
 
 	std::vector<double> dydx(y.size());
 
-	auto func = [&](const auto& x, const auto& y) {
+	auto func = [&](const auto& x, const auto& y, auto& reset) {
 
 		dydx[0] = y[0] * (a - b * y[1]);
 		dydx[1] = -y[1] * (c - d * y[0]);
@@ -836,7 +842,7 @@ void ODE_Predator_Prey()
 
 	while (x <= tmax)
 	{
-		Embedded_Fehlberg_7_8(func, x, y, h);
+		Embedded_Fehlberg_7_8(func, x, y, h, 1.);
 		x += h;
 		X.push_back(x);
 		Y0.push_back(y[0]);
@@ -875,7 +881,7 @@ void ODE_Van_der_Pol_oscillator()
 
 	std::vector<double> dydx(y.size());
 
-	auto func = [&](const auto& x, const auto& y) {
+	auto func = [&](const auto& x, const auto& y, auto& reset) {
 
 		const double mu = 5.0;
 
@@ -888,7 +894,7 @@ void ODE_Van_der_Pol_oscillator()
 
 	while (x <= tmax)
 	{
-		Embedded_Fehlberg_7_8(func, x, y, h);
+		Embedded_Fehlberg_7_8(func, x, y, h, 1.);
 		x += h;
 		X.push_back(x);
 		Y0.push_back(y[0]);
@@ -973,7 +979,7 @@ void ODE_Lorenz_System()
 
 	std::vector<double> dydx(y.size());
 
-	auto func = [&](const auto& x, const auto& y) {
+	auto func = [&](const auto& x, const auto& y, auto& reset) {
 		const double sigma = 10.0;
 		const double R = 28.0;
 		const double b = 8.0 / 3.0;
@@ -989,7 +995,7 @@ void ODE_Lorenz_System()
 
 	while (x <= tmax)
 	{
-		Embedded_Fehlberg_7_8(func, x, y, h);
+		Embedded_Fehlberg_7_8(func, x, y, h, 1.);
 		x += h;
 		X.push_back(x);
 		Y0.push_back(y[0]);
