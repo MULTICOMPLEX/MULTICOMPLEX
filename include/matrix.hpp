@@ -10,7 +10,7 @@ template <class T>
 class Matrix
 {
 public:
-	
+
 	enum { Rows = 32, Cols = 32 };
 	T matrix[Rows][Cols] = {};
 	//T** matrix;
@@ -20,7 +20,7 @@ public:
 	Matrix(size_t height, size_t width);
 	Matrix();
 	Matrix(std::initializer_list<std::initializer_list<T>> listlist);
-	
+
 	virtual ~Matrix() = default;
 
 	size_t getHeight() const;
@@ -57,7 +57,7 @@ public:
 	Matrix operator-=(const Matrix& m);
 	Matrix operator*=(const Matrix& m);
 	Matrix operator*=(const T& m);
-	
+
 	inline T(&operator [](size_t i))[Cols]
 	{
 		return matrix[i];
@@ -144,7 +144,7 @@ inline void Matrix<T>::transpose
 {
 	int i, j;
 	auto s = c.height;
-	
+
 	Matrix b(s, s);
 	for (i = 0; i < n; i++)
 		for (j = 0; j < n; j++)
@@ -237,9 +237,9 @@ inline Matrix<T>::Matrix
 //---------------------------------------------------
 
 template <typename T>
-inline Matrix<T>::Matrix(std::initializer_list<std::initializer_list<T>> listlist) : 
+inline Matrix<T>::Matrix(std::initializer_list<std::initializer_list<T>> listlist) :
 	height(listlist.begin()->size()), width(listlist.size()) {
-	
+
 	auto rows = height;
 	auto cols = width;
 
@@ -667,7 +667,7 @@ inline Matrix<T> operator+
 (
 	const Matrix<T>& a,
 	Matrix<T> b
-)
+	)
 {
 	return a.add(b);
 }
@@ -679,7 +679,7 @@ Matrix<T> operator-
 (
 	const Matrix<T>& a,
 	Matrix<T> b
-	) 
+	)
 {
 	return a.subtract(b);
 }
@@ -716,7 +716,7 @@ template <class T>
 inline Matrix<T> Matrix<T>::operator*
 (
 	Matrix<T>& b
-)
+	)
 {
 	size_t h = height;
 	size_t w = width;
@@ -903,7 +903,7 @@ inline const std::vector<T> operator+
 (
 	const std::vector<T>& a,
 	const T& b
-)
+	)
 {
 	std::vector<T> res;
 
@@ -1095,7 +1095,7 @@ inline const std::vector<T> operator*
 (
 	const T& a,
 	const std::vector<T>& b
-	
+
 	)
 {
 	std::vector<T> res = b;
@@ -1257,7 +1257,7 @@ inline void Matrix<T>::Print
 	std::ostream& flux,
 	Matrix<T> m
 ) const
-{	
+{
 	for (size_t i = 0; i < m.height; i++)
 	{
 		for (size_t j = 0; j < m.width; j++)
@@ -1275,7 +1275,7 @@ inline std::ostream& operator <<
 (
 	std::ostream& flux,
 	const std::vector<elem>& a
-)
+	)
 {
 
 	for (auto& i : a)
@@ -1293,7 +1293,7 @@ inline std::ostream& operator <<
 {
 	for (auto& i : a)
 		flux << " " << i;
-	
+
 	return flux;
 }
 //---------------------------------------------------
@@ -1303,9 +1303,9 @@ inline std::ostream& operator <<
 (
 	std::ostream& flux,
 	const Matrix<T>& m
-)
+	)
 {
-	m.Print(flux,m);
+	m.Print(flux, m);
 	return flux;
 }
 
@@ -1339,10 +1339,10 @@ inline std::vector<elem> normalize
 
 //---------------------------------------------------
 
-template<typename elem, int order,size_t num_in>
-std::array<multicomplex<elem,order>, num_in> linspace(const elem start_in, const elem end_in)
+template<typename elem, int order, size_t num_in>
+std::array<multicomplex<elem, order>, num_in> linspace(const elem start_in, const elem end_in)
 {
-	std::array<multicomplex<elem,order>, num_in> linspaced;
+	std::array<multicomplex<elem, order>, num_in> linspaced;
 
 	elem start = start_in;
 	elem end = end_in;
@@ -1414,20 +1414,20 @@ std::ostream& operator<<(std::ostream& os, const std::array<T, N>& arr)
 {
 	os.setf(std::ios::fixed, std::ios::floatfield);
 	os.precision(10);
-	
+
 	int i = 0;
 	os << "[";
 	for (auto d = arr.begin(); d != arr.end(); ++d)
 	{
 		os << std::setw(14) << *d;
-		if (d != arr.end()-1) {
+		if (d != arr.end() - 1) {
 			os << " ";
 			if (i++ == 4) { i = 0; os << std::endl << " "; }
-			
+
 		}
 		else { os << "]"; }
 	}
-	
+
 	return os;
 }
 
