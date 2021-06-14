@@ -149,8 +149,10 @@
     <ClCompile Include="sys\time.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\include\derivative.hpp" />
     <ClInclude Include="..\..\include\integrator.hpp" />
     <ClInclude Include="..\..\include\matrix.hpp" />
+    <ClInclude Include="..\..\include\MULTICOMPLEX.hpp" />
     <ClInclude Include="brent.hpp" />
     <ClInclude Include="Laplace_transform.hpp" />
     <ClInclude Include="matplotlib.hpp" />

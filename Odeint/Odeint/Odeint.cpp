@@ -41,7 +41,8 @@ template <typename F, typename T>
 std::vector<T> Find_all_zeroes
 (
 	const F& Wave_function,
-	const std::vector<T>& en
+	const std::vector<T>& en,
+	bool tunnel
 );
 
 template <typename T>
@@ -207,7 +208,7 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
 
 	T x = tmin;
 	T E = 0;
-	auto en = linspace(Vo_b, Vo_e + h, int(2 * abs(Vo_e - Vo_b)));
+	auto en = linspace(Vo_b, Vo_e, int(8 * abs(Vo_e - Vo_b)));
 
 	auto SE = [&](const auto& x, const auto& psi, auto& reset) {
 
@@ -257,7 +258,7 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
 
 	//E_zeroes1 = Find_all_zeroes(Wave_function, en);
 
-	E_zeroes2 = Find_all_zeroes(Wave_function, en);
+	E_zeroes2 = Find_all_zeroes(Wave_function, en, 0);
 	if (E_zeroes2.empty()) { std::cout << "No roots found !\n\n"; exit(0); }
 
 	//std::cout << E_zeroes;
@@ -343,6 +344,7 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine_Rectan
 		{
 			Midpoint_method_explicit(SE, x, y, h, 1.);
 			//Midpoint_method_implicit(SE, x, y, h, 1.);
+			//EI2(x, y);
 			//Euler_method(SE, x, y, h, 1.);
 			//Embedded_Fehlberg_3_4(SE, x, y, h, 1.);
 			//Embedded_Fehlberg_7_8(SE, x, y, h, 1.);
@@ -359,10 +361,10 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine_Rectan
 
 	//E_zeroes1 = Find_all_zeroes(Wave_function, en);
 
-	E_zeroes2 = Find_all_zeroes(Wave_function, en);
+	E_zeroes2 = Find_all_zeroes(Wave_function, en, 0);
 	if (E_zeroes2.empty()) { std::cout << "No roots found !\n\n"; exit(0); }
 
-	//std::cout << E_zeroes;
+	std::cout << E_zeroes2;
 
 	std::vector<std::vector<T>> psi_sol;
 
@@ -414,16 +416,19 @@ void ODE_Quantum_Solver(int mode)
 
 	double L1 = -1., L2 = 1.;
 
+	bool tunnel = false;
 	if (mode == 3 || mode == 4) {
+		tunnel = true;
 		wave_packet = true;
-		sigma = 32, mu = 1;
+		sigma = 50, mu = 1;
 		Vo = 0; tmin = -9; tmax = 11;
 		h = 0.005;
 		E = 0;
 	}
 
 	double Vb = 0;
-	if (mode == 4) {
+	if (mode == 4) {	
+		Vo = 0;
 		double ws = .1;
 		L1 = 2 * mu, L2 = 2 * mu + ws;
 		plot.line(L1, L1, 0, 2060);
@@ -519,11 +524,11 @@ void ODE_Quantum_Solver(int mode)
 	std::vector<double> E_zeroes, en;
 
 	if (Vo == 0) {
-		en = linspace(0., 1 / sqrt(sigma), 2);
+		en = linspace(0.0, 0.6, 32);
 	}
 	else en = linspace(E, Vo, int(2 * Vo));
 
-	E_zeroes = Find_all_zeroes(Wave_function, en);
+	E_zeroes = Find_all_zeroes(Wave_function, en, tunnel);
 	if (E_zeroes.empty()) { std::cout << "No roots found !\n\n"; return; }
 
 	for (auto& E : E_zeroes) {
@@ -598,6 +603,7 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 		else {
 			tmin = -8;
 			tmax = 8;
+			//h = 1e-3;
 		}
 
 		x = tmin;
@@ -610,10 +616,11 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 
 
 		std::tuple<std::vector<std::vector<double>>, std::vector<double>> v;
-		if (mode == 5)v = ODE_Q_sine_cosine(0., 8., tmin, tmax, h);
+		if (mode == 5)v = ODE_Q_sine_cosine(0., 4., tmin, tmax, h);
 
 		else {
 			double B1 = -.5, B2 = .5;
+			
 			v = ODE_Q_sine_cosine_Rectangular_potential_barrier(0., 8., tmin, tmax, h, B1, B2, 0.995);
 			plot.line(B1, B1, -1., 1.);
 			plot.line(B2, B2, -1., 1.);
@@ -1087,7 +1094,8 @@ template <typename F, typename T>
 std::vector<T> Find_all_zeroes
 (
 	const F& Wave_function,
-	const std::vector<T>& en
+	const std::vector<T>& en,
+	bool tunnel
 )
 {
 	//Gives all zeroes in y = Psi(x)
@@ -1117,6 +1125,7 @@ std::vector<T> Find_all_zeroes
 				T zero = brent->solve(en[i], en[i + 1]);
 				//std::cout << zero << " " << t++ << std::endl;
 				all_zeroes.push_back(zero);
+				if(tunnel)break;
 			}
 		}
 	}

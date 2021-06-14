@@ -926,6 +926,18 @@ inline const std::vector<T> operator+=
 }
 
 template <typename T>
+inline const std::vector<T> operator+=
+(
+	std::vector<T>& a,
+	const T& b
+	)
+{
+	for (size_t i = 0; i < a.size(); i++)
+		a[i] += b;
+	return a;
+}
+
+template <typename T>
 inline const std::vector<T> operator+
 (
 	const std::vector<T>& a,
@@ -966,6 +978,18 @@ inline const std::vector<T> operator-
 		res[i] -= b[i];
 
 	return res;
+}
+
+template <typename T>
+inline const std::vector<T> operator-=
+(
+	std::vector<T>& a,
+	const T& b
+	)
+{
+	for (size_t i = 0; i < a.size(); i++)
+		a[i] -= b;
+	return a;
 }
 
 template <typename T>
