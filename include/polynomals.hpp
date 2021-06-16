@@ -102,7 +102,7 @@ namespace ps
 			return 2 * x;
 		
 		else 
-			return 2 * x * Hermite(n - 1, x) - 2 * (n - 1) * Hermite(n - 2, x);
+			return 2 * x * Hermite(n - 1, x) - 2 * T(n - 1) * Hermite(n - 2, x);
 	}
 
 	template<typename T>

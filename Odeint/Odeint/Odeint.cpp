@@ -28,6 +28,7 @@ void ODE_quantum_harmonic_oscillator();
 void ODE_Predator_Prey();
 void ODE_Quantum_Solver(int mode = 0);
 void ODE_quantum_harmonic_oscillator_complex();
+void ODE_test_poly();
 
 void trapezoidal();
 
@@ -64,7 +65,8 @@ int main(int argc, char* argv[]) {
 
 	//testk1();
 	//for (int x = 0; x <= 6; x++)
-	ODE_Quantum_Solver(2);
+	//ODE_Quantum_Solver(2);
+	ODE_test_poly();
 
 	//ODE_Predator_Prey();
 	//quantum_harmonic_oscillator();
@@ -76,6 +78,132 @@ int main(int argc, char* argv[]) {
 	//Leapfrog_integration();
 
 	return 0;
+}
+
+template <typename T>
+inline T AssociatedLegendre
+(
+	const T& x, 
+	const int  m_m = 3,
+	const int  m_l = 8
+)
+{	
+	T pmm = 1.0;
+	T pmp1m;
+
+	// Check Inputs
+	//static_assert (fabs(x) > 1.0, "Input Out Of Range");
+
+	if (m_m > 0)
+	{
+		// P_m^m(x) = (-1) ^ m(2m - 1)!!(1 - x ^ 2) ^ m / 2
+		T sqrtomx2 = sqrt(1.0 - x * x);
+		T oddInt = 1.0;
+		for (int  i = 1; i <= m_m; ++i)
+		{
+			pmm *= -1.0 * oddInt * sqrtomx2;
+			oddInt += 2.0;
+		}
+	}
+	if (m_l == m_m)
+	{
+		return pmm;
+	}
+	else
+	{
+		// P_m + 1 ^ m(x) = x(2m + 1) P_m^m(x)
+		pmp1m = x * (2.0 * T(m_m) + 1.0) * pmm;
+		if (m_l == m_m + 1)
+		{
+			return pmp1m;
+		}
+		else
+		{
+		
+			T pmp2m = 0.0;
+			for (int  i = m_m + 2; i <= m_l; ++i)
+			{
+			
+				// (l - m) P_l^m (x) = x (2l - 1) P_l-1^m (x) - (l + m - 1) P_l-2^m (x)
+				pmp2m = x * (2.0 * T(m_l) - 1.0) * pmp1m - (T(m_l) + T(m_m) - 1) * pmm;
+				pmp2m /= T(m_l) - T(m_m);
+				// Rotate variables for next iteration
+				pmm = pmp1m;
+				pmp1m = pmp2m;
+			}
+			//std::cout << x << " " << pmp2m << std::endl;
+			return pmp2m;
+		}
+	}
+}
+
+void ODE_test_poly()
+{
+	double tmin = -1;
+	
+	double h = 0.001;
+	double tmax = 0.999;
+
+	auto x = tmin;
+
+	unsigned m = 2, n = 1;
+
+	std::vector<double> y(2);
+
+	y[0] = 1;
+	y[1] = 1;
+	
+
+	std::vector<double> dydx(y.size());
+
+	auto func = [&](const auto& x, const auto& y, auto& reset) {
+
+		dydx[0] = 0;
+
+		//dydx[1] = -(2 * n + 1 - x * x) * y[0];
+		dydx[1] =  0.9999;
+
+		return dydx; };
+	
+	std::vector<double> X = { x }, Y0 = { std::assoc_legendre(m, n, (x)) }, 
+		Y1 = { std::assoc_legendre(m, n, -cos(x*pi)) };
+
+	while (x <= tmax)
+	{
+		//Midpoint_method_explicit(func, x, y, h, std::assoc_legendre(n, 1, x-h));
+		//Midpoint_method_implicit(func, x, y, h, 1.);
+		//Euler_method(func, x, y, h, 1.);
+		//Embedded_Fehlberg_3_4(func, x, y, h, 1.);
+		//Embedded_Fehlberg_7_8(func, x, y, h, 1.);
+
+		x += h;
+		X.push_back(x);
+
+		//Y0.push_back(y[0]);
+		//Y0.push_back(y[1]);
+		Y0.push_back(std::assoc_legendre(m, n, (x)));
+		Y1.push_back(std::assoc_legendre(m, n, -cos(x*pi)));
+	}
+
+	plot.plot_somedata(X, Y0, "k", "Y[0], m = " + std::to_string(m) + ", n = " + std::to_string(n) + "", "red", 1);
+	plot.plot_somedata(X, Y1, "k", "Y[1]", "blue", 1);
+
+	std::u32string title = U"Associate Legendre Polynomials";
+	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
+	plot.set_title(cv.to_bytes(title));
+	plot.grid_on();
+	plot.show();
+
+	//plot.plot_somedata(Y0, Y1, "k", "Y[0] vs Y[1]", "green", 1);
+	//plot.show();
+
+	std::cout.setf(std::ios::fixed, std::ios::floatfield);
+	std::cout.precision(15);
+	auto p = std::minmax_element(begin(Y0), end(Y0));
+	std::cout << "minY0 = " << *p.first << ", maxY0 = " << *p.second << '\n';
+	p = std::minmax_element(begin(Y1), end(Y1));
+	std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
+
 }
 
 void ODE_test_nl(bool e_plot)

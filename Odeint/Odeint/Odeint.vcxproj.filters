@@ -50,5 +50,8 @@
     <ClInclude Include="..\..\include\MULTICOMPLEX.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\polynomals.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
