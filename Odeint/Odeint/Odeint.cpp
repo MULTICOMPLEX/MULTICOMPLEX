@@ -29,6 +29,9 @@ void ODE_Predator_Prey();
 void ODE_Quantum_Solver(int mode = 0);
 void ODE_quantum_harmonic_oscillator_complex();
 void ODE_test_poly();
+template <typename T>
+T tildePlm(const int l, const int m, const T x);
+void tal();
 
 void trapezoidal();
 
@@ -66,8 +69,10 @@ int main(int argc, char* argv[]) {
 	//testk1();
 	//for (int x = 0; x <= 6; x++)
 	//ODE_Quantum_Solver(2);
+	
 	ODE_test_poly();
-
+	//tal();
+	
 	//ODE_Predator_Prey();
 	//quantum_harmonic_oscillator();
 
@@ -83,9 +88,9 @@ int main(int argc, char* argv[]) {
 template <typename T>
 inline T AssociatedLegendre
 (
-	const T& x, 
-	const int  m_m = 3,
-	const int  m_l = 8
+	const int  m_l = 3,
+	const int  m_m = 8,
+	const T& x = 0
 )
 {	
 	T pmm = 1.0;
@@ -142,11 +147,11 @@ void ODE_test_poly()
 	double tmin = -1;
 	
 	double h = 0.001;
-	double tmax = 0.999;
+	double tmax = .999;
 
 	auto x = tmin;
 
-	unsigned m = 2, n = 1;
+	unsigned m = 12, l = 3;
 
 	std::vector<double> y(2);
 
@@ -161,16 +166,16 @@ void ODE_test_poly()
 		dydx[0] = 0;
 
 		//dydx[1] = -(2 * n + 1 - x * x) * y[0];
-		dydx[1] =  0.9999;
+		dydx[1] =  1;
 
 		return dydx; };
 	
-	std::vector<double> X = { x }, Y0 = { std::assoc_legendre(m, n, (x)) }, 
-		Y1 = { std::assoc_legendre(m, n, -cos(x*pi)) };
+	std::vector<double> X = { x }, Y0 = { tildePlm(m, l, x) },
+		Y1 = { tildePlm(m, l, x) };
 
 	while (x <= tmax)
 	{
-		//Midpoint_method_explicit(func, x, y, h, std::assoc_legendre(n, 1, x-h));
+		//Midpoint_method_explicit(func, x, y, h, 1.);
 		//Midpoint_method_implicit(func, x, y, h, 1.);
 		//Euler_method(func, x, y, h, 1.);
 		//Embedded_Fehlberg_3_4(func, x, y, h, 1.);
@@ -181,13 +186,17 @@ void ODE_test_poly()
 
 		//Y0.push_back(y[0]);
 		//Y0.push_back(y[1]);
-		Y0.push_back(std::assoc_legendre(m, n, (x)));
-		Y1.push_back(std::assoc_legendre(m, n, -cos(x*pi)));
+
+		//Y1.push_back(pow(std::assoc_legendre(m, l, x),2)); 
+		//Y1.push_back(pow(AssociatedLegendre(m, l, x), 2));
+		Y1.push_back(pow(tildePlm(m, l, x),2));
+		
 	}
 
-	plot.plot_somedata(X, Y0, "k", "Y[0], m = " + std::to_string(m) + ", n = " + std::to_string(n) + "", "red", 1);
+	//plot.plot_somedata(X, Y0, "k", "Y[0], m = " + std::to_string(m) + ", l = " + std::to_string(l) + "", "red", 1);
 	plot.plot_somedata(X, Y1, "k", "Y[1]", "blue", 1);
 
+	//https://root.cern.ch/doc/v610/LegendreAssoc_8C.html
 	std::u32string title = U"Associate Legendre Polynomials";
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
 	plot.set_title(cv.to_bytes(title));
@@ -1289,3 +1298,168 @@ std::vector<T> zeroCrossing(const std::vector<T>& s, const std::vector<T>& en)
 	return zerCross;
 }
 
+// calculate \tilde{P}_m^m
+template <typename T>
+T tildePmm(const int m, const T x) {
+	T factor = ((m % 2) == 0) ? 1.0 : -1.0;
+	const T tmp = 1.0 - x * x;
+	T tmp2 = 1.0;
+	for (int i = 1; i <= m * 2 - 1; i += 2) {
+		tmp2 *= tmp * static_cast<T>(i) / static_cast<T>(T(i) + 1);
+	}
+	factor *= std::sqrt((2 * T(m) + 1) * tmp2 / (4.0 * pi));
+	return factor;
+}
+
+template <typename T>
+T tildePmm_derivative(const int m, const T x) {
+	const T tilde_pmm = tildePmm(m, x);
+	const T result = 0.5 * m * (-2.0) * x / (1 - x * x) * tilde_pmm;
+	return result;
+}
+
+// calculate \tilde{P}_{(m+1)}^m
+template <typename T>
+double tildePmm1(const int m, const T x) {
+	return x * std::sqrt(2.0 * m + 3) * tildePmm(m, x);
+}
+
+template <typename T>
+T tildePmm1_derivative(const int m, const T x) {
+	return x * std::sqrt(2.0 * m + 3) * tildePmm_derivative(m, x) + std::sqrt(2.0 * m + 3) * tildePmm(m, x);
+}
+
+// calculate \tilde{P}_m^l
+template <typename T>
+T tildePlm(const int l, const int m, const T x) {
+	if (m < 0 || m > l || std::abs(x) > 1.0) {
+		std::cerr << "Bad arguments in tildePlm.\n";
+		return 0;
+	}
+	const T factor1 = std::sqrt((4.0 * l * l - 1) / (T(l) * l - T(m) * m));
+	const T factor2 = std::sqrt(((T(l) - 1) * (T(l) - 1) - T(m) * m) / (4.0 * (T(l) - 1) * (T(l) - 1) - 1));
+	if (l == m) return tildePmm(m, x);
+	if (l == m + 1) return tildePmm1(m, x);
+	return factor1 * (x * tildePlm(l - 1, m, x) - factor2 * tildePlm(l - 2, m, x));
+}
+
+template <typename T>
+T tildePlm_derivative(const int l, const int m, const T x) {
+	if (m < 0 || m > l || std::abs(x) > 1.0) {
+		std::cerr << "Bad arguments in tildePlm.\n";
+		return 0;
+	}
+	const T factor1 = std::sqrt((4.0 * l * l - 1) / (T(l) * l - T(m) * m));
+	const T factor2 = std::sqrt(((T(l) - 1) * (T(l) - 1) - T(m) * m) / (4.0 * (T(l) - 1) * (T(l) - 1) - 1));
+	if (l == m) return tildePmm_derivative(m, x);
+	if (l == m + 1) return tildePmm1_derivative(m, x);
+	return factor1 * (tildePlm(l - 1, m, x) + x * tildePlm_derivative(l - 1, m, x) - factor2 * tildePlm_derivative(l - 2, m, x));
+}
+
+// calculate the spherical harmonics for theta and phi
+template <typename T>
+std::complex<T> Ylm(const int l, const int m, const T theta, const T phi) {
+	const std::complex<T> tmp(0.0, static_cast<T>(m) * phi);
+	return tildePlm(l, m, std::cos(theta)) * std::exp(tmp);
+}
+
+// calculate the spherical harmonics for a vector in Cartesian coordinates
+template <typename T>
+std::complex<T> Ylm(const int l, const int m, const T x, const T y, const T z) {
+	const T norm = x * x + y * y + z * z;
+	const T cosine = z / std::sqrt(norm);
+	const std::complex<T> eiphi(x / std::sqrt(x * x + y * y), y / std::sqrt(x * x + y * y));
+	return tildePlm(l, m, cosine) * std::exp(m) * eiphi;
+}
+
+template <typename T>
+T Plm(const int l, const int m, const T x) {
+	T tmp1 = 1.0;
+	T tmp2 = 1.0;
+	if (m < 0 || m > l || std::abs(x) > 1.0) {
+		std::cerr << "Bad arguments in Plm.\n";
+		return 0;
+	}
+	for (int i = 1; i <= (l - m); ++i) {
+		tmp1 *= static_cast<T>(i);
+	}
+	for (int i = 1; i <= (l + m); ++i) {
+		tmp2 *= static_cast<T>(i);
+	}
+	const T factor = std::sqrt((4.0 * pi * tmp2) / ((2.0 * l + 1) * tmp1));
+	return factor * tildePlm(l, m, x);
+}
+
+template <typename T>
+T Plm_derivative(const int l, const int m, const T x) {
+	T tmp1 = 1.0;
+	T tmp2 = 1.0;
+	if (m < 0 || m > l || std::abs(x) > 1.0) {
+		std::cerr << "Bad arguments in Plm.\n";
+		return 0;
+	}
+	for (int i = 1; i <= (l - m); ++i) {
+		tmp1 *= static_cast<T>(i);
+	}
+	for (int i = 1; i <= (l + m); ++i) {
+		tmp2 *= static_cast<T>(i);
+	}
+	const T factor = std::sqrt((4.0 * pi * tmp2) / ((2.0 * l + 1) * tmp1));
+	return factor * tildePlm_derivative(l, m, x);
+}
+
+template <typename F, typename T>
+T numericalDerivative(F& f, T x, T width) {
+	return (f(x + width) - f(x - width)) / (width * 2.0);
+}
+
+template <typename F1, typename F2, typename T>
+void checkDerivative(F1& f, F2& df, T x, const std::string& function_name) {
+	static const int magnitude = 5;
+	double delta_x = 0.1;
+	const T analytical_derivative = df(x);
+	std::cout << "Checking derivative of " << function_name << " for x = " << x << '\n';
+	std::cout << "Analytical derivative: " << analytical_derivative << std::endl;
+	for (int i = 1; i <= magnitude; ++i) {
+		const T numerical_derivative = numericalDerivative(f, x, delta_x);
+		const T rmse = std::sqrt((numerical_derivative - analytical_derivative) * (numerical_derivative - analytical_derivative));
+		std::cout << "Delta_x = " << delta_x << " ; "
+			<< "numerical derivative = " << numerical_derivative << " ; "
+			<< "RMSE = " << rmse << '\n';
+		delta_x = delta_x / 10;
+	}
+	std::cout << "=========================================\n";
+}
+
+//https://github.com/HanatoK/Associated-Legendre-Polynomials/blob/main/associated_legendre_polynomials.cpp
+void tal() {
+	int l = 6;
+	int m = 2;
+	double x = 0.5;
+	
+	std::cout << std::fixed << std::setprecision(9);
+	std::cout << "tildePlm(l, m, x) = " << tildePlm(l, m, x) << std::endl;
+
+	std::cout << "Plm: " << Plm(l, m, x) << std::endl;
+
+	std::cout << "STL (no Condon-Shortley phase term) Plm: " << std::assoc_legendre(l, m, x) << std::endl;
+
+	using namespace std::placeholders;
+	auto f1 = std::bind(tildePmm<double>, m, _1);
+	auto df1 = std::bind(tildePmm_derivative<double>, m, _1);
+	checkDerivative(f1, df1, x, "tildePmm(m, x)");
+	auto f2 = std::bind(tildePmm1<double>, m, _1);
+	auto df2 = std::bind(tildePmm1_derivative<double>, m, _1);
+	checkDerivative(f2, df2, x, "tildePmm1(m, x)");
+	auto f3 = std::bind(tildePlm<double>, l, m, _1);
+	auto df3 = std::bind(tildePlm_derivative<double>, l, m, _1);
+	checkDerivative(f3, df3, x, "tildePlm(l, m, x)");
+	auto f4 = std::bind(Plm<double>, l, m, _1);
+	auto df4 = std::bind(Plm_derivative<double>, l, m, _1);
+	checkDerivative(f4, df4, x, "Plm(l, m, x)");
+	std::cout << "Spherical harmonics:\n";
+	const double theta = 50.0 / 180.0 * pi;
+	const double phi = -30.0 / 180.0 * pi;
+	std::cout << Ylm(l, m, theta, phi) << std::endl;
+
+}
