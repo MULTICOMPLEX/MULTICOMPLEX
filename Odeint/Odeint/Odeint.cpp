@@ -76,9 +76,9 @@ int main(int argc, char* argv[]) {
 
 	//testk1();
 	//for (int x = 0; x <= 6; x++)
-		//ODE_Quantum_Solver(x);
+		ODE_Quantum_Solver(2);
 
-	ODE_test_poly();
+	//ODE_test_poly();
 	//tal();
 
 	//ODE_Predator_Prey();
@@ -596,7 +596,7 @@ void ODE_Quantum_Solver(int mode)
 		tmin = -1; tmax = 1;
 	}
 	else if (mode == 2) {
-		tmin = -6; tmax = 6;
+		tmin = -12; tmax = 12;
 	}
 
 	double h = 0.005;
@@ -608,9 +608,9 @@ void ODE_Quantum_Solver(int mode)
 	std::vector<std::vector<double>> Y(y.size());
 
 	double sigma = 1, mu = 0;
-	double Vo = 20, E = 0;
+	double Vo = 20, E = 40;
 
-	if (mode == 2)Vo = 10;
+	if (mode == 2)Vo = 50;
 
 	bool wave_packet = 0;
 
@@ -698,10 +698,10 @@ void ODE_Quantum_Solver(int mode)
 
 		while (x <= tmax)
 		{
-			Midpoint_method_explicit(SE, x, y, h, 1.);
+			//Midpoint_method_explicit(SE, x, y, h, 1.);
 			//Midpoint_method_implicit(SE, x, y, h, 1.);
 			//Euler_method(SE, x, y, h, 1.);
-			//Embedded_Fehlberg_3_4(SE, x, y, h, 1.);
+			Embedded_Fehlberg_3_4(SE, x, y, h, 1.);
 			//Embedded_Fehlberg_7_8(SE, x, y, h, 1.);
 
 			x += h;
@@ -718,7 +718,7 @@ void ODE_Quantum_Solver(int mode)
 	int t = 0;
 	std::ostringstream oss;
 	oss.setf(ios::fixed);
-	oss.precision(2);
+	oss.precision(5);
 
 	std::vector<std::vector<double>> psi_sola, psi_solb, psi_sols;
 	std::vector<double> E_zeroes, en;
@@ -726,7 +726,7 @@ void ODE_Quantum_Solver(int mode)
 	if (Vo == 0) {
 		en = linspace(0.0, 0.6, 32);
 	}
-	else en = linspace(E, Vo, int(2 * Vo));
+	else en = linspace(E, Vo, int(2 * (Vo-E)));
 
 	E_zeroes = Find_all_zeroes(Wave_function, en, tunnel);
 	if (E_zeroes.empty()) { std::cout << "No roots found !\n\n"; return; }
@@ -1334,12 +1334,13 @@ std::vector<T> Find_all_zeroes
 
 std::string colours(const int& t)
 {
-	std::string colours[24] = { "Blue", "Green",
-																"Red", "Cyan", "Magenta", "Yellow", "Black", "Silver",
-		"Blue", "Green",
-																"Red", "Cyan", "Magenta", "Yellow", "Black", "Silver",
-		"Blue", "Green",
+	std::vector<std::string> colours = { "Blue", "Green",
 																"Red", "Cyan", "Magenta", "Yellow", "Black", "Silver" };
+	
+	auto v = colours;
+	for(int i=0; i < 16; i++)
+		colours.insert(colours.end(), v.begin(), v.end());
+	
 	return colours[t];
 }
 
