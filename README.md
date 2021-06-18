@@ -63,7 +63,7 @@ https://en.wikipedia.org/wiki/Quantum_harmonic_oscillator
 
 ![Figure_5](https://user-images.githubusercontent.com/75379917/121819687-bd670600-cc8e-11eb-8523-d05fa1ae08bd.png)
 ![Figure_8](https://user-images.githubusercontent.com/75379917/121819692-c35ce700-cc8e-11eb-9bf8-ef3bb07db3c3.png)
-
+![Figure_12](https://user-images.githubusercontent.com/75379917/122617786-326e7d00-d08d-11eb-81fe-38f822e270ed.png)
 
 https://en.wikipedia.org/wiki/Particle_in_a_box
 
@@ -74,5 +74,4 @@ https://en.wikipedia.org/wiki/Fine-structure_constant
 https://en.wikipedia.org/wiki/Wave_packet
 
 ![Figure_11](https://user-images.githubusercontent.com/75379917/121396509-bde06380-c953-11eb-8ff6-e3475a05580b.png)
-
 
