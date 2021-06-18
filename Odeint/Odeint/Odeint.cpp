@@ -31,7 +31,15 @@ void ODE_quantum_harmonic_oscillator_complex();
 void ODE_test_poly();
 template <typename T>
 T tildePlm(const int l, const int m, const T x);
+template <typename T>
+T Plm(const int l, const int m, const T x);
 void tal();
+template <typename T>
+std::complex<T> Ylm(const int l, const int m, const T x, const T y, const T z);
+
+// calculate the spherical harmonics for theta and phi
+template <typename T>
+std::complex<T> Ylm(const int l, const int m, const T theta, const T phi);
 
 void trapezoidal();
 
@@ -68,11 +76,11 @@ int main(int argc, char* argv[]) {
 
 	//testk1();
 	//for (int x = 0; x <= 6; x++)
-	//ODE_Quantum_Solver(2);
-	
+		//ODE_Quantum_Solver(x);
+
 	ODE_test_poly();
 	//tal();
-	
+
 	//ODE_Predator_Prey();
 	//quantum_harmonic_oscillator();
 
@@ -92,7 +100,7 @@ inline T AssociatedLegendre
 	const int  m_m = 8,
 	const T& x = 0
 )
-{	
+{
 	T pmm = 1.0;
 	T pmp1m;
 
@@ -104,7 +112,7 @@ inline T AssociatedLegendre
 		// P_m^m(x) = (-1) ^ m(2m - 1)!!(1 - x ^ 2) ^ m / 2
 		T sqrtomx2 = sqrt(1.0 - x * x);
 		T oddInt = 1.0;
-		for (int  i = 1; i <= m_m; ++i)
+		for (int i = 1; i <= m_m; ++i)
 		{
 			pmm *= -1.0 * oddInt * sqrtomx2;
 			oddInt += 2.0;
@@ -124,11 +132,11 @@ inline T AssociatedLegendre
 		}
 		else
 		{
-		
+
 			T pmp2m = 0.0;
-			for (int  i = m_m + 2; i <= m_l; ++i)
+			for (int i = m_m + 2; i <= m_l; ++i)
 			{
-			
+
 				// (l - m) P_l^m (x) = x (2l - 1) P_l-1^m (x) - (l + m - 1) P_l-2^m (x)
 				pmp2m = x * (2.0 * T(m_l) - 1.0) * pmp1m - (T(m_l) + T(m_m) - 1) * pmm;
 				pmp2m /= T(m_l) - T(m_m);
@@ -144,60 +152,115 @@ inline T AssociatedLegendre
 
 void ODE_test_poly()
 {
-	double tmin = -1;
-	
+	double tmin = -2;
+	double tmax = 2;
 	double h = 0.001;
-	double tmax = .999;
 
-	auto x = tmin;
-
-	unsigned m = 12, l = 3;
+	unsigned m = 100;
 
 	std::vector<double> y(2);
+	std::vector<double> state(y.size());
 
-	y[0] = 1;
-	y[1] = 1;
-	
+	double E = 49, k = 50, L = 1;
 
-	std::vector<double> dydx(y.size());
+	auto en = linspace(E, k, 4);
 
-	auto func = [&](const auto& x, const auto& y, auto& reset) {
+	double mu = 0, sigma = 1;
 
-		dydx[0] = 0;
+	auto V = [&](const auto& x) {
 
-		//dydx[1] = -(2 * n + 1 - x * x) * y[0];
-		dydx[1] =  1;
+		if (abs (x) < L)
+			return  k * (x * x);
+		
+		else return  k * (L * L);
+	};
 
-		return dydx; };
-	
-	std::vector<double> X = { x }, Y0 = { tildePlm(m, l, x) },
-		Y1 = { tildePlm(m, l, x) };
+	auto SE = [&](const auto& x, const auto& psi, auto& reset) {
 
+		state[0] = psi[1];
+
+		state[1] = 2.0 * 100 * (V(x) - E) * psi[0];
+
+		return state;
+	};
+
+	//std::vector<double> X = { x }, Y0 = { tildePlm(m, l, x) }, Y1 = { tildePlm(m, l, x) };
+	std::vector<double> Y0, Y1, X;
+
+	auto x = tmin;
+	X.emplace_back(tmin);
 	while (x <= tmax)
 	{
-		//Midpoint_method_explicit(func, x, y, h, 1.);
-		//Midpoint_method_implicit(func, x, y, h, 1.);
-		//Euler_method(func, x, y, h, 1.);
-		//Embedded_Fehlberg_3_4(func, x, y, h, 1.);
-		//Embedded_Fehlberg_7_8(func, x, y, h, 1.);
-
 		x += h;
-		X.push_back(x);
-
-		//Y0.push_back(y[0]);
-		//Y0.push_back(y[1]);
-
-		//Y1.push_back(pow(std::assoc_legendre(m, l, x),2)); 
-		//Y1.push_back(pow(AssociatedLegendre(m, l, x), 2));
-		Y1.push_back(pow(tildePlm(m, l, x),2));
-		
+		X.emplace_back(x);
 	}
 
-	//plot.plot_somedata(X, Y0, "k", "Y[0], m = " + std::to_string(m) + ", l = " + std::to_string(l) + "", "red", 1);
-	plot.plot_somedata(X, Y1, "k", "Y[1]", "blue", 1);
+	//X = linspace(tmin, tmax, 5001);
+	//auto Xnorm = linspace(-1., 1., 1000);
 
+	auto Wave_function = [&](const auto& energy) {
+		E = energy;
+
+		Y0.clear();
+		Y1.clear();
+
+		y[0] = 1e-3;
+		y[1] = 0;
+
+		//while (x <= tmax)
+		for (auto& x : X)
+		{
+			//Midpoint_method_explicit(SE, x, y, h, 1.);
+			//Midpoint_method_implicit(SE, x, y, h, 1.);
+			//Euler_method(fSE, x, y, h, 1.);
+			Embedded_Fehlberg_3_4(SE, x, y, h, 1.);
+			//Embedded_Fehlberg_7_8(SE, x, y, h, 1.);
+
+			//Y0.push_back(pow(std::hermite(m, x),2));
+
+			//Y0.push_back(pow(ps::Hermite_function(m, std::cosh(-pi*x)), 1)+ pow(ps::Hermite_function(l, std::cosh(pi*x)), 1));
+			//Y0.push_back(pow(std::assoc_legendre(m, l, std::cos(x*pi)), 2));
+			//Y1.push_back(pow(AssociatedLegendre(m, l, std::cos(x)), 1));
+			//Y0.push_back(pow(std::legendre(m-2, x), 1));
+			//Y0.push_back(pow(Ylm(m, l,x, 0.).real(),1));
+
+
+			Y0.push_back(pow((y[0]), 2));
+			Y1.push_back(pow((y[1]), 2));
+
+		}
+
+		return y[0];
+	};
+
+
+	bool mp = 1;
+	if (mp) {
+		std::vector<double> E_zeroes;
+		E_zeroes = Find_all_zeroes(Wave_function, en, 0);
+		if (E_zeroes.empty()) { std::cout << "No roots found !\n\n"; exit(0); }
+
+		std::stringstream oss;
+		int t = 0;
+		for (auto& E : E_zeroes) {
+			Wave_function(E);
+			oss.str(std::string());
+			oss << E;
+			std::cout << "E " << E << std::endl;
+			//Y0 *= pow(t, 100);
+			plot.plot_somedata(X, Y0, "k", "E = " + oss.str() + " ", colours(t), 1.0);
+			//plot.plot_somedata(X, Y1, "k", "E = " + oss.str() + " ", colours(t+1), 1.0);
+			//if (t == 2)break;
+			t++;
+		}
+	}
+	else {
+		Wave_function(1);
+		//plot.plot_somedata(X, Y0, "k", "Y[0], m = " + std::to_string(m) + ", l = " + std::to_string(l) + "", "red", 1);
+		plot.plot_somedata(X, Y1, "k", "Y[1]", "blue", 1);
+	}
 	//https://root.cern.ch/doc/v610/LegendreAssoc_8C.html
-	std::u32string title = U"Associate Legendre Polynomials";
+	std::u32string title = U"Wave function";
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
 	plot.set_title(cv.to_bytes(title));
 	plot.grid_on();
@@ -564,7 +627,7 @@ void ODE_Quantum_Solver(int mode)
 	}
 
 	double Vb = 0;
-	if (mode == 4) {	
+	if (mode == 4) {
 		Vo = 0;
 		double ws = .1;
 		L1 = 2 * mu, L2 = 2 * mu + ws;
@@ -757,7 +820,7 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 
 		else {
 			double B1 = -.5, B2 = .5;
-			
+
 			v = ODE_Q_sine_cosine_Rectangular_potential_barrier(0., 8., tmin, tmax, h, B1, B2, 0.995);
 			plot.line(B1, B1, -1., 1.);
 			plot.line(B2, B2, -1., 1.);
@@ -1262,7 +1325,7 @@ std::vector<T> Find_all_zeroes
 				T zero = brent->solve(en[i], en[i + 1]);
 				//std::cout << zero << " " << t++ << std::endl;
 				all_zeroes.push_back(zero);
-				if(tunnel)break;
+				if (tunnel)break;
 			}
 		}
 	}
@@ -1436,7 +1499,7 @@ void tal() {
 	int l = 6;
 	int m = 2;
 	double x = 0.5;
-	
+
 	std::cout << std::fixed << std::setprecision(9);
 	std::cout << "tildePlm(l, m, x) = " << tildePlm(l, m, x) << std::endl;
 

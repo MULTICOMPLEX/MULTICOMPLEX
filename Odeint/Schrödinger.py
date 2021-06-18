@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# https://helentronica.com/2014/09/04/quantum-mechanics-with-the-python/
 """
 Created on Mon Sep 03 21:02:59 2014
  

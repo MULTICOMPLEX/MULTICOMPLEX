@@ -5,46 +5,50 @@
 namespace ps
 {
 
-	template <typename T>
-	T L0
-	(
-		const T& x
-	)
-	{
-		return 1;
-	}
 
 	//Roots[LegendreP[2, cos(x)] == 0, x]
 	//x = π n - 1/2 cos^(-1)(-1/3) and n element Z
 	//54.7356°
 
-	template <typename T>
-	T L1
-	(
-		const T& x
-	)
-	{
-		return x;
-	}
+	
 	//The following is a general function that returns the value of the Legendre Polynomial for any given x and n=0,1,2,3,...
 
 	template <typename T>
-	T Legendre
+	T legendre
 	(
 		const size_t& n,
 		const T& x
 	)
 	{
 		if (n == 0) {
-			return L0(x);
+			return 1;
 		}
 		else if (n == 1) {
-			return L1(x);
+			return x;
 		}
 		else {
-			return (T(2 * n - 1) * x * Legendre(n - 1, x) - T(n - 1) * Legendre(n - 2, x)) / T(n);
+			return (T(2 * n - 1) * x * legendre(n - 1, x) - T(n - 1) * legendre(n - 2, x)) / T(n);
 		}
 	}
+
+	//The following is a general function that returns the value of the Hermite Polynomial for any given x and n=0,1,2,3,...
+	template<typename T>
+	T hermite
+	(
+		const size_t& n,
+		const T& x
+	)
+	{
+		if (n == 0)
+			return 1;
+
+		else if (n == 1)
+			return 2 * x;
+
+		else
+			return 2 * x * hermite(n - 1, x) - 2 * T(n - 1) * hermite(n - 2, x);
+	}
+
 	////////
 	//Calculating the Hermite functions
 	template<typename T>
@@ -87,23 +91,7 @@ namespace ps
 	}
 	////////
 
-	//The following is a general function that returns the value of the Hermite Polynomial for any given x and n=0,1,2,3,...
-	template<typename T>
-	T Hermite
-	(
-		const size_t& n, 
-		const T& x
-	) 
-	{
-		if (n == 0) 
-			return 1;
-
-		else if (n == 1) 
-			return 2 * x;
-		
-		else 
-			return 2 * x * Hermite(n - 1, x) - 2 * T(n - 1) * Hermite(n - 2, x);
-	}
+	
 
 	template<typename T>
 	T La0
