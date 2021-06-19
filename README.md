@@ -62,8 +62,14 @@ https://en.wikipedia.org/wiki/Finite_potential_well
 https://en.wikipedia.org/wiki/Quantum_harmonic_oscillator
 
 ![Figure_5](https://user-images.githubusercontent.com/75379917/121819687-bd670600-cc8e-11eb-8523-d05fa1ae08bd.png)
+
 ![Figure_8](https://user-images.githubusercontent.com/75379917/121819692-c35ce700-cc8e-11eb-9bf8-ef3bb07db3c3.png)
 
+https://en.wikipedia.org/wiki/Fractional_quantum_Hall_effect
+
+https://en.wikipedia.org/wiki/Phase_space
+
+![Figure_13](https://user-images.githubusercontent.com/75379917/122640285-10154780-d0ff-11eb-9745-713e3990b9c7.png)
 
 https://en.wikipedia.org/wiki/Particle_in_a_box
 
@@ -74,5 +80,4 @@ https://en.wikipedia.org/wiki/Fine-structure_constant
 https://en.wikipedia.org/wiki/Wave_packet
 
 ![Figure_11](https://user-images.githubusercontent.com/75379917/121396509-bde06380-c953-11eb-8ff6-e3475a05580b.png)
-
 
