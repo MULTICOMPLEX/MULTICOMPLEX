@@ -619,7 +619,7 @@ void ODE_Quantum_Solver(int mode)
 	if (mode == 3 || mode == 4) {
 		tunnel = true;
 		wave_packet = true;
-		sigma = 50, mu = 1;
+		sigma = 32, mu = 1;
 		Vo = 0; tmin = -9; tmax = 11;
 		h = 0.005;
 		E = 0;
@@ -659,13 +659,13 @@ void ODE_Quantum_Solver(int mode)
 			else return Vo;
 		}
 
-		else return -(2 * E - (x * x) / sigma);
+		else return -2 * E + (x * x) / sigma;
 	};
 
 	auto SE = [&](const auto& x, const auto& psi, auto& reset) {
 
 		state[0] = psi[1];
-
+	
 		if (mode == 0 || mode == 1)
 			state[1] = 2 * (V(x) - E) * psi[0];
 
@@ -674,13 +674,9 @@ void ODE_Quantum_Solver(int mode)
 		return state;
 	};
 
-	X.emplace_back(x);
-	while (x <= tmax)
-	{
-		x += h;
+	for(x = tmin; x <= tmax; x += h)
 		X.emplace_back(x);
-	}
-
+	
 	auto Wave_function = [&](const auto& energy) {
 		E = energy;
 
@@ -695,15 +691,14 @@ void ODE_Quantum_Solver(int mode)
 		Y[0].emplace_back(y[0]);
 		Y[1].emplace_back(y[1]);
 
-		while (x <= tmax)
+		for(auto& x : X)
 		{
-			//Midpoint_method_explicit(SE, x, y, h, 1.);
+			Midpoint_method_explicit(SE, x, y, h, 1.);
 			//Midpoint_method_implicit(SE, x, y, h, 1.);
 			//Euler_method(SE, x, y, h, 1.);
-			Embedded_Fehlberg_3_4(SE, x, y, h, 1.);
+			//Embedded_Fehlberg_3_4(SE, x, y, h, 1.);
 			//Embedded_Fehlberg_7_8(SE, x, y, h, 1.);
 
-			x += h;
 			Y[0].emplace_back(y[0]);
 			Y[1].emplace_back(y[1]);
 
@@ -793,7 +788,6 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 
 	else
 	{
-		X.clear();
 		if (mode == 5) {
 			tmin = -4;
 			tmax = 4;
@@ -805,14 +799,9 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 			//h = 1e-3;
 		}
 
-		x = tmin;
-		X.emplace_back(x);
-		while (x <= tmax)
-		{
-			x += h;
+		X.clear();
+		for (x = tmin; x <= tmax; x += h)
 			X.emplace_back(x);
-		}
-
 
 		std::tuple<std::vector<std::vector<double>>, std::vector<double>> v;
 		if (mode == 5)v = ODE_Q_sine_cosine(0., 4., tmin, tmax, h);
