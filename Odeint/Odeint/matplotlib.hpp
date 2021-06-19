@@ -7,16 +7,14 @@
 #include <cfloat>
 
 
-using namespace std;
-
 class plot_matplotlib
 {
 
 private:
 
-  void PyRun_SimpleStringStd(string somestring);
+  void PyRun_SimpleStringStd(std::string somestring);
   bool _autorange;
-  string _pythoncmd;
+  std::string _pythoncmd;
   double _range_x1, _range_x2, 
     _range_y1, _range_y2, 
     _range_z1, _range_z2,
@@ -24,7 +22,7 @@ private:
 
 public:
 
-  static vector<string> colors;
+  static std::vector<std::string> colors;
 
   plot_matplotlib(); // Constructor
 
@@ -32,25 +30,25 @@ public:
 
   void init_plot_window(const char* name, int x, int y);
 
-  //! \brief Set the label on the X axis
+  //Set the label on the X axis
   void set_xlabel(std::string xlabel, std::string properties = "");
 
-  //! \brief Set the label on the Y axis
+  //Set the label on the Y axis
   void set_ylabel(std::string ylabel, std::string properties = "");
 
-  //! \brief Set the plot title
-  void set_title(string title);
+  //Set the plot title
+  void set_title(std::string title = "Plot", std::string font = "DejaVu Sans", int fs = 10);
 
-  //! \brief Set the aspect ratio of the plot to equal (desired for plotting paths and path Segments)
+  //Set the aspect ratio of the plot to equal (desired for plotting paths and path Segments)
   void set_equal_ascpectratio();
 
-  //! \brief Set a figure (required for using subplots)
+  //Set a figure (required for using subplots)
   void figure(int fignumber);
 
-  //! \brief Set a subplot number
+  //Set a subplot number
   void subplot(int plotnumber);
 
-  //! \brief Set the X and Y range of the plot
+  //Set the X and Y range of the plot
   template <typename T>
   void set_xyrange(T x1, T x2, T y1, T y2)
   {
@@ -69,19 +67,19 @@ public:
       "])");
   }
 
-  //! \brief Enable a legend
+  //Enable a legend
   void enable_legend();
 
-  //! \brief Calculate the plot range dependent on the added data (all data visible + small border, better than built standard range)
+  //Calculate the plot range dependent on the added data (all data visible + small border, better than built standard range)
   void set_range_auto();
 
-  void run_customcommand(string command);
+  void run_customcommand(std::string command);
 
   void adjust_ticker();
 
   void show();
 
-  //! \brief Add data to the plot with markers (X/Y points and matplotlib properties, e.g. 'o' for points or no properties for points connected by lines)
+  //Add data to the plot with markers (X/Y points and matplotlib properties, e.g. 'o' for points or no properties for points connected by lines)
   void plot_somedata(const std::vector<double>& X, const std::vector<double>& Y,
     std::string properties = "k", std::string label = "Line 1", std::string color = "green", double linewidth = 2, double alpha = 1);
 
@@ -102,7 +100,7 @@ public:
 };
 
 
-void plot_matplotlib::PyRun_SimpleStringStd(string somestring)
+void plot_matplotlib::PyRun_SimpleStringStd(std::string somestring)
 {
   PyRun_SimpleStringFlags(somestring.c_str(), NULL);
   if (_pythoncmd != "") {
@@ -174,9 +172,10 @@ void plot_matplotlib::set_ylabel(std::string ylabel, std::string properties)
 }
 
 //! \brief Set the plot title
-void plot_matplotlib::set_title(std::string title)
+void plot_matplotlib::set_title(std::string title, std::string font, int fs)
 {
-  PyRun_SimpleStringStd("plt.title('" + title + "')");
+ // PyRun_SimpleStringStd("plt.title('" + title + "', font='Segoe UI Historic', fontsize=20)");
+  PyRun_SimpleStringStd("plt.title('" + title + "', font='" + font + "', fontsize="+ std::to_string(fs) +" )");
 }
 
 //! \brief Set the aspect ratio of the plot to equal (desired for plotting paths and path Segments)
@@ -230,7 +229,7 @@ void plot_matplotlib::set_range_auto()
     );
 }
 
-void plot_matplotlib::run_customcommand(string command)
+void plot_matplotlib::run_customcommand(std::string command)
 {
   PyRun_SimpleStringStd("plt." + command);
 }
@@ -302,7 +301,7 @@ void plot_matplotlib::plot_somedata(const std::vector<double>& X, const std::vec
 
     PyRun_SimpleStringStd(
       "plt.plot( [" + xpoints + "], [" + ypoints + "]" + properties + ", label=" + label + ",color=" + color + ",\
-      linewidth=" + to_string(linewidth) + ", alpha=" + to_string(alpha) + ")");
+      linewidth=" + std::to_string(linewidth) + ", alpha=" + std::to_string(alpha) + ")");
   
   if (label != "")PyRun_SimpleStringStd("plt.legend()");
 }
@@ -370,7 +369,7 @@ void plot_matplotlib::plot_somedata_3D(const std::vector<double>& X, const std::
   PyRun_SimpleStringStd("ax = plt.subplot(111, projection = '3d')");
 
   PyRun_SimpleStringStd(
-    "ax.plot( [" + xpoints + "], [" + ypoints + "], [" + zpoints + "]" + properties + ", label=" + label + ",color=" + color + ",alpha=" + to_string(alpha) + ")");
+    "ax.plot( [" + xpoints + "], [" + ypoints + "], [" + zpoints + "]" + properties + ", label=" + label + ",color=" + color + ",alpha=" + std::to_string(alpha) + ")");
 
   if (label != "")PyRun_SimpleStringStd("plt.legend()");
 }
@@ -386,15 +385,15 @@ void plot_matplotlib::PyRun_Simple(std::string somestring)
 
 void plot_matplotlib::line(const double x1, const double x2, const double y1, const double y2)
 {
-  PyRun_SimpleStringStd("plt.plot([" + to_string(x1) + ", " 
-    + to_string(x2) + "], [" + to_string(y1) + ", " + to_string(y2) + "], color = 'black', linestyle = 'dotted')");
+  PyRun_SimpleStringStd("plt.plot([" + std::to_string(x1) + ", " 
+    + std::to_string(x2) + "], [" + std::to_string(y1) + ", " + std::to_string(y2) + "], color = 'black', linestyle = 'dotted')");
 }
 
 void plot_matplotlib::text(const double x, const double y, 
   std::string somestring, std::string color, double fontsize)
 {
-  PyRun_SimpleStringStd("plt.text(" + to_string(x) + ", " + to_string(y) +", '" + somestring + "', color = \
-      '" + color + "', fontsize = "+to_string(fontsize) + ")");
+  PyRun_SimpleStringStd("plt.text(" + std::to_string(x) + ", " + std::to_string(y) +", '" + somestring + "', color = \
+      '" + color + "', fontsize = "+std::to_string(fontsize) + ")");
 }
 
 void plot_matplotlib::arrow(const double x_tail, const double y_tail,
@@ -404,10 +403,10 @@ void plot_matplotlib::arrow(const double x_tail, const double y_tail,
     //" + to_string(dy) + ", head_width=1, linewidth = 5, facecolor = '" + color + "')");
 
   PyRun_SimpleStringStd("import matplotlib.patches as mpatches");
-  PyRun_SimpleStringStd("x_tail = " + to_string(x_tail) + "");//3.4
-  PyRun_SimpleStringStd("y_tail = " + to_string(y_tail) + "");//2020
-  PyRun_SimpleStringStd("x_head = " + to_string(x_head) + "");//2.1
-  PyRun_SimpleStringStd("y_head = " + to_string(y_head) + "");//2020
+  PyRun_SimpleStringStd("x_tail = " + std::to_string(x_tail) + "");//3.4
+  PyRun_SimpleStringStd("y_tail = " + std::to_string(y_tail) + "");//2020
+  PyRun_SimpleStringStd("x_head = " + std::to_string(x_head) + "");//2.1
+  PyRun_SimpleStringStd("y_head = " + std::to_string(y_head) + "");//2020
   PyRun_SimpleStringStd("dx = x_head - x_tail");
   PyRun_SimpleStringStd("dy = y_head - y_tail");
   PyRun_SimpleStringStd("arrow = mpatches.FancyArrowPatch((x_tail, y_tail), (x_head, y_head), \
@@ -421,14 +420,14 @@ void plot_matplotlib::init_plot_window(const char* name, int x, int y)
   run_customcommand(name);
   // PyRun_Simple("fig = plt.figure(1)");
   PyRun_Simple("wm = plt.get_current_fig_manager()");
-  PyRun_Simple("wm.window.wm_geometry('+" + to_string(x) + "+" + to_string(y) + "')");
+  PyRun_Simple("wm.window.wm_geometry('+" + std::to_string(x) + "+" + std::to_string(y) + "')");
   adjust_ticker();
   PyRun_Simple("import atexit");
   PyRun_Simple("import sys");
   PyRun_Simple("import subprocess");
 }
 
-vector<string> plot_matplotlib::colors
+std::vector<std::string> plot_matplotlib::colors
 {
   /*
       "cloudy blue",

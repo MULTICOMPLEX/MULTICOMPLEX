@@ -716,7 +716,7 @@ void ODE_Quantum_Solver(int mode)
 
 	int t = 0;
 	std::ostringstream oss;
-	oss.setf(ios::fixed);
+	oss.setf(std::ios::fixed);
 	oss.precision(3);
 
 	std::vector<std::vector<double>> psi_sola, psi_solb, psi_sols;
@@ -838,15 +838,15 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 	std::u32string title;
 	if (mode == 0)title = U"Finite potential well";
 	else if (mode == 1)title = U"Infinite potential well = Particle in 1-D Box";
-	else if (mode == 2)title = U"Quantum Harmonic oscillator";
+	else if (mode == 2)title = U"Quantum Harmonic oscillator"; 
+	//title = U"Quantum Harmonic oscillator, chained 𓂀 = 𓄍 𓄎";
 	else if (mode == 3)title = U"Gaussian wave packet";
 	else if (mode == 4) title = U"Quantum Gaussian wave packet + tunnelling through a rectangular potential barrier";
 	else if (mode == 5) title = U"Quantum Sine and cosine wave";
 	else title = U"Quantum Cosine wave + tunnelling through a rectangular potential barrier";
 
-	title = U"Quantum Harmonic oscillator, chained  Ψ^1, Ψ^2";
-
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
+	//plot.set_title(cv.to_bytes(title), "Segoe UI Historic", 20);
 	plot.set_title(cv.to_bytes(title));
 	plot.grid_on();
 	plot.show();
@@ -863,6 +863,7 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 			plot.plot_somedata(Y[0], v, "k", "E = " + oss.str() + " ", colours(t++), 1.0);
 			v = Y[1];
 		}
+		//plot.set_title(cv.to_bytes(title), "Segoe UI Historic", 20);
 		plot.set_title(cv.to_bytes(title));
 		plot.show();
 
