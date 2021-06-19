@@ -76,7 +76,7 @@ int main(int argc, char* argv[]) {
 
 	//testk1();
 	//for (int x = 0; x <= 6; x++)
-		ODE_Quantum_Solver(2);
+	ODE_Quantum_Solver(2);
 
 	//ODE_test_poly();
 	//tal();
@@ -169,9 +169,9 @@ void ODE_test_poly()
 
 	auto V = [&](const auto& x) {
 
-		if (abs (x) < L)
+		if (abs(x) < L)
 			return  k * (x * x);
-		
+
 		else return  k * (L * L);
 	};
 
@@ -592,12 +592,6 @@ void ODE_Quantum_Solver(int mode)
 	if (mode == 0) {
 		tmin = -2; tmax = 2;
 	}
-	else if (mode == 1) {
-		tmin = -1; tmax = 1;
-	}
-	else if (mode == 2) {
-		tmin = -12; tmax = 12;
-	}
 
 	double h = 0.005;
 
@@ -608,9 +602,14 @@ void ODE_Quantum_Solver(int mode)
 	std::vector<std::vector<double>> Y(y.size());
 
 	double sigma = 1, mu = 0;
-	double Vo = 20, E = 40;
+	double Vo = 20, E = 0;
 
-	if (mode == 2)Vo = 50;
+	if (mode == 2) {
+
+		tmin = -13; tmax = 13;
+
+		E = 50; Vo = 60;
+	}
 
 	bool wave_packet = 0;
 
@@ -713,12 +712,12 @@ void ODE_Quantum_Solver(int mode)
 	};
 
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
-	std::cout.precision(8);
+	std::cout.precision(8);//8
 
 	int t = 0;
 	std::ostringstream oss;
 	oss.setf(ios::fixed);
-	oss.precision(5);
+	oss.precision(3);
 
 	std::vector<std::vector<double>> psi_sola, psi_solb, psi_sols;
 	std::vector<double> E_zeroes, en;
@@ -726,7 +725,7 @@ void ODE_Quantum_Solver(int mode)
 	if (Vo == 0) {
 		en = linspace(0.0, 0.6, 32);
 	}
-	else en = linspace(E, Vo, int(2 * (Vo-E)));
+	else en = linspace(E, Vo, int(2 * (Vo - E)));
 
 	E_zeroes = Find_all_zeroes(Wave_function, en, tunnel);
 	if (E_zeroes.empty()) { std::cout << "No roots found !\n\n"; return; }
@@ -845,10 +844,15 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 	else if (mode == 5) title = U"Quantum Sine and cosine wave";
 	else title = U"Quantum Cosine wave + tunnelling through a rectangular potential barrier";
 
+	title = U"Quantum Harmonic oscillator, chained  Ψ^1, Ψ^2";
+
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
 	plot.set_title(cv.to_bytes(title));
 	plot.grid_on();
 	plot.show();
+
+	Wave_function(E_zeroes.front());
+	auto v = Y[1];
 
 	if (mode != 5 && mode != 6) {
 		t = 0;
@@ -856,7 +860,8 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 			Wave_function(E);
 			oss.str(std::string());
 			oss << E;
-			plot.plot_somedata(Y[1], Y[0], "k", "E = " + oss.str() + " ", colours(t++), 1.0);
+			plot.plot_somedata(Y[0], v, "k", "E = " + oss.str() + " ", colours(t++), 1.0);
+			v = Y[1];
 		}
 		plot.set_title(cv.to_bytes(title));
 		plot.show();
@@ -1299,7 +1304,7 @@ std::vector<T> Find_all_zeroes
 )
 {
 	//Gives all zeroes in y = Psi(x)
-	const T epsilon = 1e-8;
+	const T epsilon = 1e-9;
 	const auto brent = new Brent(epsilon, Wave_function);
 	const auto secant = new Secant(epsilon, Wave_function);
 	const auto dekker = new Dekker(epsilon, Wave_function);
@@ -1336,11 +1341,11 @@ std::string colours(const int& t)
 {
 	std::vector<std::string> colours = { "Blue", "Green",
 																"Red", "Cyan", "Magenta", "Yellow", "Black", "Silver" };
-	
+
 	auto v = colours;
-	for(int i=0; i < 16; i++)
+	for (int i = 0; i < 16; i++)
 		colours.insert(colours.end(), v.begin(), v.end());
-	
+
 	return colours[t];
 }
 
