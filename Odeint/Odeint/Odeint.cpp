@@ -1,5 +1,4 @@
-﻿
-#include "MULTICOMPLEX.hpp"
+﻿#include "MULTICOMPLEX.hpp"
 #include "rkf78.hpp"
 #include "vector_calculus.hpp"
 #include "matplotlib.hpp"
@@ -63,6 +62,9 @@ std::vector<T> zeroCrossing(const std::vector<T>& s, const std::vector<T>& en);
 plot_matplotlib plot;
 std::string colours(const int& t);
 
+namespace th {
+	void test_fillhermites();
+}
 int main(int argc, char* argv[]) {
 
 	//trapezoidal();
@@ -76,7 +78,9 @@ int main(int argc, char* argv[]) {
 
 	//testk1();
 	//for (int x = 0; x <= 6; x++)
-	ODE_Quantum_Solver(2);
+	ODE_Quantum_Solver(7);
+	
+	//th::test_fillhermites();
 
 	//ODE_test_poly();
 	//tal();
@@ -91,290 +95,6 @@ int main(int argc, char* argv[]) {
 	//Leapfrog_integration();
 
 	return 0;
-}
-
-template <typename T>
-inline T AssociatedLegendre
-(
-	const int  m_l = 3,
-	const int  m_m = 8,
-	const T& x = 0
-)
-{
-	T pmm = 1.0;
-	T pmp1m;
-
-	// Check Inputs
-	//static_assert (fabs(x) > 1.0, "Input Out Of Range");
-
-	if (m_m > 0)
-	{
-		// P_m^m(x) = (-1) ^ m(2m - 1)!!(1 - x ^ 2) ^ m / 2
-		T sqrtomx2 = sqrt(1.0 - x * x);
-		T oddInt = 1.0;
-		for (int i = 1; i <= m_m; ++i)
-		{
-			pmm *= -1.0 * oddInt * sqrtomx2;
-			oddInt += 2.0;
-		}
-	}
-	if (m_l == m_m)
-	{
-		return pmm;
-	}
-	else
-	{
-		// P_m + 1 ^ m(x) = x(2m + 1) P_m^m(x)
-		pmp1m = x * (2.0 * T(m_m) + 1.0) * pmm;
-		if (m_l == m_m + 1)
-		{
-			return pmp1m;
-		}
-		else
-		{
-
-			T pmp2m = 0.0;
-			for (int i = m_m + 2; i <= m_l; ++i)
-			{
-
-				// (l - m) P_l^m (x) = x (2l - 1) P_l-1^m (x) - (l + m - 1) P_l-2^m (x)
-				pmp2m = x * (2.0 * T(m_l) - 1.0) * pmp1m - (T(m_l) + T(m_m) - 1) * pmm;
-				pmp2m /= T(m_l) - T(m_m);
-				// Rotate variables for next iteration
-				pmm = pmp1m;
-				pmp1m = pmp2m;
-			}
-			//std::cout << x << " " << pmp2m << std::endl;
-			return pmp2m;
-		}
-	}
-}
-
-void ODE_test_poly()
-{
-	double tmin = -2;
-	double tmax = 2;
-	double h = 0.001;
-
-	unsigned m = 100;
-
-	std::vector<double> y(2);
-	std::vector<double> state(y.size());
-
-	double E = 49, k = 50, L = 1;
-
-	auto en = linspace(E, k, 4);
-
-	double mu = 0, sigma = 1;
-
-	auto V = [&](const auto& x) {
-
-		if (abs(x) < L)
-			return  k * (x * x);
-
-		else return  k * (L * L);
-	};
-
-	auto SE = [&](const auto& x, const auto& psi, auto& reset) {
-
-		state[0] = psi[1];
-
-		state[1] = 2.0 * 100 * (V(x) - E) * psi[0];
-
-		return state;
-	};
-
-	//std::vector<double> X = { x }, Y0 = { tildePlm(m, l, x) }, Y1 = { tildePlm(m, l, x) };
-	std::vector<double> Y0, Y1, X;
-
-	auto x = tmin;
-	X.emplace_back(tmin);
-	while (x <= tmax)
-	{
-		x += h;
-		X.emplace_back(x);
-	}
-
-	//X = linspace(tmin, tmax, 5001);
-	//auto Xnorm = linspace(-1., 1., 1000);
-
-	auto Wave_function = [&](const auto& energy) {
-		E = energy;
-
-		Y0.clear();
-		Y1.clear();
-
-		y[0] = 1e-3;
-		y[1] = 0;
-
-		//while (x <= tmax)
-		for (auto& x : X)
-		{
-			//Midpoint_method_explicit(SE, x, y, h, 1.);
-			//Midpoint_method_implicit(SE, x, y, h, 1.);
-			//Euler_method(fSE, x, y, h, 1.);
-			Embedded_Fehlberg_3_4(SE, x, y, h, 1.);
-			//Embedded_Fehlberg_7_8(SE, x, y, h, 1.);
-
-			//Y0.push_back(pow(std::hermite(m, x),2));
-
-			//Y0.push_back(pow(ps::Hermite_function(m, std::cosh(-pi*x)), 1)+ pow(ps::Hermite_function(l, std::cosh(pi*x)), 1));
-			//Y0.push_back(pow(std::assoc_legendre(m, l, std::cos(x*pi)), 2));
-			//Y1.push_back(pow(AssociatedLegendre(m, l, std::cos(x)), 1));
-			//Y0.push_back(pow(std::legendre(m-2, x), 1));
-			//Y0.push_back(pow(Ylm(m, l,x, 0.).real(),1));
-
-
-			Y0.push_back(pow((y[0]), 2));
-			Y1.push_back(pow((y[1]), 2));
-
-		}
-
-		return y[0];
-	};
-
-
-	bool mp = 1;
-	if (mp) {
-		std::vector<double> E_zeroes;
-		E_zeroes = Find_all_zeroes(Wave_function, en, 0);
-		if (E_zeroes.empty()) { std::cout << "No roots found !\n\n"; exit(0); }
-
-		std::stringstream oss;
-		int t = 0;
-		for (auto& E : E_zeroes) {
-			Wave_function(E);
-			oss.str(std::string());
-			oss << E;
-			std::cout << "E " << E << std::endl;
-			//Y0 *= pow(t, 100);
-			plot.plot_somedata(X, Y0, "k", "E = " + oss.str() + " ", colours(t), 1.0);
-			//plot.plot_somedata(X, Y1, "k", "E = " + oss.str() + " ", colours(t+1), 1.0);
-			//if (t == 2)break;
-			t++;
-		}
-	}
-	else {
-		Wave_function(1);
-		//plot.plot_somedata(X, Y0, "k", "Y[0], m = " + std::to_string(m) + ", l = " + std::to_string(l) + "", "red", 1);
-		plot.plot_somedata(X, Y1, "k", "Y[1]", "blue", 1);
-	}
-	//https://root.cern.ch/doc/v610/LegendreAssoc_8C.html
-	std::u32string title = U"Wave function";
-	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
-	plot.set_title(cv.to_bytes(title));
-	plot.grid_on();
-	plot.show();
-
-	//plot.plot_somedata(Y0, Y1, "k", "Y[0] vs Y[1]", "green", 1);
-	//plot.show();
-
-	std::cout.setf(std::ios::fixed, std::ios::floatfield);
-	std::cout.precision(15);
-	auto p = std::minmax_element(begin(Y0), end(Y0));
-	std::cout << "minY0 = " << *p.first << ", maxY0 = " << *p.second << '\n';
-	p = std::minmax_element(begin(Y1), end(Y1));
-	std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
-
-}
-
-void ODE_test_nl(bool e_plot)
-{
-	double x = -4.0;
-	double tmax = 5.0;
-	double h = .05;
-
-	std::vector<double> y(1);
-
-	y[0] = 4.0;
-
-	std::vector<double> dydx(y.size());
-
-	auto func = [&](const auto& x, const auto& y, auto& reset) {
-
-		dydx[0] = x * sqrt(abs(y[0])) + pow(sin(x * pi / 2), 3) - 5. * (x > 2.);
-		return dydx; };
-
-	std::vector<double> X = { x }, Y0 = { y[0] };
-
-	while (x <= tmax)
-	{
-		Embedded_Fehlberg_7_8(func, x, y, h, 1.);
-		x += h;
-		X.push_back(x);
-		Y0.push_back(y[0]);
-	}
-
-	plot.plot_somedata(X, Y0, "k", "test", "blue");
-
-	std::u32string title = U"test";
-	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
-	plot.set_title(cv.to_bytes(title));
-
-	if (e_plot)plot.show();
-
-	std::cout.setf(std::ios::fixed, std::ios::floatfield);
-	std::cout.precision(15);
-	auto p = std::minmax_element(begin(Y0), end(Y0));
-	std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
-}
-
-void ODE_harmonic_oscillator()
-{
-	double x = 0;
-	double tmax = 5;
-	double h = .005;
-
-	std::vector<double> y(2);
-
-	y[0] = 0;//0.5*sqrt(2);
-	y[1] = 1;//0.5*sqrt(2)0
-
-	std::vector<double> dydx(y.size());
-
-	//y" = -y or y" + y = 0
-	// (this is clearly equivalent to y" = −y, after introducing an auxiliary variable) :
-	// y' = z
-	// z' = -y
-
-	//mxws mxws;
-	auto func = [&](const auto& x, const auto& y, auto& reset) {
-		const double w0 = 2 * pi * 0.25;
-		const double zeta = 0.3;//0.3
-		int n = 5;
-
-		dydx[0] = n * y[1];
-		//dydx[1] = -2. * zeta * w0 * y[1] - pow(w0, 2) * y[0];
-		dydx[1] = -n * y[0];
-
-		return dydx; };
-
-	std::vector<double> X = { x }, Y0 = { y[0] }, Y1 = { y[1] };
-
-	while (x <= tmax)
-	{
-		Embedded_Fehlberg_7_8(func, x, y, h, 1.);
-		x += h;
-		X.push_back(x);
-		Y0.push_back(y[0]);
-		Y1.push_back(y[1]);
-	}
-
-	plot.plot_somedata(X, Y0, "k", "sine", "blue", 1);
-	plot.plot_somedata(X, Y1, "k", "cosine", "red", 1);
-
-	std::u32string title = U"ÿ = -y";
-	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
-	plot.set_title(cv.to_bytes(title));
-	plot.show();
-
-	std::cout.setf(std::ios::fixed, std::ios::floatfield);
-	std::cout.precision(15);
-	auto p = std::minmax_element(begin(Y0), end(Y0));
-	std::cout << "minY0 = " << *p.first << ", maxY0 = " << *p.second << '\n';
-	p = std::minmax_element(begin(Y1), end(Y1));
-	std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
-
 }
 
 template <typename T>
@@ -542,11 +262,11 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine_Rectan
 
 		while (x <= tmax)
 		{
-			Midpoint_method_explicit(SE, x, y, h, 1.);
+			//Midpoint_method_explicit(SE, x, y, h, 1.);
 			//Midpoint_method_implicit(SE, x, y, h, 1.);
 			//EI2(x, y);
 			//Euler_method(SE, x, y, h, 1.);
-			//Embedded_Fehlberg_3_4(SE, x, y, h, 1.);
+			Embedded_Fehlberg_3_4(SE, x, y, h, 1.);
 			//Embedded_Fehlberg_7_8(SE, x, y, h, 1.);
 
 			x += h;
@@ -604,7 +324,7 @@ void ODE_Quantum_Solver(int mode)
 	double sigma = 1, mu = 0;
 	double Vo = 20, E = 0;
 
-	if (mode == 2) {
+	if (mode == 2 || mode == 7) {
 
 		tmin = -13; tmax = 13;
 
@@ -662,12 +382,18 @@ void ODE_Quantum_Solver(int mode)
 		else return -2 * E + (x * x) / sigma;
 	};
 
+	double MU = 5;
+
 	auto SE = [&](const auto& x, const auto& psi, auto& reset) {
 
 		state[0] = psi[1];
 	
 		if (mode == 0 || mode == 1)
 			state[1] = 2 * (V(x) - E) * psi[0];
+
+		else if (mode == 7)
+			state[1] = V(x - mu) * (psi[0]) - MU * psi[1] * (psi[0] * psi[0] - 1.0);
+		     // dydx[1] =          -y[0]  - mu *   y[1] *   (y[0] *   y[0] - 1.0);
 
 		else state[1] = V(x - mu) * psi[0];
 
@@ -676,6 +402,7 @@ void ODE_Quantum_Solver(int mode)
 
 	for(x = tmin; x <= tmax; x += h)
 		X.emplace_back(x);
+	//X = linspace(tmin, tmax, 5201);
 	
 	auto Wave_function = [&](const auto& energy) {
 		E = energy;
@@ -690,20 +417,20 @@ void ODE_Quantum_Solver(int mode)
 
 		Y[0].emplace_back(y[0]);
 		Y[1].emplace_back(y[1]);
-
+		
 		for(auto& x : X)
 		{
-			Midpoint_method_explicit(SE, x, y, h, 1.);
+				Midpoint_method_explicit(SE, x, y, h, 1.);
 			//Midpoint_method_implicit(SE, x, y, h, 1.);
 			//Euler_method(SE, x, y, h, 1.);
 			//Embedded_Fehlberg_3_4(SE, x, y, h, 1.);
 			//Embedded_Fehlberg_7_8(SE, x, y, h, 1.);
 
-			Y[0].emplace_back(y[0]);
+			Y[0].emplace_back(y[0]); 
 			Y[1].emplace_back(y[1]);
 
 		}
-		return *Y[0].rbegin();
+		return y[0];
 	};
 
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
@@ -828,6 +555,7 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 	if (mode == 0)title = U"Finite potential well";
 	else if (mode == 1)title = U"Infinite potential well = Particle in 1-D Box";
 	else if (mode == 2)title = U"Quantum Harmonic oscillator"; 
+	else if (mode == 7) title = U"Quantum Harmonic oscillator, van der Pol";
 	//title = U"Quantum Harmonic oscillator, chained 𓂀 = 𓄍 𓄎";
 	else if (mode == 3)title = U"Gaussian wave packet";
 	else if (mode == 4) title = U"Quantum Gaussian wave packet + tunnelling through a rectangular potential barrier";
@@ -863,6 +591,105 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 		p = std::minmax_element(begin(Y[1]), end(Y[1]));
 		std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
 	}
+}
+
+void ODE_test_nl(bool e_plot)
+{
+	double x = -4.0;
+	double tmax = 5.0;
+	double h = .05;
+
+	std::vector<double> y(1);
+
+	y[0] = 4.0;
+
+	std::vector<double> dydx(y.size());
+
+	auto func = [&](const auto& x, const auto& y, auto& reset) {
+
+		dydx[0] = x * sqrt(abs(y[0])) + pow(sin(x * pi / 2), 3) - 5. * (x > 2.);
+		return dydx; };
+
+	std::vector<double> X = { x }, Y0 = { y[0] };
+
+	while (x <= tmax)
+	{
+		Embedded_Fehlberg_7_8(func, x, y, h, 1.);
+		x += h;
+		X.push_back(x);
+		Y0.push_back(y[0]);
+	}
+
+	plot.plot_somedata(X, Y0, "k", "test", "blue");
+
+	std::u32string title = U"test";
+	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
+	plot.set_title(cv.to_bytes(title));
+
+	if (e_plot)plot.show();
+
+	std::cout.setf(std::ios::fixed, std::ios::floatfield);
+	std::cout.precision(15);
+	auto p = std::minmax_element(begin(Y0), end(Y0));
+	std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
+}
+
+void ODE_harmonic_oscillator()
+{
+	double x = 0;
+	double tmax = 5;
+	double h = .005;
+
+	std::vector<double> y(2);
+
+	y[0] = 0;//0.5*sqrt(2);
+	y[1] = 1;//0.5*sqrt(2)0
+
+	std::vector<double> dydx(y.size());
+
+	//y" = -y or y" + y = 0
+	// (this is clearly equivalent to y" = −y, after introducing an auxiliary variable) :
+	// y' = z
+	// z' = -y
+
+	//mxws mxws;
+	auto func = [&](const auto& x, const auto& y, auto& reset) {
+		const double w0 = 2 * pi * 0.25;
+		const double zeta = 0.3;//0.3
+		int n = 5;
+
+		dydx[0] = n * y[1];
+		//dydx[1] = -2. * zeta * w0 * y[1] - pow(w0, 2) * y[0];
+		dydx[1] = -n * y[0];
+
+		return dydx; };
+
+	std::vector<double> X = { x }, Y0 = { y[0] }, Y1 = { y[1] };
+
+	while (x <= tmax)
+	{
+		Embedded_Fehlberg_7_8(func, x, y, h, 1.);
+		x += h;
+		X.push_back(x);
+		Y0.push_back(y[0]);
+		Y1.push_back(y[1]);
+	}
+
+	plot.plot_somedata(X, Y0, "k", "sine", "blue", 1);
+	plot.plot_somedata(X, Y1, "k", "cosine", "red", 1);
+
+	std::u32string title = U"ÿ = -y";
+	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
+	plot.set_title(cv.to_bytes(title));
+	plot.show();
+
+	std::cout.setf(std::ios::fixed, std::ios::floatfield);
+	std::cout.precision(15);
+	auto p = std::minmax_element(begin(Y0), end(Y0));
+	std::cout << "minY0 = " << *p.first << ", maxY0 = " << *p.second << '\n';
+	p = std::minmax_element(begin(Y1), end(Y1));
+	std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
+
 }
 
 void ODE_quantum_harmonic_oscillator()
@@ -1294,7 +1121,7 @@ std::vector<T> Find_all_zeroes
 )
 {
 	//Gives all zeroes in y = Psi(x)
-	const T epsilon = 1e-9;
+	const T epsilon = 1e-12;
 	const auto brent = new Brent(epsilon, Wave_function);
 	const auto secant = new Secant(epsilon, Wave_function);
 	const auto dekker = new Dekker(epsilon, Wave_function);
@@ -1520,5 +1347,262 @@ void tal() {
 	const double theta = 50.0 / 180.0 * pi;
 	const double phi = -30.0 / 180.0 * pi;
 	std::cout << Ylm(l, m, theta, phi) << std::endl;
+
+}
+ 
+namespace th {
+#pragma warning( disable : 4129 )
+	using namespace std;
+
+	const int MAXHERMITES = 10;
+	const int SIZE = 400;
+	const int X = 4;
+	const int Y = 3;
+	const long double W = 80;
+
+	int hermites[MAXHERMITES][MAXHERMITES];
+
+	long double hermite(long double x, int n) {
+		if (n < 0 || n > MAXHERMITES) {
+			cout << "Warning: Hermite polynomial not computed for degree " << n << "." << endl;
+			return 0;
+		}
+		long double h = 0;
+		for (int i = 0; i <= n; i++) {
+			h += pow(x, i) * hermites[n][i];
+		}
+		return h;
+	}
+
+	long double I(long double x, int n) {
+		return pow(hermite(sqrt(2) * x / W, n) * exp(-x * x / W / W), 2);
+	}
+
+	void svg() {
+		char filename[200];
+		sprintf(filename, "hermites.svg");
+		fstream fout(filename, fstream::out);
+		fout << "<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='" << X * SIZE << "px' height='" << Y * SIZE << "px'>" << endl;
+		fout << "<defs>" << endl;
+		for (int i = 0; i < X; i++) {
+			fout << "<linearGradient id='grad" << i << "' x1='0%' y1='0%' x2='100%' y2='0%'>" << endl;
+			long double intensities[SIZE], maxintensity = 0;
+			for (int j = 0; j < SIZE; j++) {
+				intensities[j] = I(j - SIZE / 2, i);
+				if (intensities[j] > maxintensity) maxintensity = intensities[j];
+			}
+			for (int j = 0; j < SIZE; j++) {
+				fout << fixed << setprecision(4) << "<stop offset='" << j * 100.0L / SIZE << "\%' style='stop-color:#000; stop-opacity:" << 1 - intensities[j] / maxintensity << ";' />" << endl;
+			}
+			fout << "</linearGradient>" << endl;
+		}
+		fout << "</defs>" << endl;
+		//fout << "<rect x='0' y='0' height='1024' width='1024' fill='url(#grad4)' />" << endl;
+		for (int x = 0; x < X; x++) {
+			for (int y = 0; y < Y; y++) {
+				fout << "<rect x='0' y='0' width='" << SIZE << "' height='" << SIZE << "' fill='url(#grad" << x << ")' transform='matrix(1,0,0,1," << x * SIZE << "," << y * SIZE << ")'/>" << endl;
+				fout << "<rect x='0' y='0' width='" << SIZE << "' height='" << SIZE << "' fill='url(#grad" << y << ")' transform='matrix(0,1,1,0," << x * SIZE << "," << y * SIZE << ")'/>" << endl;
+			}
+		}
+		fout << "</svg>" << endl;
+	}
+
+	void fillhermites() {
+		for (int i = 1; i < MAXHERMITES; i++) {
+			hermites[0][i] = 0;
+		}
+		hermites[0][0] = 1;
+		for (int j = 1; j < MAXHERMITES; j++) {
+			hermites[j][0] = 0;
+			for (int i = 1; i <= MAXHERMITES; i++) { // up to j would suffice, but it's better to set higher coefficients to zero
+				hermites[j][i] = 2 * hermites[j - 1][i - 1];
+				hermites[j][i - 1] -= i * hermites[j - 1][i];
+			}
+		}
+		return;
+	}
+
+	
+	void test_fillhermites() {
+		fillhermites();
+		svg();
+	}
+
+}
+
+
+template <typename T>
+inline T AssociatedLegendre
+(
+	const int  m_l = 3,
+	const int  m_m = 8,
+	const T& x = 0
+)
+{
+	T pmm = 1.0;
+	T pmp1m;
+
+	// Check Inputs
+	//static_assert (fabs(x) > 1.0, "Input Out Of Range");
+
+	if (m_m > 0)
+	{
+		// P_m^m(x) = (-1) ^ m(2m - 1)!!(1 - x ^ 2) ^ m / 2
+		T sqrtomx2 = sqrt(1.0 - x * x);
+		T oddInt = 1.0;
+		for (int i = 1; i <= m_m; ++i)
+		{
+			pmm *= -1.0 * oddInt * sqrtomx2;
+			oddInt += 2.0;
+		}
+	}
+	if (m_l == m_m)
+	{
+		return pmm;
+	}
+	else
+	{
+		// P_m + 1 ^ m(x) = x(2m + 1) P_m^m(x)
+		pmp1m = x * (2.0 * T(m_m) + 1.0) * pmm;
+		if (m_l == m_m + 1)
+		{
+			return pmp1m;
+		}
+		else
+		{
+
+			T pmp2m = 0.0;
+			for (int i = m_m + 2; i <= m_l; ++i)
+			{
+
+				// (l - m) P_l^m (x) = x (2l - 1) P_l-1^m (x) - (l + m - 1) P_l-2^m (x)
+				pmp2m = x * (2.0 * T(m_l) - 1.0) * pmp1m - (T(m_l) + T(m_m) - 1) * pmm;
+				pmp2m /= T(m_l) - T(m_m);
+				// Rotate variables for next iteration
+				pmm = pmp1m;
+				pmp1m = pmp2m;
+			}
+			//std::cout << x << " " << pmp2m << std::endl;
+			return pmp2m;
+		}
+	}
+}
+
+void ODE_test_poly()
+{
+	double tmin = -2;
+	double tmax = 2;
+	double h = 0.00008;
+
+	std::vector<double> y(2);
+	std::vector<double> state(y.size());
+
+	double k = 100, L = 1, E = 49, m = 100, H = 1;
+
+	auto en = linspace(E, E + 1, 4);
+
+	auto V = [&](const auto& x) {
+
+		if (abs(x) < L)
+			return  0.5 * k * x * x;
+
+		else return  0.5 * k * (L * L);
+	};
+
+	auto SE = [&](const auto& x, const auto& psi, auto& reset) {
+
+		state[0] = psi[1];
+
+		state[1] = (2.0 * m) * (V(x) - E) * psi[0];
+
+		return state;
+	};
+
+	//std::vector<double> X = { x }, Y0 = { tildePlm(m, l, x) }, Y1 = { tildePlm(m, l, x) };
+	std::vector<double> Y0, Y1, X;
+
+	for (auto x = tmin; x <= tmax; x += h)
+		X.emplace_back(x);
+
+	//X = linspace(tmin, tmax, 50001);
+	//auto Xnorm = linspace(-1., 1., 1000);
+
+	auto Wave_function = [&](const auto& energy) {
+		E = energy;
+
+		Y0.clear();
+		Y1.clear();
+
+		y[0] = .001;
+		y[1] = 0;
+
+		//while (x <= tmax)
+		for (auto& x : X)
+		{
+			Midpoint_method_explicit(SE, x, y, h, 1.);
+			//Midpoint_method_implicit(SE, x, y, h, 1.);
+			//Euler_method(fSE, x, y, h, 1.);
+			//Embedded_Fehlberg_3_4(SE, x, y, h, 1.);
+			//Embedded_Fehlberg_7_8(SE, x, y, h, 1.);
+
+			//Y0.push_back(pow(std::hermite(m, x),2));
+
+			//Y0.push_back(pow(ps::Hermite_function(m, std::cosh(-pi*x)), 1)+ pow(ps::Hermite_function(l, std::cosh(pi*x)), 1));
+			//Y0.push_back(pow(std::assoc_legendre(m, l, std::cos(x*pi)), 2));
+			//Y1.push_back(pow(AssociatedLegendre(m, l, std::cos(x)), 1));
+			//Y0.push_back(pow(std::legendre(m-2, x), 1));
+			//Y0.push_back(pow(Ylm(m, l,x, 0.).real(),1));
+
+
+			Y0.push_back(pow((y[0]), 2));
+			Y1.push_back(pow((y[1]), 2));
+
+		}
+
+		return y[0];
+	};
+
+
+	bool mp = 1;
+	if (mp) {
+		std::vector<double> E_zeroes;
+		E_zeroes = Find_all_zeroes(Wave_function, en, 0);
+		if (E_zeroes.empty()) { std::cout << "No roots found !\n\n"; exit(0); }
+
+		std::stringstream oss;
+		int t = 0;
+		for (auto& E : E_zeroes) {
+			Wave_function(E);
+			oss.str(std::string());
+			oss << E;
+			std::cout << "E " << E << std::endl;
+			//Y0 *= pow(t, 100);
+			plot.plot_somedata(X, Y0, "k", "E = " + oss.str() + " ", colours(t), 1.0);
+			//plot.plot_somedata(X, Y1, "k", "E = " + oss.str() + " ", colours(t+1), 1.0);
+			//if (t == 2)break;
+			t++;
+		}
+	}
+	else {
+		Wave_function(1);
+		//plot.plot_somedata(X, Y0, "k", "Y[0], m = " + std::to_string(m) + ", l = " + std::to_string(l) + "", "red", 1);
+		plot.plot_somedata(X, Y1, "k", "Y[1]", "blue", 1);
+	}
+	//https://root.cern.ch/doc/v610/LegendreAssoc_8C.html
+	std::u32string title = U"Wave function";
+	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
+	plot.set_title(cv.to_bytes(title));
+	plot.grid_on();
+	plot.show();
+
+	//plot.plot_somedata(Y0, Y1, "k", "Y[0] vs Y[1]", "green", 1);
+	//plot.show();
+
+	std::cout.setf(std::ios::fixed, std::ios::floatfield);
+	std::cout.precision(15);
+	auto p = std::minmax_element(begin(Y0), end(Y0));
+	std::cout << "minY0 = " << *p.first << ", maxY0 = " << *p.second << '\n';
+	p = std::minmax_element(begin(Y1), end(Y1));
+	std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
 
 }
