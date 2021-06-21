@@ -71,6 +71,10 @@ https://en.wikipedia.org/wiki/Phase_space
 
 ![Figure_13](https://user-images.githubusercontent.com/75379917/122640285-10154780-d0ff-11eb-9745-713e3990b9c7.png)
 
+https://en.wikipedia.org/wiki/Van_der_Pol_oscillator
+
+![Figure_14](https://user-images.githubusercontent.com/75379917/122764212-8781dd00-d29f-11eb-858c-2827c3ce5afc.png)
+
 https://en.wikipedia.org/wiki/Particle_in_a_box
 
 ![Figure_6](https://user-images.githubusercontent.com/75379917/120670886-27163180-c491-11eb-9fee-48d6ca8a10fe.png)
