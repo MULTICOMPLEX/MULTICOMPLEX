@@ -75,6 +75,10 @@ https://en.wikipedia.org/wiki/Van_der_Pol_oscillator
 
 ![Figure_14](https://user-images.githubusercontent.com/75379917/122764212-8781dd00-d29f-11eb-858c-2827c3ce5afc.png)
 
+https://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equations
+
+![Figure_15](https://user-images.githubusercontent.com/75379917/123142447-bc399400-d459-11eb-8f93-b3c2893eefc2.png)
+
 https://en.wikipedia.org/wiki/Particle_in_a_box
 
 ![Figure_6](https://user-images.githubusercontent.com/75379917/120670886-27163180-c491-11eb-9fee-48d6ca8a10fe.png)
