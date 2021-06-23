@@ -77,8 +77,8 @@ int main(int argc, char* argv[]) {
 	//ODE_quantum_harmonic_oscillator_complex();
 
 	//testk1();
-	//for (int x = 0; x <= 6; x++)
-	ODE_Quantum_Solver(7);
+	//for (int x = 0; x <= 8; x++)
+	ODE_Quantum_Solver(8);
 	
 	//th::test_fillhermites();
 
@@ -324,7 +324,7 @@ void ODE_Quantum_Solver(int mode)
 	double sigma = 1, mu = 0;
 	double Vo = 20, E = 0;
 
-	if (mode == 2 || mode == 7) {
+	if (mode == 2 || mode == 7 || mode == 8) {
 
 		tmin = -13; tmax = 13;
 
@@ -384,17 +384,26 @@ void ODE_Quantum_Solver(int mode)
 
 	double MU = 5;
 
+	double a = -0, b = -1, c = -0, d = -1;//default
+	a = -0, b = -1, c = -sqrt(3), d = -sqrt(3);
+
 	auto SE = [&](const auto& x, const auto& psi, auto& reset) {
 
-		state[0] = psi[1];
-	
+		if (mode == 8)
+			state[0] = a - b * psi[1];
+		else 	
+			state[0] = psi[1];
+
 		if (mode == 0 || mode == 1)
 			state[1] = 2 * (V(x) - E) * psi[0];
 
 		else if (mode == 7)
 			state[1] = V(x - mu) * (psi[0]) - MU * psi[1] * (psi[0] * psi[0] - 1.0);
 		     // dydx[1] =          -y[0]  - mu *   y[1] *   (y[0] *   y[0] - 1.0);
-
+		else if (mode == 8)	
+			state[1] = V(x - mu) * (c - d * psi[0]) - MU * psi[1] * (psi[0] * psi[0] - 1.0);
+		
+		
 		else state[1] = V(x - mu) * psi[0];
 
 		return state;
@@ -420,13 +429,16 @@ void ODE_Quantum_Solver(int mode)
 		
 		for(auto& x : X)
 		{
-				Midpoint_method_explicit(SE, x, y, h, 1.);
+			Midpoint_method_explicit(SE, x, y, h, 1.);
 			//Midpoint_method_implicit(SE, x, y, h, 1.);
 			//Euler_method(SE, x, y, h, 1.);
 			//Embedded_Fehlberg_3_4(SE, x, y, h, 1.);
 			//Embedded_Fehlberg_7_8(SE, x, y, h, 1.);
 
-			Y[0].emplace_back(y[0]); 
+			//Y[0].emplace_back(y[0] * y[0]);
+			//Y[1].emplace_back(y[1] * y[1]);
+
+			Y[0].emplace_back(y[0]);
 			Y[1].emplace_back(y[1]);
 
 		}
@@ -556,10 +568,12 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 	else if (mode == 1)title = U"Infinite potential well = Particle in 1-D Box";
 	else if (mode == 2)title = U"Quantum Harmonic oscillator"; 
 	else if (mode == 7) title = U"Quantum Harmonic oscillator, van der Pol";
+	else if (mode == 8) title = U"Quantum Harmonic oscillator, van der Pol, Predator-Prey";
 	//title = U"Quantum Harmonic oscillator, chained 𓂀 = 𓄍 𓄎";
 	else if (mode == 3)title = U"Gaussian wave packet";
 	else if (mode == 4) title = U"Quantum Gaussian wave packet + tunnelling through a rectangular potential barrier";
 	else if (mode == 5) title = U"Quantum Sine and cosine wave";
+	
 	else title = U"Quantum Cosine wave + tunnelling through a rectangular potential barrier";
 
 	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
