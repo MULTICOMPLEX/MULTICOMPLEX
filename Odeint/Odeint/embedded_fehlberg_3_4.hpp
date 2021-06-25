@@ -32,29 +32,29 @@
 
 
 template<typename F, typename T>
-void Runge_Kutta_3_4(F& f, const T& t, std::vector<T>& y, const T& h, T reset);
+void Runge_Kutta_3_4(F& f, const T& t, std::vector<T>& y, const T& h);
 
 template<typename F, typename T>
-void Runge_Kutta_3_4(F& f, const T& t, std::vector<MX0>& y, const T& h, T reset);
+void Runge_Kutta_3_4(F& f, const T& t, std::vector<MX0>& y, const T& h);
 
 template<typename F, typename T>
-int Embedded_Fehlberg_3_4(F& f, const T& t, std::vector<T>& y, const T& h, T reset) {
+int Embedded_Fehlberg_3_4(F& f, const T& t, std::vector<T>& y, const T& h) {
 
-	Runge_Kutta_3_4(f, t, y, h, reset);
+	Runge_Kutta_3_4(f, t, y, h);
 
 	return 0;
 }
 
 template<typename F, typename T>
-int Embedded_Fehlberg_3_4(F& f, const T& t, std::vector<MX0>& y, const T& h, T reset) {
+int Embedded_Fehlberg_3_4(F& f, const T& t, std::vector<MX0>& y, const T& h) {
 
-	Runge_Kutta_3_4(f, t, y, h, reset);
+	Runge_Kutta_3_4(f, t, y, h);
 
 	return 0;
 }
 
 template<typename F, typename T>
-void Runge_Kutta_3_4(F& f, const T& t, std::vector<T>& y, const T& h, T reset)
+void Runge_Kutta_3_4(F& f, const T& t, std::vector<T>& y, const T& h)
 {
 	static const T a2 = 2.0 / 7.0;
 	static const T a3 = 7.0 / 15.0;
@@ -82,18 +82,17 @@ void Runge_Kutta_3_4(F& f, const T& t, std::vector<T>& y, const T& h, T reset)
 	std::vector<T> k1, k2, k3, k4, k5;
 	T h2 = a2 * h;
 
-	k1 = f(t, y, reset);
-	k2 = f(t + h2, y + h2 * k1, reset);
-	k3 = f(t + a3 * h, y + h * (b31 * k1 + b32 * k2), reset);
-	k4 = f(t + a4 * h, y + h * (b41 * k1 + b42 * k2 + b43 * k3), reset);
-	k5 = f(t + h, y + h * (b51 * k1 + b53 * k3 + b54 * k4), reset);
+	k1 = f(t, y);
+	k2 = f(t + h2, y + h2 * k1);
+	k3 = f(t + a3 * h, y + h * (b31 * k1 + b32 * k2));
+	k4 = f(t + a4 * h, y + h * (b41 * k1 + b42 * k2 + b43 * k3));
+	k5 = f(t + h, y + h * (b51 * k1 + b53 * k3 + b54 * k4));
 	y += h * (c1 * k1 + c3 * k3 + c4 * k4 + c5 * k5);
-	y *= reset;
 	//return  d1 * k1 + d3 * k3 + d4 * k4 + d5 * k5;
 }
 
 template<typename F, typename T>
-void Runge_Kutta_3_4(F& f, const T& t, std::vector<MX0>& y, const T& h, T reset)
+void Runge_Kutta_3_4(F& f, const T& t, std::vector<MX0>& y, const T& h)
 {
 	static const T a2 = 2.0 / 7.0;
 	static const T a3 = 7.0 / 15.0;
@@ -121,12 +120,11 @@ void Runge_Kutta_3_4(F& f, const T& t, std::vector<MX0>& y, const T& h, T reset)
 	std::vector<MX0> k1, k2, k3, k4, k5;
 	T h2 = a2 * h;
 
-	k1 = f(t, y, reset);
-	k2 = f(t + h2, y + h2 * k1, reset);
-	k3 = f(t + a3 * h, y + h * (b31 * k1 + b32 * k2), reset);
-	k4 = f(t + a4 * h, y + h * (b41 * k1 + b42 * k2 + b43 * k3), reset);
-	k5 = f(t + h, y + h * (b51 * k1 + b53 * k3 + b54 * k4), reset);
+	k1 = f(t, y);
+	k2 = f(t + h2, y + h2 * k1);
+	k3 = f(t + a3 * h, y + h * (b31 * k1 + b32 * k2));
+	k4 = f(t + a4 * h, y + h * (b41 * k1 + b42 * k2 + b43 * k3));
+	k5 = f(t + h, y + h * (b51 * k1 + b53 * k3 + b54 * k4));
 	y += h * (c1 * k1 + c3 * k3 + c4 * k4 + c5 * k5);
-	y *= reset;
 	//return  d1 * k1 + d3 * k3 + d4 * k4 + d5 * k5;
 }
