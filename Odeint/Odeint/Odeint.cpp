@@ -62,9 +62,8 @@ std::vector<T> zeroCrossing(const std::vector<T>& s, const std::vector<T>& en);
 plot_matplotlib plot;
 std::string colours(const int& t);
 
-namespace th {
-	void test_fillhermites();
-}
+void test_fillhermites();
+
 int main(int argc, char* argv[]) {
 
 	//trapezoidal();
@@ -77,10 +76,9 @@ int main(int argc, char* argv[]) {
 	//ODE_quantum_harmonic_oscillator_complex();
 
 	//testk1();
-	for (int x = 0; x <= 8; x++)
-	ODE_Quantum_Solver(x);
-	
-	//th::test_fillhermites();
+	//for (int x = 0; x <= 8; x++)
+	//ODE_Quantum_Solver(7);
+	test_fillhermites();
 
 	//ODE_test_poly();
 	//tal();
@@ -1362,31 +1360,31 @@ void tal() {
 
 }
  
-namespace th {
+
 #pragma warning( disable : 4129 )
 	using namespace std;
 
 	const int MAXHERMITES = 10;
-	const int SIZE = 400;
-	const int X = 4;
-	const int Y = 3;
-	const long double W = 80;
+	const int SIZe = 400;
+	const int X = 4;//4
+	const int Y = 3;//3
+	const double W = 80;
 
 	int hermites[MAXHERMITES][MAXHERMITES];
 
-	long double hermite(long double x, int n) {
+	double hermite(double x, int n) {
 		if (n < 0 || n > MAXHERMITES) {
 			cout << "Warning: Hermite polynomial not computed for degree " << n << "." << endl;
 			return 0;
 		}
-		long double h = 0;
+		double h = 0;
 		for (int i = 0; i <= n; i++) {
 			h += pow(x, i) * hermites[n][i];
 		}
 		return h;
 	}
 
-	long double I(long double x, int n) {
+	double I(double x, int n) {
 		return pow(hermite(sqrt(2) * x / W, n) * exp(-x * x / W / W), 2);
 	}
 
@@ -1394,26 +1392,38 @@ namespace th {
 		char filename[200];
 		sprintf(filename, "hermites.svg");
 		fstream fout(filename, fstream::out);
-		fout << "<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='" << X * SIZE << "px' height='" << Y * SIZE << "px'>" << endl;
+		fout << "<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='" << X * SIZe << "px' height='" << Y * SIZe << "px'>" << endl;
 		fout << "<defs>" << endl;
 		for (int i = 0; i < X; i++) {
 			fout << "<linearGradient id='grad" << i << "' x1='0%' y1='0%' x2='100%' y2='0%'>" << endl;
-			long double intensities[SIZE], maxintensity = 0;
-			for (int j = 0; j < SIZE; j++) {
-				intensities[j] = I(j - SIZE / 2, i);
+			double intensities[SIZe], maxintensity = 0;
+			for (int j = 0; j < SIZe; j++) {
+				intensities[j] = I(j - SIZe / 2, i);
 				if (intensities[j] > maxintensity) maxintensity = intensities[j];
 			}
-			for (int j = 0; j < SIZE; j++) {
-				fout << fixed << setprecision(4) << "<stop offset='" << j * 100.0L / SIZE << "\%' style='stop-color:#000; stop-opacity:" << 1 - intensities[j] / maxintensity << ";' />" << endl;
+			std::vector<double> Y, X;
+
+			for (int j = 0; j < SIZe; j++) {
+				fout << fixed << setprecision(4) << "<stop offset='" << j * 100.0L / SIZe << "\%' style='stop-color:#000; stop-opacity:" << 1 - intensities[j] / maxintensity << ";' />" << endl;
+				
+				Y.push_back(1 - intensities[j] / maxintensity);
+				X.push_back(j * 100.0L / SIZe);
 			}
+
+			std::u32string title;
+			title = U"Test hermite 2d";
+			std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv1;
+			plot.plot_somedata(X, Y, "o", cv1.to_bytes(title), "Red", 1.0, 1);
+			plot.show();
+
 			fout << "</linearGradient>" << endl;
 		}
 		fout << "</defs>" << endl;
 		//fout << "<rect x='0' y='0' height='1024' width='1024' fill='url(#grad4)' />" << endl;
 		for (int x = 0; x < X; x++) {
 			for (int y = 0; y < Y; y++) {
-				fout << "<rect x='0' y='0' width='" << SIZE << "' height='" << SIZE << "' fill='url(#grad" << x << ")' transform='matrix(1,0,0,1," << x * SIZE << "," << y * SIZE << ")'/>" << endl;
-				fout << "<rect x='0' y='0' width='" << SIZE << "' height='" << SIZE << "' fill='url(#grad" << y << ")' transform='matrix(0,1,1,0," << x * SIZE << "," << y * SIZE << ")'/>" << endl;
+				fout << "<rect x='0' y='0' width='" << SIZe << "' height='" << SIZe << "' fill='url(#grad" << x << ")' transform='matrix(1,0,0,1," << x * SIZe << "," << y * SIZe << ")'/>" << endl;
+				fout << "<rect x='0' y='0' width='" << SIZe << "' height='" << SIZe << "' fill='url(#grad" << y << ")' transform='matrix(0,1,1,0," << x * SIZe << "," << y * SIZe << ")'/>" << endl;
 			}
 		}
 		fout << "</svg>" << endl;
@@ -1439,8 +1449,6 @@ namespace th {
 		fillhermites();
 		svg();
 	}
-
-}
 
 
 template <typename T>
@@ -1618,3 +1626,5 @@ void ODE_test_poly()
 	std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
 
 }
+
+
