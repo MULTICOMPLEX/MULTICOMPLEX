@@ -1,5 +1,10 @@
 ## **gallery:**
 
+### Haidinger's brush:
+
+https://en.wikipedia.org/wiki/Haidinger%27s_brush
+![Figure_16](https://user-images.githubusercontent.com/75379917/123514611-23db2380-d694-11eb-868f-f53636058e71.png)
+
 ### Spherical harmonics
 ![newplot(1)](https://user-images.githubusercontent.com/75379917/112055866-a6b18700-8b57-11eb-8541-b77f98d7771f.png)
 ![newplot(1)](https://user-images.githubusercontent.com/75379917/112537041-80d1ef80-8dae-11eb-8c81-d0277625a586.png)
