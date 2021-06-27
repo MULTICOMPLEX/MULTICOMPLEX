@@ -98,6 +98,8 @@ public:
 
   void arrow(const double x_tail, const double y_tail,
     const double x_head, const double y_head, std::string color);
+
+  void imshow(const std::string& points, int extent);
 };
 
 
@@ -306,6 +308,26 @@ void plot_matplotlib::plot_somedata(const std::vector<double>& X, const std::vec
       alpha="+ std::to_string(alpha) +")");
   
   if (label != "")PyRun_SimpleStringStd("plt.legend()");
+}
+
+void plot_matplotlib::imshow(const std::string& points, int extent)
+{
+  // Plot Points:
+  std::string str;
+
+  str.reserve(points.size());
+  for (auto& i: points)
+  {
+    str += i;
+    if (i == ']')
+      str += ',';
+  }
+
+  str.erase(std::prev(str.end()-1));
+
+  PyRun_SimpleStringStd("E = "+std::to_string(extent)+"");
+  PyRun_SimpleStringStd("plt.imshow(" + str + ", cmap = 'viridis', extent=[-E, E, -E, E])");
+
 }
 
 void plot_matplotlib::plot_somedata_3D(const std::vector<double>& X, const std::vector<double>& Y,

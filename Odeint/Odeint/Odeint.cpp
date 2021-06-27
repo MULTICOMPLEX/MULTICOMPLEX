@@ -16,6 +16,7 @@
 #include "secant.hpp"
 #include "Laplace_transform.hpp"
 #include <codecvt>
+#include "NumCpp.hpp"
 
 void Leapfrog_integration();
 void ODE_test_nl(bool e_plot);
@@ -63,6 +64,7 @@ plot_matplotlib plot;
 std::string colours(const int& t);
 
 void test_fillhermites();
+void Haidingers_brush();
 
 int main(int argc, char* argv[]) {
 
@@ -78,7 +80,9 @@ int main(int argc, char* argv[]) {
 	//testk1();
 	//for (int x = 0; x <= 8; x++)
 	//ODE_Quantum_Solver(7);
-	test_fillhermites();
+	
+	//test_fillhermites();
+	Haidingers_brush();
 
 	//ODE_test_poly();
 	//tal();
@@ -93,6 +97,31 @@ int main(int argc, char* argv[]) {
 	//Leapfrog_integration();
 
 	return 0;
+}
+
+void Haidingers_brush()
+{
+	double E = 3;
+
+	auto x = nc::linspace(-E, E, 1000);
+	auto y = nc::linspace(-E, E, 1000);
+
+	auto mg = nc::meshgrid(x, y);
+
+	//auto zz = nc::exp(-(nc::power(mg.first, 2) + nc::power(mg.second, 2))) *
+		//(nc::power(mg.second, 2) + nc::power(mg.second, 2));
+	//zz = np.exp(-(xx * *2 + yy * *2)) * (yy * *2 + yy * *2)
+	auto zz = nc::exp(-(nc::power(mg.first, 2) + nc::power(mg.second, 2))) *
+		(nc::power(mg.first, 2) - nc::power(mg.second, 2));
+	//zz = np.exp(-(xx * *2 + yy * *2)) * (xx * *2 - yy * *2)
+
+	std::u32string title = U"Haidingers Brush";
+	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
+
+	plot.set_title(cv.to_bytes(title));
+	plot.imshow(zz.str(), 3);
+
+	plot.show();
 }
 
 template <typename T>
