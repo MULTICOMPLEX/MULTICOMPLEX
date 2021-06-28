@@ -103,10 +103,7 @@ void Haidingers_brush()
 {
 	double E = 3;
 
-	auto x = nc::linspace(-E, E, 1000);
-	auto y = nc::linspace(-E, E, 1000);
-
-	auto mg = nc::meshgrid(x, y);
+	auto mg = nc::meshgrid(nc::linspace(-E, E, 1000), nc::linspace(-E, E, 1000));
 
 	//auto zz = nc::exp(-(nc::power(mg.first, 2) + nc::power(mg.second, 2))) *
 		//(nc::power(mg.second, 2) + nc::power(mg.second, 2));
@@ -116,7 +113,7 @@ void Haidingers_brush()
 	//zz = np.exp(-(xx * *2 + yy * *2)) * (xx * *2 - yy * *2)
 
 	plot.set_title(U"Haidinger's Brush");
-	plot.imshow(zz.str(), 3);
+	plot.imshow(zz.str(), "viridis", E);
 
 	plot.show();
 }
