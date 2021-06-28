@@ -1,11 +1,7 @@
 #pragma once
 
-#include <vector>
-#include <string>
 #include <Python.h>
-
-#include <cfloat>
-
+#include <codecvt>
 
 class plot_matplotlib
 {
@@ -37,7 +33,7 @@ public:
   void set_ylabel(std::string ylabel, std::string properties = "");
 
   //Set the plot title
-  void set_title(std::string title = "Plot", std::string font = "DejaVu Sans", int fs = 10);
+  void set_title(std::u32string title, std::string font = "DejaVu Sans", int fs = 10);
 
   //Set the aspect ratio of the plot to equal (desired for plotting paths and path Segments)
   void set_equal_ascpectratio();
@@ -157,7 +153,7 @@ void plot_matplotlib::grid_off()
 }
 
 
-//! \brief Set the label on the X axis
+//Set the label on the X axis
 void plot_matplotlib::set_xlabel(std::string xlabel, std::string properties)
 {
   if (properties != "") {
@@ -165,7 +161,7 @@ void plot_matplotlib::set_xlabel(std::string xlabel, std::string properties)
   }
   PyRun_SimpleStringStd("plt.xlabel('" + xlabel + "'" + properties + ")");
 }
-//! \brief Set the label on the Y axis
+//Set the label on the Y axis
 void plot_matplotlib::set_ylabel(std::string ylabel, std::string properties)
 {
   if (properties != "") {
@@ -174,37 +170,41 @@ void plot_matplotlib::set_ylabel(std::string ylabel, std::string properties)
   PyRun_SimpleStringStd("plt.ylabel('" + ylabel + "'" + properties + ")");
 }
 
-//! \brief Set the plot title
-void plot_matplotlib::set_title(std::string title, std::string font, int fs)
+//Set the plot title
+void plot_matplotlib::set_title(std::u32string title, std::string font, int fs)
 {
- // PyRun_SimpleStringStd("plt.title('" + title + "', font='Segoe UI Historic', fontsize=20)");
-  PyRun_SimpleStringStd("plt.title('" + title + "', font='" + font + "', fontsize="+ std::to_string(fs) +" )");
+  std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
+ 
+  title.append(UR"(")");
+  title.insert(0, UR"(")");
+
+  PyRun_SimpleStringStd("plt.title(" + cv.to_bytes(title) + ", font='" + font + "', fontsize=" + std::to_string(fs) + " )");
 }
 
-//! \brief Set the aspect ratio of the plot to equal (desired for plotting paths and path Segments)
+//Set the aspect ratio of the plot to equal (desired for plotting paths and path Segments)
 void plot_matplotlib::set_equal_ascpectratio()
 {
   PyRun_SimpleStringStd("plt.axes().set_aspect('equal')");
 }
 
-//! \brief Set a figure (required for using subplots)
+//Set a figure (required for using subplots)
 void plot_matplotlib::figure(int fignumber)
 {
   PyRun_SimpleStringStd("plt.figure(" + std::to_string(fignumber) + ")");
 }
-//! \brief Set a subplot number
+//Set a subplot number
 void plot_matplotlib::subplot(int plotnumber)
 {
   PyRun_SimpleStringStd("plt.subplot(" + std::to_string(plotnumber) + ")");
 }
 
-//! \brief Enable a legend
+//Enable a legend
 void plot_matplotlib::enable_legend()
 {
   PyRun_SimpleStringStd("plt.legend()");
 }
 
-//! \brief Calculate the plot range dependent on the added data (all data visible + small border, better than built standard range)
+//Calculate the plot range dependent on the added data (all data visible + small border, better than built standard range)
 void plot_matplotlib::set_range_auto()
 {
   double extendpercent = 0.04f;
@@ -247,7 +247,7 @@ void plot_matplotlib::adjust_ticker()
   PyRun_SimpleStringStd("ax.tick_params(which = 'both', direction='in')");
 }
 
-//! \brief Finally show the plot window (interrupts program execution until plot window is closed)
+//Finally show the plot window (interrupts program execution until plot window is closed)
 
 void plot_matplotlib::show()
 {

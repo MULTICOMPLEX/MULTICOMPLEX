@@ -15,7 +15,7 @@
 #include "dekker.hpp"
 #include "secant.hpp"
 #include "Laplace_transform.hpp"
-#include <codecvt>
+
 #include "NumCpp.hpp"
 
 void Leapfrog_integration();
@@ -115,10 +115,7 @@ void Haidingers_brush()
 		(nc::power(mg.first, 2) - nc::power(mg.second, 2));
 	//zz = np.exp(-(xx * *2 + yy * *2)) * (xx * *2 - yy * *2)
 
-	std::u32string title = U"Haidingers Brush";
-	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
-
-	plot.set_title(cv.to_bytes(title));
+	plot.set_title(U"Haidinger's Brush");
 	plot.imshow(zz.str(), 3);
 
 	plot.show();
@@ -600,9 +597,8 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 	
 	else title = U"Quantum Cosine wave + tunnelling through a rectangular potential barrier";
 
-	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
-	//plot.set_title(cv.to_bytes(title), "Segoe UI Historic", 20);
-	plot.set_title(cv.to_bytes(title));
+	//plot.set_title(title, "Segoe UI Historic", 20);
+	plot.set_title(title);
 	plot.grid_on();
 	plot.show();
 
@@ -618,8 +614,8 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 			plot.plot_somedata(Y[0], v, "k", "E = " + oss.str() + " ", colours(t++), 1.0);
 			v = Y[1];
 		}
-		//plot.set_title(cv.to_bytes(title), "Segoe UI Historic", 20);
-		plot.set_title(cv.to_bytes(title));
+		//plot.set_title(title, "Segoe UI Historic", 20);
+		plot.set_title(title);
 		plot.show();
 
 		std::cout.setf(std::ios::fixed, std::ios::floatfield);
@@ -661,8 +657,7 @@ void ODE_test_nl(bool e_plot)
 	plot.plot_somedata(X, Y0, "k", "test", "blue");
 
 	std::u32string title = U"test";
-	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
-	plot.set_title(cv.to_bytes(title));
+	plot.set_title(title);
 
 	if (e_plot)plot.show();
 
@@ -717,8 +712,8 @@ void ODE_harmonic_oscillator()
 	plot.plot_somedata(X, Y1, "k", "cosine", "red", 1);
 
 	std::u32string title = U"ÿ = -y";
-	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
-	plot.set_title(cv.to_bytes(title));
+	plot.set_title(title);
+
 	plot.show();
 
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
@@ -792,8 +787,8 @@ y[1] = 0;
 	//plot.plot_somedata(X, Y1, "k", "Y[1]", "blue");
 
 	std::u32string title = U"Hermite functions Ψn̈(x) + (2n + 1 - x²) Ψn(x) = 0";
-	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
-	plot.set_title(cv.to_bytes(title));
+
+	plot.set_title(title);
 	plot.grid_on();
 	plot.show();
 
@@ -861,8 +856,7 @@ void ODE_quantum_harmonic_oscillator_complex()
 	plot.plot_somedata(X, Y3, "k", "y[1].imag", "blue");
 
 	std::u32string title = U"Hermite functions Ψn̈(x) + (2n + 1 - x²) Ψn(x) = 0";
-	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
-	plot.set_title(cv.to_bytes(title));
+	plot.set_title(title);
 	plot.grid_on();
 	plot.show();
 
@@ -915,8 +909,8 @@ void ODE_Predator_Prey()
 	plot.plot_somedata(X, Y1, "k", "Y[1]", "red");
 
 	std::u32string title = U"Predator-Prey Equations dx/dt = x(a - by) dy/dt = -y(c - dx)";
-	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
-	plot.set_title(cv.to_bytes(title));
+
+	plot.set_title(title);
 	plot.show();
 	plot.plot_somedata(Y0, Y1, "k", "Rabbits vs Foxes", "green");
 	plot.show();
@@ -967,8 +961,7 @@ void ODE_Van_der_Pol_oscillator()
 	plot.plot_somedata(X, Y1, "k", "Y[1]", "red");
 
 	std::u32string title = U"x′′+ β(x^2−1)x′ + x = 0";// x = y...
-	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
-	plot.set_title(cv.to_bytes(title));
+	plot.set_title(title);
 	plot.show();
 
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
@@ -1016,8 +1009,7 @@ void quantum_harmonic_oscillator()
 
 
 	std::u32string title = U"ÿ - 2xẏ + 2my = 0";
-	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
-	plot.set_title(cv.to_bytes(title));
+	plot.set_title(title);
 	plot.show();
 
 	std::cout.setf(std::ios::fixed, std::ios::floatfield);
@@ -1639,8 +1631,7 @@ void ODE_test_poly()
 	}
 	//https://root.cern.ch/doc/v610/LegendreAssoc_8C.html
 	std::u32string title = U"Wave function";
-	std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv;
-	plot.set_title(cv.to_bytes(title));
+	plot.set_title(title);
 	plot.grid_on();
 	plot.show();
 
