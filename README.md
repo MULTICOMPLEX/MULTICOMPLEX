@@ -4,6 +4,8 @@
 
 https://en.wikipedia.org/wiki/Haidinger%27s_brush
 
+https://en.wikipedia.org/wiki/Wave_packet
+
 https://www.youtube.com/watch?v=d3E7aFdHVK4
 
 ![Figure_16](https://user-images.githubusercontent.com/75379917/123514611-23db2380-d694-11eb-868f-f53636058e71.png)
