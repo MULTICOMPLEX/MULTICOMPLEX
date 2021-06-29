@@ -6,8 +6,8 @@ import math
 
 E = 5 #3
 
-x = np.linspace(-E, E, 90)#90
-y = np.linspace(-E, E, 90)
+x = np.linspace(-E, E, 1000)
+y = np.linspace(-E, E, 1000)
 
 xx, yy = np.meshgrid(x, y)
 
@@ -44,7 +44,7 @@ plt.imshow(zz, cmap = 'viridis', extent=[-E, E, -E, E])
 plt.title("Haidinger's Brush")
 plt.show()
 
-fig, (ax1, ax2) = plt.subplots(1, 2)
+fig  = plt.figure();
 frames = [] # for storing the generated images
 
 norm = plt.Normalize(np.min(zz), np.max(zz))
@@ -59,11 +59,21 @@ for i in range(90):
 ani = animation.ArtistAnimation(fig, frames, interval=20, blit=True,
                                 repeat_delay=0)
 
+
+ani.save('c:/ffmpeg/movies/movie1.gif')
+plt.show()
+
+fig, (ax1, ax2) = plt.subplots(1, 2)
+
 def data(i):
     xx, yy = DoRotation(x, y, math.radians(i*4))
     zz = np.exp(-(xx**2 + yy**2)) * (xx**2 - yy**2) * np.sin(math.radians(i*4))
     surf[0].remove()
     surf[0] = ax1.plot_surface(xx, yy, zz, rstride=1, cstride=1, cmap='viridis', norm = norm, edgecolor='none')
+
+
+x = np.linspace(-E, E, 90)
+y = np.linspace(-E, E, 90)
 
 xx, yy = np.meshgrid(x, y)
 zz = np.exp(-(xx**2 + yy**2)) * (xx**2 - yy**2)
@@ -83,7 +93,7 @@ ax1.set_zlim(np.min(zz), np.max(zz))
 
 plt.title("Photon")
 
-ani.save('movie.gif')
+ani.save('c:/ffmpeg/movies/movie2.gif')
 plt.show()
 
 
