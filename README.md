@@ -4,6 +4,8 @@
 
 https://en.wikipedia.org/wiki/Haidinger%27s_brush
 
+https://en.wikipedia.org/wiki/Gaussian_beam
+
 https://en.wikipedia.org/wiki/Wave_packet
 
 https://www.youtube.com/watch?v=d3E7aFdHVK4
