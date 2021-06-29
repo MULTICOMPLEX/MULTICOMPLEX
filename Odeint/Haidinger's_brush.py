@@ -1,12 +1,13 @@
 import numpy as np
 np.set_printoptions(threshold=np.inf)
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import math
 
 E = 5 #3
 
-x = np.linspace(-E, E, 1000)#90
-y = np.linspace(-E, E, 1000)
+x = np.linspace(-E, E, 90)#90
+y = np.linspace(-E, E, 90)
 
 xx, yy = np.meshgrid(x, y)
 
@@ -24,6 +25,7 @@ zz = np.exp(-(xx**2 + yy**2)) * (xx**2 - yy**2)
 #zz = np.exp(-(xx**2 + yy**2)) * np.cos(xx**2 - yy**2) * np.sin(xx**2 - yy**2)
 
 #plt.imshow(zz, cmap = 'prism', extent=[-E, E, -E, E])
+
 plt.imshow(zz, cmap = 'viridis', extent=[-E, E, -E, E])
 
 #plt.quiver(xx, yy, zz*xx, zz*yy)
@@ -38,12 +40,11 @@ plt.imshow(zz, cmap = 'viridis', extent=[-E, E, -E, E])
 
 #ax.view_init(60, 35)
 
+
 plt.title("Haidinger's Brush")
 plt.show()
 
-import matplotlib.animation as animation
-
-fig = plt.figure()
+fig, (ax1, ax2) = plt.subplots(1, 2)
 frames = [] # for storing the generated images
 
 norm = plt.Normalize(np.min(zz), np.max(zz))
@@ -57,6 +58,28 @@ for i in range(90):
 
 ani = animation.ArtistAnimation(fig, frames, interval=20, blit=True,
                                 repeat_delay=0)
+
+def data(i):
+    xx, yy = DoRotation(x, y, math.radians(i*4))
+    zz = np.exp(-(xx**2 + yy**2)) * (xx**2 - yy**2) * np.sin(math.radians(i*4))
+    surf[0].remove()
+    surf[0] = ax1.plot_surface(xx, yy, zz, rstride=1, cstride=1, cmap='viridis', norm = norm, edgecolor='none')
+
+xx, yy = np.meshgrid(x, y)
+zz = np.exp(-(xx**2 + yy**2)) * (xx**2 - yy**2)
+
+ax1 = plt.axes(projection='3d')
+
+surf = [ax1.plot_surface(xx, yy, zz, rstride=1, cstride=1, cmap='viridis', norm = norm, edgecolor='none')]
+
+ani = animation.FuncAnimation(fig, data, 90, interval=20, repeat_delay=0)
+
+ax1.set_xlabel('x')
+ax1.set_ylabel('y')
+ax1.set_zlabel('z')
+ax1.set_xlim(-E,E)
+ax1.set_ylim(-E,E)
+ax1.set_zlim(np.min(zz), np.max(zz))
 
 plt.title("Photon")
 
