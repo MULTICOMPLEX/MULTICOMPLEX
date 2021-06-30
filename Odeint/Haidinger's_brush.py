@@ -66,8 +66,9 @@ plt.show()
 fig, (ax1, ax2) = plt.subplots(1, 2)
 
 def data(i):
-    xx, yy = DoRotation(x, y, math.radians(i*4))
+    xx, yy = np.meshgrid(x, y)
     zz = np.exp(-(xx**2 + yy**2)) * (xx**2 - yy**2) * np.sin(math.radians(i*4))
+    xx, yy = DoRotation(x, y, math.radians(i*4))
     surf[0].remove()
     surf[0] = ax1.plot_surface(xx, yy, zz, rstride=1, cstride=1, cmap='viridis', norm = norm, edgecolor='none')
 
