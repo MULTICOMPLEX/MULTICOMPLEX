@@ -16,7 +16,7 @@ https://www.youtube.com/watch?v=d3E7aFdHVK4
 
 ![movie](https://user-images.githubusercontent.com/75379917/123710413-00b89b80-d86f-11eb-8252-7e25333eb43e.gif)
 
-![movie](https://user-images.githubusercontent.com/75379917/123796812-d0f8aa80-d8e5-11eb-834f-40d78670463c.gif)
+![movie2](https://user-images.githubusercontent.com/75379917/123929765-6e5be900-d98f-11eb-94b4-532cc8c136cc.gif)
 
 ### Spherical harmonics
 ![newplot(1)](https://user-images.githubusercontent.com/75379917/112055866-a6b18700-8b57-11eb-8541-b77f98d7771f.png)
