@@ -127,5 +127,4 @@ void Runge_Kutta(F f, T t, Vec& y, T h) {
       + b10_6 * k6 + b10_7 * k7 + b10_9 * k9));
    
     y += h * (c1 * k1 + c4 * k4 + c5 * k5 + c7 * k7 + c8 * k8);
-    //y += h * k1;
 }

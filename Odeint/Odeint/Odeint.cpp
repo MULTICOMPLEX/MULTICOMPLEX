@@ -15,6 +15,7 @@
 #include "dekker.hpp"
 #include "secant.hpp"
 #include "Laplace_transform.hpp"
+#include "embedded_prince_dormand_v3_4_5.hpp"
 
 #include "NumCpp.hpp"
 
@@ -79,10 +80,10 @@ int main(int argc, char* argv[]) {
 
 	//testk1();
 	//for (int x = 0; x <= 8; x++)
-	//ODE_Quantum_Solver(7);
+	ODE_Quantum_Solver(0);
 	
 	//test_fillhermites();
-	Haidingers_brush();
+	//Haidingers_brush();
 
 	//ODE_test_poly();
 	//tal();
@@ -427,8 +428,8 @@ void ODE_Quantum_Solver(int mode)
 		return state;
 	};
 
-	for(x = tmin; x <= tmax; x += h)
-		X.emplace_back(x);
+	//for(x = tmin; x <= tmax; x += h)
+//		X.emplace_back(x);
 	//X = linspace(tmin, tmax, 5201);
 	
 	auto Wave_function = [&](const auto& energy) {
@@ -440,14 +441,26 @@ void ODE_Quantum_Solver(int mode)
 		y[1] = 1;
 
 		Y.clear();
+		X.clear();
 		Y.resize(y.size());
 
 		Y[0].emplace_back(y[0]);
 		Y[1].emplace_back(y[1]);
+		X.emplace_back(x);
+
+		auto h2 = h;
 		
-		for(auto& x : X)
+		while (x < tmax)
 		{
 			Midpoint_method_explicit(SE, x, y, h);
+			
+			//Embedded_Prince_Dormand_v3_4_5(SE, x, y, h, h2);
+			
+			x += h2;
+	
+			X.emplace_back(x);
+			// 0.01859777
+			// 0.00186101
 			//Midpoint_method_implicit(SE, x, y, h);
 			//Euler_method(SE, x, y, h);
 			//Embedded_Fehlberg_3_4(SE, x, y, h);
