@@ -153,7 +153,7 @@ def find_all_zeroes(x,y):
 N = 1000                  # number of points to take
 psi = np.zeros([N,2])     # Wave function values and its derivative (psi and psi')
 psi0 = [1,0]              # Wave function initial states
-Vo = 21
+Vo = 20
 E = 0.0                   # global variable Energy  needed for Sch.Eq, changed in function "Wave function"
 b = 2                     # point outside of well where we need to check if the function diverges
 x = np.linspace(-b, b, N) # x-axis

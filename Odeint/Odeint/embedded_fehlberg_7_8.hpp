@@ -167,7 +167,7 @@ void Runge_Kutta_7_8(F& f, const T& t, std::vector<T>& y, const T& h) {
     + b13_7 * k7 + b13_8 * k8 + b13_9 * k9 + b13_10 * k10 + k12));
   
   y += h * (c_1_11 * (k1 + k11) + c6 * k6 + c_7_8 * (k7 + k8) + c_9_10 * (k9 + k10));
-  //y += h * k1;
+
  // return err_factor * (k1 + k11 - k12 - k13);
 }
 

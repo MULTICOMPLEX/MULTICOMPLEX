@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
 
 	//testk1();
 	//for (int x = 0; x <= 8; x++)
-	ODE_Quantum_Solver(0);
+	ODE_Quantum_Solver(2);
 	
 	//test_fillhermites();
 	//Haidingers_brush();
@@ -274,11 +274,11 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine_Rectan
 
 		while (x <= tmax)
 		{
-			//Midpoint_method_explicit(SE, x, y, h);
+			Midpoint_method_explicit(SE, x, y, h);
 			//Midpoint_method_implicit(SE, x, y, h);
 			//EI2(x, y);
 			//Euler_method(SE, x, y, h);
-			Embedded_Fehlberg_3_4(SE, x, y, h);
+			//Embedded_Fehlberg_3_4(SE, x, y, h);
 			//Embedded_Fehlberg_7_8(SE, x, y, h);
 			
 			if (x > B1 && x < B2)
@@ -452,18 +452,20 @@ void ODE_Quantum_Solver(int mode)
 		
 		while (x < tmax)
 		{
-			Midpoint_method_explicit(SE, x, y, h);
+			//Midpoint_method_explicit(SE, x, y, h);
 			
-			//Embedded_Prince_Dormand_v3_4_5(SE, x, y, h, h2);
-			
+			//Embedded_Prince_Dormand_v3_4_5(SE, x, y, h, h2, 1e-3);
+			Embedded_Fehlberg_3_4(SE, x, y, h, h2, 1e-3);
+
 			x += h2;
 	
 			X.emplace_back(x);
-			// 0.01859777
-			// 0.00186101
+			// 59.47790788
+			// 
+			// 59.49999995
 			//Midpoint_method_implicit(SE, x, y, h);
 			//Euler_method(SE, x, y, h);
-			//Embedded_Fehlberg_3_4(SE, x, y, h);
+		
 			//Embedded_Fehlberg_7_8(SE, x, y, h);
 
 			//Y[0].emplace_back(y[0] * y[0]);
