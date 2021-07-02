@@ -1,5 +1,3 @@
-#pragma once
-
 template<typename F, typename T>
 void Midpoint_method_implicit(F& f, const T& t, std::vector<T>& y, const T& h) {
 
@@ -16,13 +14,13 @@ void Midpoint_method_implicit(F& f, const T& t, std::vector<T>& y, const T& h) {
 template<typename T>
 void EI1(const T& t, std::vector<T>& y) {
 
-	y *= 2 * sin(t);
+	y *= 2 * std::sin(t);
 }
 
 template<typename T>
 void EI2(const T& t, std::vector<T>& y) {
 
-	y *= 2 * cos(t);
+	y *= 2 * std::cos(t);
 }
 
 template<typename F, typename T>

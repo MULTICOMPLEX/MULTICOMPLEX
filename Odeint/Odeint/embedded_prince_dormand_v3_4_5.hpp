@@ -1,27 +1,6 @@
 
 template<typename F, typename T>
-std::vector<T> Runge_Kutta2(const F& f, const T& t, std::vector<T>& y, const T& h);
-
-template<typename F, typename T>
-void Embedded_Prince_Dormand_v3_4_5(const F& f, const T& t, std::vector<T>& y, const T& h, T& h2, const T&epsilon) {
-
-	auto k = Runge_Kutta2(f, t, y, h);
-	k = Runge_Kutta2(f, t, k, h2);
-
-	auto p = std::minmax_element(begin(k), end(k));
-	auto i = abs(*p.second);
-
-	if (i > epsilon) {
-		//std::cout << "i = " << i << std::endl;
-		h2 /= 2; 
-	}
-
-	else if (h2 < h / 2) h2 *= 2;
-
-}
-
-template<typename F, typename T>
-std::vector<T> Runge_Kutta2(const F& f, const T& t, std::vector<T>& y, const T& h) {
+void Runge_Kutta2(const F& f, const T& t, std::vector<T>& y, const T& h) {
 	static const T r_9 = 1.0 / 9.0;
 	static const T r_2_9 = 2.0 / 9.0;
 	static const T r_12 = 1.0 / 12.0;
@@ -45,7 +24,10 @@ std::vector<T> Runge_Kutta2(const F& f, const T& t, std::vector<T>& y, const T& 
 		+ 330.0 * k5 + 35.0 * k6));
 	y += h * (0.0862 * k1 + 0.6660 * k3 - 0.7857 * k4
 		+ 0.9570 * k5 + 0.0965 * k6 - 0.0200 * k7);
+}
 
-	return 0.0002 * (44.0 * k1 - 330.0 * k3 + 891.0 * k4 - 660.0 * k5
-		- 45.0 * k6 + 100.0 * k7);
+template<typename F, typename T>
+void Embedded_Prince_Dormand_v3_4_5(const F& f, const T& t, std::vector<T>& y, const T& h) {
+
+	Runge_Kutta2(f, t, y, h);
 }

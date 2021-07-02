@@ -81,7 +81,7 @@ int main(int argc, char* argv[]) {
 	//testk1();
 	//for (int x = 0; x <= 8; x++)
 	ODE_Quantum_Solver(2);
-	
+
 	//test_fillhermites();
 	//Haidingers_brush();
 
@@ -280,14 +280,14 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine_Rectan
 			//Euler_method(SE, x, y, h);
 			//Embedded_Fehlberg_3_4(SE, x, y, h);
 			//Embedded_Fehlberg_7_8(SE, x, y, h);
-			
+
 			if (x > B1 && x < B2)
 			{
 				y *= pow(Reset, 2);
 			}
-			
+
 			else if (x > B2) y *= Reset;
-			
+
 			x += h;
 			for (size_t i = 0; i < y.size(); i++)
 				Y[i].emplace_back(y[i]);
@@ -347,7 +347,7 @@ void ODE_Quantum_Solver(int mode)
 
 		tmin = -13; tmax = 13;
 
-		E = 50; Vo = 60;
+		E = 50; Vo = 60;//50
 	}
 
 	bool wave_packet = 0;
@@ -410,7 +410,7 @@ void ODE_Quantum_Solver(int mode)
 
 		if (mode == 8)
 			state[0] = a - b * psi[1];
-		else 	
+		else
 			state[0] = psi[1];
 
 		if (mode == 0 || mode == 1)
@@ -418,20 +418,20 @@ void ODE_Quantum_Solver(int mode)
 
 		else if (mode == 7)
 			state[1] = V(x - mu) * (psi[0]) - MU * psi[1] * (psi[0] * psi[0] - 1.0);
-		     // dydx[1] =          -y[0]  - mu *   y[1] *   (y[0] *   y[0] - 1.0);
-		else if (mode == 8)	
+		// dydx[1] =          -y[0]  - mu *   y[1] *   (y[0] *   y[0] - 1.0);
+		else if (mode == 8)
 			state[1] = V(x - mu) * (c - d * psi[0]) - MU * psi[1] * (psi[0] * psi[0] - 1.0);
-		
-		
+
+
 		else state[1] = V(x - mu) * psi[0];
 
 		return state;
 	};
 
-	//for(x = tmin; x <= tmax; x += h)
-//		X.emplace_back(x);
+	for (x = tmin; x <= tmax; x += h)
+		X.emplace_back(x);
 	//X = linspace(tmin, tmax, 5201);
-	
+
 	auto Wave_function = [&](const auto& energy) {
 		E = energy;
 
@@ -441,32 +441,22 @@ void ODE_Quantum_Solver(int mode)
 		y[1] = 1;
 
 		Y.clear();
-		X.clear();
 		Y.resize(y.size());
 
 		Y[0].emplace_back(y[0]);
 		Y[1].emplace_back(y[1]);
-		X.emplace_back(x);
 
-		auto h2 = h;
-		
-		while (x < tmax)
+		for (auto& x : X)
 		{
 			//Midpoint_method_explicit(SE, x, y, h);
-			
-			//Embedded_Prince_Dormand_v3_4_5(SE, x, y, h, h2, 1e-3);
-			Embedded_Fehlberg_3_4(SE, x, y, h, h2, 1e-3);
 
-			x += h2;
-	
-			X.emplace_back(x);
-			// 59.47790788
-			// 
-			// 59.49999995
+			//Embedded_Prince_Dormand_v3_4_5(SE, x, y, h);
+			//Embedded_Fehlberg_3_4(SE, x, y, h);
+
 			//Midpoint_method_implicit(SE, x, y, h);
 			//Euler_method(SE, x, y, h);
-		
-			//Embedded_Fehlberg_7_8(SE, x, y, h);
+
+			Embedded_Fehlberg_7_8(SE, x, y, h);
 
 			//Y[0].emplace_back(y[0] * y[0]);
 			//Y[1].emplace_back(y[1] * y[1]);
@@ -599,14 +589,14 @@ Normal distribution(σ = 2.377343271833, μ = 1)\\n\
 	std::u32string title;
 	if (mode == 0)title = U"Finite potential well";
 	else if (mode == 1)title = U"Infinite potential well = Particle in 1-D Box";
-	else if (mode == 2)title = U"Quantum Harmonic oscillator"; 
+	else if (mode == 2)title = U"Quantum Harmonic oscillator";
 	else if (mode == 7) title = U"Quantum Harmonic oscillator, van der Pol";
 	else if (mode == 8) title = U"Quantum Harmonic oscillator, van der Pol, Predator-Prey";
 	//title = U"Quantum Harmonic oscillator, chained 𓂀 = 𓄍 𓄎";
 	else if (mode == 3)title = U"Gaussian wave packet";
 	else if (mode == 4) title = U"Quantum Gaussian wave packet + tunnelling through a rectangular potential barrier";
 	else if (mode == 5) title = U"Quantum Sine and cosine wave";
-	
+
 	else title = U"Quantum Cosine wave + tunnelling through a rectangular potential barrier";
 
 	//plot.set_title(title, "Segoe UI Historic", 20);
@@ -1392,96 +1382,96 @@ void tal() {
 	std::cout << Ylm(l, m, theta, phi) << std::endl;
 
 }
- 
+
 
 #pragma warning( disable : 4129 )
-	using namespace std;
+using namespace std;
 
-	const int MAXHERMITES = 10;
-	const int SIZe = 400;
-	const int X = 4;//4
-	const int Y = 3;//3
-	const double W = 80;
+const int MAXHERMITES = 10;
+const int SIZe = 400;
+const int X = 4;//4
+const int Y = 3;//3
+const double W = 80;
 
-	int hermites[MAXHERMITES][MAXHERMITES];
+int hermites[MAXHERMITES][MAXHERMITES];
 
-	double hermite(double x, int n) {
-		if (n < 0 || n > MAXHERMITES) {
-			cout << "Warning: Hermite polynomial not computed for degree " << n << "." << endl;
-			return 0;
-		}
-		double h = 0;
-		for (int i = 0; i <= n; i++) {
-			h += pow(x, i) * hermites[n][i];
-		}
-		return h;
+double hermite(double x, int n) {
+	if (n < 0 || n > MAXHERMITES) {
+		cout << "Warning: Hermite polynomial not computed for degree " << n << "." << endl;
+		return 0;
 	}
-
-	double I(double x, int n) {
-		return pow(hermite(sqrt(2) * x / W, n) * exp(-x * x / W / W), 2);
+	double h = 0;
+	for (int i = 0; i <= n; i++) {
+		h += pow(x, i) * hermites[n][i];
 	}
+	return h;
+}
 
-	void svg() {
-		char filename[200];
-		sprintf(filename, "hermites.svg");
-		fstream fout(filename, fstream::out);
-		fout << "<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='" << X * SIZe << "px' height='" << Y * SIZe << "px'>" << endl;
-		fout << "<defs>" << endl;
-		for (int i = 0; i < X; i++) {
-			fout << "<linearGradient id='grad" << i << "' x1='0%' y1='0%' x2='100%' y2='0%'>" << endl;
-			double intensities[SIZe], maxintensity = 0;
-			for (int j = 0; j < SIZe; j++) {
-				intensities[j] = I(j - SIZe / 2, i);
-				if (intensities[j] > maxintensity) maxintensity = intensities[j];
-			}
-			std::vector<double> Y, X;
+double I(double x, int n) {
+	return pow(hermite(sqrt(2) * x / W, n) * exp(-x * x / W / W), 2);
+}
 
-			for (int j = 0; j < SIZe; j++) {
-				fout << fixed << setprecision(4) << "<stop offset='" << j * 100.0L / SIZe << "\%' style='stop-color:#000; stop-opacity:" << 1 - intensities[j] / maxintensity << ";' />" << endl;
-				
-				Y.push_back(1 - intensities[j] / maxintensity);
-				X.push_back(j * 100.0L / SIZe);
-			}
-
-			std::u32string title;
-			title = U"Test hermite 2d";
-			std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv1;
-			plot.plot_somedata(X, Y, "o", cv1.to_bytes(title), "Red", 1.0, 1);
-			plot.show();
-
-			fout << "</linearGradient>" << endl;
+void svg() {
+	char filename[200];
+	sprintf(filename, "hermites.svg");
+	fstream fout(filename, fstream::out);
+	fout << "<svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='" << X * SIZe << "px' height='" << Y * SIZe << "px'>" << endl;
+	fout << "<defs>" << endl;
+	for (int i = 0; i < X; i++) {
+		fout << "<linearGradient id='grad" << i << "' x1='0%' y1='0%' x2='100%' y2='0%'>" << endl;
+		double intensities[SIZe], maxintensity = 0;
+		for (int j = 0; j < SIZe; j++) {
+			intensities[j] = I(j - SIZe / 2, i);
+			if (intensities[j] > maxintensity) maxintensity = intensities[j];
 		}
-		fout << "</defs>" << endl;
-		//fout << "<rect x='0' y='0' height='1024' width='1024' fill='url(#grad4)' />" << endl;
-		for (int x = 0; x < X; x++) {
-			for (int y = 0; y < Y; y++) {
-				fout << "<rect x='0' y='0' width='" << SIZe << "' height='" << SIZe << "' fill='url(#grad" << x << ")' transform='matrix(1,0,0,1," << x * SIZe << "," << y * SIZe << ")'/>" << endl;
-				fout << "<rect x='0' y='0' width='" << SIZe << "' height='" << SIZe << "' fill='url(#grad" << y << ")' transform='matrix(0,1,1,0," << x * SIZe << "," << y * SIZe << ")'/>" << endl;
-			}
+		std::vector<double> Y, X;
+
+		for (int j = 0; j < SIZe; j++) {
+			fout << fixed << setprecision(4) << "<stop offset='" << j * 100.0L / SIZe << "\%' style='stop-color:#000; stop-opacity:" << 1 - intensities[j] / maxintensity << ";' />" << endl;
+
+			Y.push_back(1 - intensities[j] / maxintensity);
+			X.push_back(j * 100.0L / SIZe);
 		}
-		fout << "</svg>" << endl;
+
+		std::u32string title;
+		title = U"Test hermite 2d";
+		std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> cv1;
+		plot.plot_somedata(X, Y, "o", cv1.to_bytes(title), "Red", 1.0, 1);
+		plot.show();
+
+		fout << "</linearGradient>" << endl;
 	}
-
-	void fillhermites() {
-		for (int i = 1; i < MAXHERMITES; i++) {
-			hermites[0][i] = 0;
+	fout << "</defs>" << endl;
+	//fout << "<rect x='0' y='0' height='1024' width='1024' fill='url(#grad4)' />" << endl;
+	for (int x = 0; x < X; x++) {
+		for (int y = 0; y < Y; y++) {
+			fout << "<rect x='0' y='0' width='" << SIZe << "' height='" << SIZe << "' fill='url(#grad" << x << ")' transform='matrix(1,0,0,1," << x * SIZe << "," << y * SIZe << ")'/>" << endl;
+			fout << "<rect x='0' y='0' width='" << SIZe << "' height='" << SIZe << "' fill='url(#grad" << y << ")' transform='matrix(0,1,1,0," << x * SIZe << "," << y * SIZe << ")'/>" << endl;
 		}
-		hermites[0][0] = 1;
-		for (int j = 1; j < MAXHERMITES; j++) {
-			hermites[j][0] = 0;
-			for (int i = 1; i <= MAXHERMITES; i++) { // up to j would suffice, but it's better to set higher coefficients to zero
-				hermites[j][i] = 2 * hermites[j - 1][i - 1];
-				hermites[j][i - 1] -= i * hermites[j - 1][i];
-			}
-		}
-		return;
 	}
+	fout << "</svg>" << endl;
+}
 
-	
-	void test_fillhermites() {
-		fillhermites();
-		svg();
+void fillhermites() {
+	for (int i = 1; i < MAXHERMITES; i++) {
+		hermites[0][i] = 0;
 	}
+	hermites[0][0] = 1;
+	for (int j = 1; j < MAXHERMITES; j++) {
+		hermites[j][0] = 0;
+		for (int i = 1; i <= MAXHERMITES; i++) { // up to j would suffice, but it's better to set higher coefficients to zero
+			hermites[j][i] = 2 * hermites[j - 1][i - 1];
+			hermites[j][i - 1] -= i * hermites[j - 1][i];
+		}
+	}
+	return;
+}
+
+
+void test_fillhermites() {
+	fillhermites();
+	svg();
+}
 
 
 template <typename T>
