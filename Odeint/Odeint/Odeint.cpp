@@ -66,6 +66,8 @@ std::string colours(const int& t);
 
 void test_fillhermites();
 void Haidingers_brush();
+void ODE_Bessels_equation();
+void ODE_Bessels_equationQ();
 
 int main(int argc, char* argv[]) {
 
@@ -80,7 +82,10 @@ int main(int argc, char* argv[]) {
 
 	//testk1();
 	//for (int x = 0; x <= 8; x++)
-	ODE_Quantum_Solver(2);
+	//ODE_Quantum_Solver(2);
+
+	//ODE_Bessels_equation();
+	ODE_Bessels_equationQ();
 
 	//test_fillhermites();
 	//Haidingers_brush();
@@ -450,13 +455,13 @@ void ODE_Quantum_Solver(int mode)
 		{
 			//Midpoint_method_explicit(SE, x, y, h);
 
-			//Embedded_Prince_Dormand_v3_4_5(SE, x, y, h);
+			Embedded_Prince_Dormand_v3_4_5(SE, x, y, h);
 			//Embedded_Fehlberg_3_4(SE, x, y, h);
 
 			//Midpoint_method_implicit(SE, x, y, h);
 			//Euler_method(SE, x, y, h);
 
-			Embedded_Fehlberg_7_8(SE, x, y, h);
+			//Embedded_Fehlberg_7_8(SE, x, y, h);
 
 			//Y[0].emplace_back(y[0] * y[0]);
 			//Y[1].emplace_back(y[1] * y[1]);
@@ -669,6 +674,156 @@ void ODE_test_nl(bool e_plot)
 	std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
 }
 
+
+void ODE_Bessels_equationQ()
+{
+	double tmin = 1e-15;
+	double x = tmin;
+	double tmax = 10;
+	double h = .005;
+	double E = 0;
+
+	std::vector<double> y(2);
+
+	y[0] = 1;
+	y[1] = 0;
+
+	std::vector<double> dydx(y.size());
+	std::vector<double> X, en;
+	std::vector<std::vector<double>> Y(y.size());
+
+	for (x = 0; x <= 10; x += 0.1)
+		en.emplace_back(x);
+
+	for (x = tmin; x <= tmax; x += h)
+		X.emplace_back(x);
+
+	auto SE = [&](const auto& x, const auto& y) {
+
+		const double 	nu = 0.0;
+
+		dydx[0] = y[1];
+		dydx[1] = 1.0 / pow(x, 2) * (-x * y[1] - (pow(x, 2) - pow(nu, 2)) * E * y[0]);
+
+		return dydx; };
+
+	auto Wave_function = [&](const auto& energy) {
+		E = energy;
+
+		Y.clear();
+		Y.resize(y.size());
+
+		x = tmin;
+
+		y[0] = 1;
+		y[1] = 0;
+
+		for (size_t i = 0; i < y.size(); i++)
+			Y[i].emplace_back(y[i]);
+
+		for (auto& x : X)
+		{
+			Midpoint_method_explicit(SE, x, y, h);
+			//Midpoint_method_implicit(SE, x, y, h);
+			//Euler_method(SE, x, y, h);
+			//Embedded_Fehlberg_3_4(SE, x, y, h);
+			//Embedded_Fehlberg_7_8(SE, x, y, h);
+
+			for (size_t i = 0; i < y.size(); i++)
+				Y[i].emplace_back(y[i]);
+		}
+
+		return y[0];
+	};
+
+	std::vector<double> E_zeroes;
+
+	E_zeroes = Find_all_zeroes(Wave_function, en, 0);
+	if (E_zeroes.empty()) { std::cout << "No roots found !" << std::endl << std::endl; exit(0); }
+
+	std::vector<std::vector<double>> psi_sola, psi_solb;
+
+	for (auto& E : E_zeroes) {
+		Wave_function(E);
+		psi_sola.emplace_back(Y[0]);
+		psi_solb.emplace_back(Y[1]);
+	}
+
+	int t = 0;
+	std::ostringstream oss;
+	oss.setf(std::ios::fixed);
+	oss.precision(6);
+
+	for (auto& E : E_zeroes) {
+		Wave_function(E);
+		oss.str(std::string());
+		oss << E;
+		plot.plot_somedata(X, Y[0], "k", "E = " + oss.str() + " ", colours(t++), 1.0);
+
+		std::cout.setf(std::ios::fixed, std::ios::floatfield);
+		std::cout.precision(15);
+		std::cout << "E = " << oss.str() << std::endl;
+	}
+
+	std::u32string title = U"Quantum Bessel function";
+	plot.set_title(title);
+	plot.grid_on();
+
+	plot.show();
+}
+
+void ODE_Bessels_equation()
+{
+	double tmin = 1e-15;
+	double x = tmin;
+	double tmax = 10;
+	double h = .005;
+
+	std::vector<double> y(2);
+
+	y[0] = 1;
+	y[1] = 0;
+
+	std::vector<double> dydx(y.size());
+
+	auto func = [&](const auto& x, const auto& y) {
+
+		const double 	nu = 0.0;
+
+		dydx[0] = y[1];
+		dydx[1] = 1.0 / pow(x, 2) * (-x * y[1] - (pow(x, 2) - pow(nu, 2)) * y[0]);
+
+		return dydx; };
+
+	std::vector<double> X = { tmin }, Y0 = { y[0] }, Y1 = { y[1] };
+
+	while (x <= tmax)
+	{
+		Embedded_Fehlberg_7_8(func, x, y, h);
+		x += h;
+		X.push_back(x);
+		Y0.push_back(y[0]);
+		Y1.push_back(y[1]);
+	}
+
+	plot.plot_somedata(X, Y0, "k", "y^1", "blue", 1);
+	plot.plot_somedata(X, Y1, "k", "y^2", "red", 1);
+
+	std::u32string title = U"Bessels equation";
+	plot.set_title(title);
+
+	plot.show();
+
+	std::cout.setf(std::ios::fixed, std::ios::floatfield);
+	std::cout.precision(15);
+	auto p = std::minmax_element(begin(Y0), end(Y0));
+	std::cout << "minY0 = " << *p.first << ", maxY0 = " << *p.second << '\n';
+	p = std::minmax_element(begin(Y1), end(Y1));
+	std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
+}
+
+
+
 void ODE_harmonic_oscillator()
 {
 	double x = 0;
@@ -724,7 +879,6 @@ void ODE_harmonic_oscillator()
 	std::cout << "minY0 = " << *p.first << ", maxY0 = " << *p.second << '\n';
 	p = std::minmax_element(begin(Y1), end(Y1));
 	std::cout << "minY1 = " << *p.first << ", maxY1 = " << *p.second << '\n';
-
 }
 
 void ODE_quantum_harmonic_oscillator()
