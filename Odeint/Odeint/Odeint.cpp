@@ -47,15 +47,14 @@ void trapezoidal();
 template <typename T>
 int sign(const T& x);
 
-template<typename T>
-std::vector<T> linspace(const T start_in, const T end_in, std::size_t num_in);
+template <typename T>
+std::vector<T> linspace(const T start_in, const T end_in, std::size_t num_in, bool endpoint = true);
 
 template <typename F, typename T>
 std::vector<T> Find_all_zeroes
 (
 	const F& Wave_function,
-	const std::vector<T>& en,
-	bool tunnel
+	const std::vector<T>& en
 );
 
 template <typename T>
@@ -205,7 +204,7 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine
 
 	//E_zeroes1 = Find_all_zeroes(Wave_function, en);
 
-	E_zeroes2 = Find_all_zeroes(Wave_function, en, 0);
+	E_zeroes2 = Find_all_zeroes(Wave_function, en);
 	if (E_zeroes2.empty()) { std::cout << "No roots found !\n\n"; exit(0); }
 
 	//std::cout << E_zeroes;
@@ -305,7 +304,7 @@ std::tuple<std::vector<std::vector<T>>, std::vector<T>> ODE_Q_sine_cosine_Rectan
 
 	//E_zeroes1 = Find_all_zeroes(Wave_function, en);
 
-	E_zeroes2 = Find_all_zeroes(Wave_function, en, 0);
+	E_zeroes2 = Find_all_zeroes(Wave_function, en);
 	if (E_zeroes2.empty()) { std::cout << "No roots found !\n\n"; exit(0); }
 
 	std::cout << E_zeroes2;
@@ -453,9 +452,9 @@ void ODE_Quantum_Solver(int mode)
 
 		for (auto& x : X)
 		{
-			//Midpoint_method_explicit(SE, x, y, h);
+			Midpoint_method_explicit(SE, x, y, h);
 
-			Embedded_Prince_Dormand_v3_4_5(SE, x, y, h);
+			//Embedded_Prince_Dormand_v3_4_5(SE, x, y, h);
 			//Embedded_Fehlberg_3_4(SE, x, y, h);
 
 			//Midpoint_method_implicit(SE, x, y, h);
@@ -484,12 +483,12 @@ void ODE_Quantum_Solver(int mode)
 	std::vector<std::vector<double>> psi_sola, psi_solb, psi_sols;
 	std::vector<double> E_zeroes, en;
 
-	if (Vo == 0) {
-		en = linspace(0.0, 0.6, 32);
-	}
+	if (Vo == 0) 
+		en = linspace(0.0, 0.25, 4, false);
+
 	else en = linspace(E, Vo, int(2 * (Vo - E)));
 
-	E_zeroes = Find_all_zeroes(Wave_function, en, tunnel);
+	E_zeroes = Find_all_zeroes(Wave_function, en);
 	if (E_zeroes.empty()) { std::cout << "No roots found !\n\n"; return; }
 
 	for (auto& E : E_zeroes) {
@@ -689,11 +688,10 @@ void ODE_Bessels_equationQ()
 	y[1] = 0;
 
 	std::vector<double> dydx(y.size());
-	std::vector<double> X, en;
+	std::vector<double> X;
 	std::vector<std::vector<double>> Y(y.size());
 
-	for (x = 0; x <= 10; x += 0.1)
-		en.emplace_back(x);
+	auto en = linspace(tmin, tmax, 50);
 
 	for (x = tmin; x <= tmax; x += h)
 		X.emplace_back(x);
@@ -738,7 +736,7 @@ void ODE_Bessels_equationQ()
 
 	std::vector<double> E_zeroes;
 
-	E_zeroes = Find_all_zeroes(Wave_function, en, 0);
+	E_zeroes = Find_all_zeroes(Wave_function, en);
 	if (E_zeroes.empty()) { std::cout << "No roots found !" << std::endl << std::endl; exit(0); }
 
 	std::vector<std::vector<double>> psi_sola, psi_solb;
@@ -1272,7 +1270,7 @@ int sign(const T& x)
 }
 
 template <typename T>
-std::vector<T> linspace(const T start_in, const T end_in, std::size_t num_in)
+std::vector<T> linspace(const T start_in, const T end_in, std::size_t num_in, bool endpoint)
 {
 	std::vector<T> linspaced(num_in);
 
@@ -1287,14 +1285,30 @@ std::vector<T> linspace(const T start_in, const T end_in, std::size_t num_in)
 		return linspaced;
 	}
 
-	T delta = (end - start) / (num - 1);
+	T delta;
 
-	for (size_t i = 0; i < num - 1; ++i)
+	if (endpoint)
 	{
-		linspaced[i] = (start + delta * i);
+		delta = (end - start) / (num - 1);
+
+		for (size_t i = 0; i < num - 1; ++i)
+		{
+			linspaced[i] = (start + delta * i);
+		}
+		
+		linspaced[num_in - 1] = end; // I want to ensure that start and end														 
+																 // are exactly the same as the input
 	}
-	linspaced[num_in - 1] = end; // I want to ensure that start and end
-														// are exactly the same as the input
+
+	else {
+		delta = (end - start) / (num);
+
+		for (size_t i = 0; i < num; ++i)
+		{
+			linspaced[i] = (start + delta * i);
+		}
+	}
+
 	return linspaced;
 }
 
@@ -1302,15 +1316,14 @@ template <typename F, typename T>
 std::vector<T> Find_all_zeroes
 (
 	const F& Wave_function,
-	const std::vector<T>& en,
-	bool tunnel
+	const std::vector<T>& en
 )
 {
 	//Gives all zeroes in y = Psi(x)
 	const T epsilon = 1e-12;
 	const auto brent = new Brent(epsilon, Wave_function);
-	const auto secant = new Secant(epsilon, Wave_function);
-	const auto dekker = new Dekker(epsilon, Wave_function);
+	//const auto secant = new Secant(epsilon, Wave_function);
+	//const auto dekker = new Dekker(epsilon, Wave_function);
 
 	std::vector<T> s;
 	std::vector<T> all_zeroes;
@@ -1333,11 +1346,11 @@ std::vector<T> Find_all_zeroes
 				T zero = brent->solve(en[i], en[i + 1]);
 				//std::cout << zero << " " << t++ << std::endl;
 				all_zeroes.push_back(zero);
-				if (tunnel)break;
+
 			}
 		}
 	}
-	delete brent, dekker, secant;
+	delete brent; //dekker, secant;
 	return all_zeroes;
 }
 
@@ -1763,7 +1776,7 @@ void ODE_test_poly()
 	bool mp = 1;
 	if (mp) {
 		std::vector<double> E_zeroes;
-		E_zeroes = Find_all_zeroes(Wave_function, en, 0);
+		E_zeroes = Find_all_zeroes(Wave_function, en);
 		if (E_zeroes.empty()) { std::cout << "No roots found !\n\n"; exit(0); }
 
 		std::stringstream oss;
