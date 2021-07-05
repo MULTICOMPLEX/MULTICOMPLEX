@@ -9,7 +9,7 @@ RADIUS = 1
 SPEED_OF_SOUND = 0.75
 BESSEL_ROOTS = [jn_zeros(m, 10) for m in range(10)]
 FPS = 25
-TIME_PER_MODE = 10
+TIME_PER_MODE = 3#10
 
 MODES = (
     (0, 1),
@@ -57,15 +57,16 @@ y = np.sin(theta) * r
 z = circular_membrane(r, theta, 0, m, n, RADIUS, SPEED_OF_SOUND)
 vmin, vmax = get_vmin_vmax(m, n)
 
-fig = plt.figure(figsize=(19.2, 10.8), dpi=100)
-#fig = plt.figure()
+#fig = plt.figure(figsize=(19.2, 10.8), dpi=100)
+fig = plt.figure()
 ax = fig.add_axes([0, 0, 1, 1], projection='3d')
 ax.set_axis_off()
 plot = [ax.plot_surface(
     x,
     y,
     z,
-    cmap='Spectral',
+    #cmap='Spectral',
+    cmap='viridis',
     vmin=vmin,
     vmax=vmax,
     rcount=50,
@@ -79,7 +80,8 @@ text = ax.text2D(
     0.5, 0.95,
     f'Circular membrane, m = {m}, n = {n}, ω={omega:.2f}',
     #size=36, weight='bold', family='Fira Sans',
-    size=36, weight='bold', family='DejaVu Sans',
+    size=16, weight='bold', family='DejaVu Sans',
+    #size=36, weight='bold', family='DejaVu Sans',
     va='top', ha='center',
     transform=ax.transAxes,
 )
