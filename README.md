@@ -24,6 +24,12 @@ https://en.wikipedia.org/wiki/Bessel_function
 
 ![Figure_18](https://user-images.githubusercontent.com/75379917/124363401-4bedf800-dc3b-11eb-9c02-84c612222055.png)
 
+### Vibrations of a circular membrane
+
+https://en.wikipedia.org/wiki/Vibrations_of_a_circular_membrane
+
+https://user-images.githubusercontent.com/75379917/124523061-ad59c680-ddf5-11eb-81b4-a939c6b20797.mp4
+
 ### Spherical harmonics
 ![newplot(1)](https://user-images.githubusercontent.com/75379917/112055866-a6b18700-8b57-11eb-8541-b77f98d7771f.png)
 ![newplot(1)](https://user-images.githubusercontent.com/75379917/112537041-80d1ef80-8dae-11eb-8c81-d0277625a586.png)
