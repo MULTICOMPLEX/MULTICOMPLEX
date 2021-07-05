@@ -784,24 +784,27 @@ void ODE_Bessels_equation()
 
 	std::vector<double> dydx(y.size());
 
-	auto func = [&](const auto& x, const auto& y) {
+	const double 	nu = 0;
 
-		const double 	nu = 0.0;
+	auto func = [&](const auto& x, const auto& y) {
 
 		dydx[0] = y[1];
 		dydx[1] = 1.0 / pow(x, 2) * (-x * y[1] - (pow(x, 2) - pow(nu, 2)) * y[0]);
 
 		return dydx; };
 
-	std::vector<double> X = { tmin }, Y0 = { y[0] }, Y1 = { y[1] };
-
+	std::vector<double> X = { tmin }, Y0 = { y[0] }, Y1;// = { y[1] };
+	Y1.push_back(std::cyl_bessel_j(nu, x));
 	while (x <= tmax)
 	{
+		
 		Embedded_Fehlberg_7_8(func, x, y, h);
+		
 		x += h;
 		X.push_back(x);
 		Y0.push_back(y[0]);
-		Y1.push_back(y[1]);
+		Y1.push_back(std::cyl_bessel_j(nu, x));
+		//Y1.push_back(y[1]);
 	}
 
 	plot.plot_somedata(X, Y0, "k", "y^1", "blue", 1);
